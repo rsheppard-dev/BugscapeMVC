@@ -1,3 +1,4 @@
 {
-	"dotnet.defaultSolution": "BugscapeMVC.sln"
+	"dotnet.defaultSolution": "BugscapeMVC.sln",
+	"editor.formatOnSave": true
 }

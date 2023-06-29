@@ -17,5 +17,24 @@ namespace BugscapeMVC.Models
         [NotMapped]
         [Display(Name = "Full Name")]
         public string? FullName { get { return  $"{FirstName} {LastName}"; } }
+
+        [NotMapped]
+        public IFormFile? AvatarFormFile { get; set; }
+
+        [Display(Name = "Avatar File Name")]
+        public string? AvatarFileName { get; set; }
+
+         [Display(Name = "File Extension")]
+        public string? AvatarContentType { get; set; }
+
+        public byte[]? AvatarFileData { get; set; }
+
+         [Display(Name = "Company")]
+        public int? CompanyId { get; set; }
+
+        // navigation properties
+        public virtual Company? Company { get; set; }
+        
+        public virtual ICollection<Project> Projects { get; set; } = new HashSet<Project>();
     }
 }
