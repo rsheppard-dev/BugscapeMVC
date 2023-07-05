@@ -5,12 +5,12 @@ using Microsoft.AspNetCore.Identity;
 
 namespace BugscapeMVC.Services
 {
-    public class RolesService : IRolesService
+    public class RoleService : IRoleService
     {
         private readonly ApplicationDbContext _context;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<AppUser> _userManager;
-        public RolesService(ApplicationDbContext context, RoleManager<IdentityRole> roleManager, UserManager<AppUser> userManager)
+        public RoleService(ApplicationDbContext context, RoleManager<IdentityRole> roleManager, UserManager<AppUser> userManager)
         {
             _context = context;
             _roleManager = roleManager;
@@ -23,10 +23,10 @@ namespace BugscapeMVC.Services
             return result;
         }
 
-        public async Task<string> GetRoleNameByIdAsync(string roleId)
+        public async Task<string?> GetRoleNameByIdAsync(string roleId)
         {
             IdentityRole role = _context.Roles.Find(roleId) ?? new IdentityRole();
-            string result = await _roleManager.GetRoleNameAsync(role) ?? "Role not found.";
+            string? result = await _roleManager.GetRoleNameAsync(role);
 
             return result;
         }

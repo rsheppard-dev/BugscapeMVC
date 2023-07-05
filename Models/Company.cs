@@ -8,7 +8,7 @@ namespace BugscapeMVC.Models
 
         [Required]
         [Display(Name = "Company Name")]
-        public required string Name { get; set; }
+        public string? Name { get; set; }
 
         [Display(Name = "Company Description")]
         public string? Description { get; set; }
@@ -17,5 +17,7 @@ namespace BugscapeMVC.Models
         public virtual ICollection<AppUser> Members { get; set; } = new HashSet<AppUser>();
 
         public virtual ICollection<Project> Projects { get; set; } = new HashSet<Project>();
+
+        public virtual ICollection<Invite> Invites { get; set; } = new HashSet<Invite>();
     }
 }
