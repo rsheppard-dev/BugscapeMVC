@@ -23,6 +23,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<ICompanyInfoService, CompanyInfoService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
+builder.Services.AddScoped<ITicketService, TicketService>();
 
 var app = builder.Build();
 
