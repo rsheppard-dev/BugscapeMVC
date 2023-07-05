@@ -9,9 +9,9 @@ namespace BugscapeMVC.Services
     public class ProjectService : IProjectService
     {
         private readonly ApplicationDbContext _context;
-        private readonly RoleService _roleService;
+        private readonly IRoleService _roleService;
 
-        public ProjectService(ApplicationDbContext context, RoleService roleService)
+        public ProjectService(ApplicationDbContext context, IRoleService roleService)
         {
             _context = context;
             _roleService = roleService;

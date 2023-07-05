@@ -16,7 +16,6 @@ namespace BugscapeMVC.Services.Interfaces
         public Task<AppUser?> GetProjectManagerAsync(int projectId);
         public Task<List<AppUser>> GetProjectMembersByRoleAsync(int projectId, string role);
         public Task<Project?> GetProjectByIdAsync(int projectId, int companyId);
-        public Task<List<AppUser>> GetSubmittersOnProjectAsync(int projectId);
         public Task<List<AppUser>> GetUsersNotOnProjectAsync(int projectId, int companyId);
         public Task<List<Project>> GetUserProjectsAsync(string userId);
         public Task<bool> IsUserOnProjectAsync(string userId, int projectId);
