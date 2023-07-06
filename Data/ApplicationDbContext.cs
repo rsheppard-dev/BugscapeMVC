@@ -23,4 +23,9 @@ public class ApplicationDbContext : IdentityDbContext<AppUser>
     public DbSet<TicketPriority> TicketPriorities { get; set; }
     public DbSet<TicketStatus> TicketStatuses { get; set; }
     public DbSet<TicketType> TicketTypes { get; set; }
+
+    internal Task<AppUser> FindAsync(string userId)
+    {
+        throw new NotImplementedException();
+    }
 }
