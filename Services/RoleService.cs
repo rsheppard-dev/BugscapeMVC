@@ -25,7 +25,10 @@ namespace BugscapeMVC.Services
 
         public async Task<string?> GetRoleNameByIdAsync(string roleId)
         {
-            IdentityRole role = _context.Roles.Find(roleId) ?? new IdentityRole();
+            IdentityRole? role = _context.Roles.Find(roleId);
+
+            if (role is null) return null;       
+
             string? result = await _roleManager.GetRoleNameAsync(role);
 
             return result;
