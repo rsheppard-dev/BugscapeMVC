@@ -19,7 +19,7 @@ public class ApplicationDbContext : IdentityDbContext<AppUser>
     public DbSet<Ticket> Tickets { get; set; }
     public DbSet<TicketAttachment> TicketAttachments { get; set; }
     public DbSet<TicketComment> TicketComments { get; set; }
-    public DbSet<TicketHistory> TicketHistory { get; set; }
+    public DbSet<TicketHistory> TicketHistories { get; set; }
     public DbSet<TicketPriority> TicketPriorities { get; set; }
     public DbSet<TicketStatus> TicketStatuses { get; set; }
     public DbSet<TicketType> TicketTypes { get; set; }

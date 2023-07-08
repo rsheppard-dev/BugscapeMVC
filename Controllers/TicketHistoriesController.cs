@@ -10,43 +10,43 @@ using BugscapeMVC.Models;
 
 namespace BugscapeMVC.Controllers
 {
-    public class TicketHistoryController : Controller
+    public class TicketHistoriesController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public TicketHistoryController(ApplicationDbContext context)
+        public TicketHistoriesController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: TicketHistory
+        // GET: TicketHistories
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.TicketHistory.Include(t => t.Ticket).Include(t => t.User);
+            var applicationDbContext = _context.TicketHistories.Include(t => t.Ticket).Include(t => t.User);
             return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: TicketHistory/Details/5
+        // GET: TicketHistories/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.TicketHistory == null)
+            if (id == null || _context.TicketHistories == null)
             {
                 return NotFound();
             }
 
-            var ticketHistory = await _context.TicketHistory
+            var ticketHistories = await _context.TicketHistories
                 .Include(t => t.Ticket)
                 .Include(t => t.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (ticketHistory == null)
+            if (ticketHistories == null)
             {
                 return NotFound();
             }
 
-            return View(ticketHistory);
+            return View(ticketHistories);
         }
 
-        // GET: TicketHistory/Create
+        // GET: TicketHistories/Create
         public IActionResult Create()
         {
             ViewData["TicketId"] = new SelectList(_context.Tickets, "Id", "Description");
@@ -54,7 +54,7 @@ namespace BugscapeMVC.Controllers
             return View();
         }
 
-        // POST: TicketHistory/Create
+        // POST: TicketHistories/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -72,25 +72,25 @@ namespace BugscapeMVC.Controllers
             return View(ticketHistory);
         }
 
-        // GET: TicketHistory/Edit/5
+        // GET: TicketHistories/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.TicketHistory == null)
+            if (id == null || _context.TicketHistories == null)
             {
                 return NotFound();
             }
 
-            var ticketHistory = await _context.TicketHistory.FindAsync(id);
-            if (ticketHistory == null)
+            var ticketHistories = await _context.TicketHistories.FindAsync(id);
+            if (ticketHistories == null)
             {
                 return NotFound();
             }
-            ViewData["TicketId"] = new SelectList(_context.Tickets, "Id", "Description", ticketHistory.TicketId);
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", ticketHistory.UserId);
-            return View(ticketHistory);
+            ViewData["TicketId"] = new SelectList(_context.Tickets, "Id", "Description", ticketHistories.TicketId);
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", ticketHistories.UserId);
+            return View(ticketHistories);
         }
 
-        // POST: TicketHistory/Edit/5
+        // POST: TicketHistories/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -111,7 +111,7 @@ namespace BugscapeMVC.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TicketHistoryExists(ticketHistory.Id))
+                    if (!TicketHistoriesExists(ticketHistory.Id))
                     {
                         return NotFound();
                     }
@@ -127,48 +127,48 @@ namespace BugscapeMVC.Controllers
             return View(ticketHistory);
         }
 
-        // GET: TicketHistory/Delete/5
+        // GET: TicketHistories/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.TicketHistory == null)
+            if (id == null || _context.TicketHistories == null)
             {
                 return NotFound();
             }
 
-            var ticketHistory = await _context.TicketHistory
+            var ticketHistories = await _context.TicketHistories
                 .Include(t => t.Ticket)
                 .Include(t => t.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (ticketHistory == null)
+            if (ticketHistories == null)
             {
                 return NotFound();
             }
 
-            return View(ticketHistory);
+            return View(ticketHistories);
         }
 
-        // POST: TicketHistory/Delete/5
+        // POST: TicketHistories/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.TicketHistory == null)
+            if (_context.TicketHistories == null)
             {
-                return Problem("Entity set 'ApplicationDbContext.TicketHistory'  is null.");
+                return Problem("Entity set 'ApplicationDbContext.TicketHistories'  is null.");
             }
-            var ticketHistory = await _context.TicketHistory.FindAsync(id);
-            if (ticketHistory != null)
+            var ticketHistories = await _context.TicketHistories.FindAsync(id);
+            if (ticketHistories != null)
             {
-                _context.TicketHistory.Remove(ticketHistory);
+                _context.TicketHistories.Remove(ticketHistories);
             }
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool TicketHistoryExists(int id)
+        private bool TicketHistoriesExists(int id)
         {
-          return (_context.TicketHistory?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_context.TicketHistories?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
