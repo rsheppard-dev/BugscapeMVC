@@ -1,6 +1,7 @@
 using BugscapeMVC.Data;
 using BugscapeMVC.Models;
 using BugscapeMVC.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace BugscapeMVC.Services
 {
@@ -165,14 +166,53 @@ namespace BugscapeMVC.Services
             }
         }
 
-        public Task<List<TicketHistory>> GetCompanyTicketsHistoriesAsync(int companyId)
+        public async Task<List<TicketHistory>> GetCompanyTicketsHistoriesAsync(int companyId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                List<Project> projects = (await _context.Companies
+                    .Include(company => company.Projects)
+                        .ThenInclude(project => project.Tickets)
+                            .ThenInclude(ticket => ticket.History)
+                                .ThenInclude(history => history.User)
+                    .FirstOrDefaultAsync(company => company.Id == companyId))?.Projects
+                    .ToList() ?? new();
+
+                List<Ticket> tickets = projects.SelectMany(project => project.Tickets).ToList();
+
+                List<TicketHistory> ticketHistories = tickets.SelectMany(ticket => ticket.History).ToList();
+
+                return ticketHistories;
+            }
+            catch (Exception)
+            {     
+                throw;
+            }
         }
 
-        public Task<List<TicketHistory>> GetProjectTicketsHistoriesAsync(int projectId, int companyId)
+        public async Task<List<TicketHistory>> GetProjectTicketsHistoriesAsync(int projectId, int companyId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                Project? project = await _context.Projects
+                    .Where(project => project.CompanyId == companyId)
+                    .Include(project => project.Tickets)
+                        .ThenInclude(ticket => ticket.History)
+                                .ThenInclude(history => history.User)
+                    .FirstOrDefaultAsync(project => project.Id == projectId);
+
+                if (project is null) return new List<TicketHistory>();
+
+                List<TicketHistory> ticketHistories = project.Tickets
+                    .SelectMany(ticket => ticket.History)
+                    .ToList();
+
+                return ticketHistories;
+            }
+            catch (Exception)
+            {               
+                throw;
+            }
         }
     }
 }

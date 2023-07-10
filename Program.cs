@@ -24,6 +24,7 @@ builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<ICompanyInfoService, CompanyInfoService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<ITicketService, TicketService>();
+builder.Services.AddScoped<ITicketHistoryService, TicketHistoryService>();
 
 var app = builder.Build();
 
