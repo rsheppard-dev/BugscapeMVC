@@ -4,6 +4,7 @@ using BugscapeMVC.Models;
 using Microsoft.AspNetCore.Identity;
 using BugscapeMVC.Services.Interfaces;
 using BugscapeMVC.Services;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +26,10 @@ builder.Services.AddScoped<ICompanyInfoService, CompanyInfoService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<ITicketService, TicketService>();
 builder.Services.AddScoped<ITicketHistoryService, TicketHistoryService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+
+builder.Services.AddScoped<IEmailSender, EmailService>();
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 
 var app = builder.Build();
 
