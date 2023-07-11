@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace BugscapeMVC.Models
@@ -39,6 +40,7 @@ namespace BugscapeMVC.Models
         [Display(Name = "Invitee Last Name")]
         public required string InviteeLastName { get; set; }
 
+        [DefaultValue(true)]
         public bool IsValid { get; set; }
 
         // navigation properties
