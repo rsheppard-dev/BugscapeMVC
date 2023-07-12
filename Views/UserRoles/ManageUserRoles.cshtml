@@ -1,0 +1,41 @@
+@model IEnumerable<BugscapeMVC.Models.ViewModels.ManageUserRolesViewModel>
+
+<div class="row">
+  <h2 class="m-t-0 h3"><b>Manage Member Roles </b></h2>
+  @foreach (var member in Model)
+  {
+      <div class="row">
+      	<div class="card col-4 m-3">
+      	    <div class="card-body">
+      	    	<p class="text-muted font-13 m-b-30">
+      	    		This form displays the current roles assigned to the user: <strong class="text-info">@member.AppUser.FullName</strong>.
+      	    		Use the dropdown to select the roles this user should be assigned.
+      	    		Once roles are selected, click "Assign Roles" to submit the form.
+      	    	</p>
+      	    	<hr />
+
+				@if (member is not null)
+				{
+      	    		<form asp-action="ManageUserRoles" asp-controller="UserRoles" method=post>
+                    	<input type="hidden" asp-for="@member.AppUser.Id" />
+
+						<div class="row">
+							<div class="col-6">
+								<div class="from-group">
+									<label asp-for="@member.Roles" class="custom-label">Roles for @member.AppUser.FullName</label>
+									<select asp-for="@member.SelectedRoles" class="form-control" asp-items="@member.Roles" multiple>
+									</select>
+									<hr />
+								</div>
+								<div class="form-group">
+									<button type="submit" class="btn btn-info">Assign Role</button>
+								</div>
+							</div>
+						</div>
+      	    		</form>
+				}
+      	    </div>
+      	</div>
+      </div>
+  }
+</div>

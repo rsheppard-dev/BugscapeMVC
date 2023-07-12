@@ -35,10 +35,10 @@ namespace BugscapeMVC.Models
         public int TicketStatusId { get; set; }
 
         [Display(Name = "Ticket Owner")]
-        public required string OwnerUserId { get; set; }
+        public string? OwnerUserId { get; set; }
 
         [Display(Name = "Ticket Developer")]
-        public required string DeveloperUserId { get; set; }
+        public string? DeveloperUserId { get; set; }
 
         // navigation properties
         public virtual Project? Project { get; set; }

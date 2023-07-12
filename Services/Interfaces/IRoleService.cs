@@ -1,10 +1,12 @@
 using BugscapeMVC.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace BugscapeMVC.Services.Interfaces
 {
     public interface IRoleService
     {
         public Task<bool> HasRoleAsync(AppUser user, string roleName);
+        public Task<List<IdentityRole>> GetRolesAsync();
         public Task<IEnumerable<string>> GetUserRolesAsync(AppUser user);
         public Task<bool> AddUserToRoleAsync(AppUser user, string roleName);
         public Task<bool> RemoveUserFromRoleAsync(AppUser user, string roleName);

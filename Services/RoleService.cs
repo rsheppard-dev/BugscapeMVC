@@ -2,6 +2,7 @@ using BugscapeMVC.Data;
 using BugscapeMVC.Models;
 using BugscapeMVC.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace BugscapeMVC.Services
 {
@@ -32,6 +33,22 @@ namespace BugscapeMVC.Services
             string? result = await _roleManager.GetRoleNameAsync(role);
 
             return result;
+        }
+
+        public async Task<List<IdentityRole>> GetRolesAsync()
+        {
+            try
+            {
+                List<IdentityRole> roles = new();
+                
+                roles = await _context.Roles.ToListAsync();
+
+                return roles;
+            }
+            catch (Exception)
+            {     
+                throw;
+            }
         }
 
         public async Task<IEnumerable<string>> GetUserRolesAsync(AppUser user)

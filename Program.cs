@@ -5,17 +5,21 @@ using Microsoft.AspNetCore.Identity;
 using BugscapeMVC.Services.Interfaces;
 using BugscapeMVC.Services;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using BugscapeMVC.Services.Factories;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var connectionString = builder.Configuration.GetSection("DBSettings")["ConnectionString"] ?? throw new InvalidOperationException("Connection string not found.");
+var connectionString = DataUtility.GetConnectionString(builder.Configuration) ?? throw new InvalidOperationException("Connection string not found.");
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(connectionString));
+    options.UseNpgsql(connectionString,
+    o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentity<AppUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddClaimsPrincipalFactory<UserClaimsPrincipalFactory>()
     .AddDefaultUI()
     .AddDefaultTokenProviders();
 builder.Services.AddControllersWithViews();
@@ -34,6 +38,8 @@ builder.Services.AddScoped<IEmailSender, EmailService>();
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 
 var app = builder.Build();
+
+await DataUtility.ManageDataAsync(app);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
