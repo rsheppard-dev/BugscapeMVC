@@ -64,11 +64,14 @@ namespace BugscapeMVC.Controllers
 
             string? selectedUserRole = member.SelectedRoles?.FirstOrDefault();
 
-            if (string.IsNullOrEmpty(selectedUserRole)) return View(member);
-
-            if (await _roleService.RemoveUserFromRolesAsync(user, roles))
+            if (member.SelectedRoles is not null && member.SelectedRoles.Any())
             {
-                await _roleService.AddUserToRoleAsync(user, selectedUserRole);
+                await _roleService.RemoveUserFromRolesAsync(user, roles);
+
+                foreach (string selectedRole in member.SelectedRoles)
+                {
+                    await _roleService.AddUserToRoleAsync(user, selectedRole);
+                }
             }
 
             return RedirectToAction(nameof(ManageUserRoles));

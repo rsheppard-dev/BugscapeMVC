@@ -1,22 +1,26 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BugscapeMVC.Data;
 using BugscapeMVC.Models;
+using BugscapeMVC.Extensions;
+using BugscapeMVC.Models.ViewModels;
+using BugscapeMVC.Services.Interfaces;
+using BugscapeMVC.Models.Enums;
 
 namespace BugscapeMVC.Controllers
 {
     public class ProjectsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IRoleService _roleService;
+        private readonly ILookupService _lookupService;
 
-        public ProjectsController(ApplicationDbContext context)
+        public ProjectsController(ApplicationDbContext context, IRoleService roleService, ILookupService lookupService)
         {
             _context = context;
+            _roleService = roleService;
+            _lookupService = lookupService;
         }
 
         // GET: Projects
@@ -47,11 +51,19 @@ namespace BugscapeMVC.Controllers
         }
 
         // GET: Projects/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name");
-            ViewData["ProjectPriorityId"] = new SelectList(_context.ProjectPriorities, "Id", "Name");
-            return View();
+            int companyId = User.Identity?.GetCompanyId() ?? 0;
+
+            if (companyId == 0) return View();
+
+            AddProjectWithPMViewModel model = new()
+            {
+                PMList = new SelectList(await _roleService.GetUsersInRoleAsync(Roles.ProjectManager.ToString(), companyId), "Id", "FullName"),
+                PriorityList = new SelectList(await _lookupService.GetProjectPrioritiesAsync(), "Id", "Name")
+            };
+
+            return View(model);
         }
 
         // POST: Projects/Create

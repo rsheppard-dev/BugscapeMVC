@@ -46,9 +46,8 @@ namespace BugscapeMVC.Models
         // navigation properties
         public virtual Company? Company { get; set; }
         public virtual ProjectPriority? ProjectPriority { get; set; }
-
+        
         public virtual ICollection<AppUser> Members { get; set; } = new HashSet<AppUser>();
-
         public virtual ICollection<Ticket> Tickets { get; set; } = new HashSet<Ticket>();
     }
 }
