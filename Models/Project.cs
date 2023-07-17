@@ -13,15 +13,15 @@ namespace BugscapeMVC.Models
         public required string Name { get; set; }
 
         [Display(Name = "Company")]
-        public int? CompanyId { get; set; }
+        public int CompanyId { get; set; }
 
         public string? Description { get; set; }
 
-        [DataType(DataType.DateTime)]
+        [DataType(DataType.Date)]
         [Display(Name = "Start Date")]
         public DateTimeOffset StartDate { get; set; }
 
-        [DataType(DataType.DateTime)]
+        [DataType(DataType.Date)]
         [Display(Name = "End Date")]
         public DateTimeOffset? EndDate { get; set; }
 

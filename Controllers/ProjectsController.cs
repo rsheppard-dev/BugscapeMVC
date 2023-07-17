@@ -15,12 +15,16 @@ namespace BugscapeMVC.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IRoleService _roleService;
         private readonly ILookupService _lookupService;
+        private readonly IFileService _fileService;
+        private readonly IProjectService _projectService;
 
-        public ProjectsController(ApplicationDbContext context, IRoleService roleService, ILookupService lookupService)
+        public ProjectsController(ApplicationDbContext context, IRoleService roleService, ILookupService lookupService, IFileService fileService, IProjectService projectService)
         {
             _context = context;
             _roleService = roleService;
             _lookupService = lookupService;
+            _fileService = fileService;
+            _projectService = projectService;
         }
 
         // GET: Projects
@@ -71,17 +75,41 @@ namespace BugscapeMVC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,CompanyId,Description,StartDate,EndDate,ProjectPriorityId,ImageFileName,ImageContentType,ImageFileData,Archived")] Project project)
+        public async Task<IActionResult> Create(AddProjectWithPMViewModel model)
         {
-            if (ModelState.IsValid)
+            if (model is not null)
             {
-                _context.Add(project);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                int companyId = User.Identity?.GetCompanyId() ?? 0;
+
+                if (companyId == 0) return RedirectToAction("Create");
+
+                try
+                {
+                    if (model.Project?.ImageFormFile is not null)
+                    {
+                        model.Project.ImageFileData = await _fileService.ConvertFileToByteArrayAsync(model.Project.ImageFormFile);
+                        model.Project.ImageFileName = model.Project.ImageFormFile.FileName;
+                        model.Project.ImageContentType = model.Project.ImageFormFile.ContentType;
+                    }
+
+                    model.Project!.CompanyId = companyId;
+
+                    await _projectService.AddNewProjectAsync(model.Project);
+
+                    if (!string.IsNullOrEmpty(model.PmId))
+                    {
+                        await _projectService.AddProjectManagerAsync(model.PmId, model.Project.Id);
+                    }
+
+                    return RedirectToAction("Index");
+                }
+                catch (Exception)
+                { 
+                    throw;
+                }
             }
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", project.CompanyId);
-            ViewData["ProjectPriorityId"] = new SelectList(_context.ProjectPriorities, "Id", "Name", project.ProjectPriorityId);
-            return View(project);
+  
+            return RedirectToAction("Create");
         }
 
         // GET: Projects/Edit/5
