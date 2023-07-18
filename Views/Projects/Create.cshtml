@@ -1,4 +1,8 @@
 @model BugscapeMVC.Models.ViewModels.AddProjectWithPMViewModel
+@using BugscapeMVC.Services.Interfaces
+@using BugscapeMVC.Models.Enums
+
+@inject IFileService fileService
 
 @{
     ViewData["Title"] = "Create";
@@ -34,7 +38,9 @@
             </div>
             <div class="form-group">
                 <label class="control-label">Project Priority</label>
-                <select asp-for="Project.ProjectPriorityId" class ="form-control" asp-items="@Model.PriorityList"></select>
+                <select asp-for="Project.ProjectPriorityId" class ="form-control" asp-items="@Model.PriorityList">
+                    <option disabled selected hidden>Choose Priority</option>
+                </select>
             </div>
             <div class="form-group">
                 <label class="control-label">Project Image</label>
@@ -43,12 +49,17 @@
             </div>
             <div>
                 <label>Image Preview</label>
-                <img id="imageFileData" src="" class="img-fluid img-thumbnail" src="">
+                    <img id="imageFileData" class="img-fluid img-thumbnail" src="~/images/default-profile.png">
             </div>
+            @if (User.IsInRole(Roles.Admin.ToString()))
+            {
             <div class="form-group">
                 <label class="control-label">Project Manager</label>
-                <select asp-for="PmId" class ="form-control" asp-items="@Model.PMList"></select>
+                <select asp-for="PmId" class="form-control" asp-items="@Model.PMList">
+                    <option disabled selected hidden>Assign Project Manager</option>
+                </select>
             </div>
+            }
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>

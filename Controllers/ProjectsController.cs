@@ -59,7 +59,7 @@ namespace BugscapeMVC.Controllers
         {
             int companyId = User.Identity?.GetCompanyId() ?? 0;
 
-            if (companyId == 0) return View();
+            if (companyId == 0) return NotFound();
 
             AddProjectWithPMViewModel model = new()
             {
@@ -92,7 +92,9 @@ namespace BugscapeMVC.Controllers
                         model.Project.ImageContentType = model.Project.ImageFormFile.ContentType;
                     }
 
-                    model.Project!.CompanyId = companyId;
+                    if (model.Project is null) return RedirectToAction("Create");
+
+                    model.Project.CompanyId = companyId;
 
                     await _projectService.AddNewProjectAsync(model.Project);
 
@@ -114,20 +116,19 @@ namespace BugscapeMVC.Controllers
 
         // GET: Projects/Edit/5
         public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null || _context.Projects == null)
-            {
-                return NotFound();
-            }
+        {       
+            int companyId = User.Identity?.GetCompanyId() ?? 0;
 
-            var project = await _context.Projects.FindAsync(id);
-            if (project == null)
+            if (companyId == 0 || id is null) return NotFound();
+
+            AddProjectWithPMViewModel model = new()
             {
-                return NotFound();
-            }
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", project.CompanyId);
-            ViewData["ProjectPriorityId"] = new SelectList(_context.ProjectPriorities, "Id", "Name", project.ProjectPriorityId);
-            return View(project);
+                Project = await _projectService.GetProjectByIdAsync(id.Value, companyId),
+                PMList = new SelectList(await _roleService.GetUsersInRoleAsync(Roles.ProjectManager.ToString(), companyId), "Id", "FullName"),
+                PriorityList = new SelectList(await _lookupService.GetProjectPrioritiesAsync(), "Id", "Name")
+            };
+
+            return View(model);
         }
 
         // POST: Projects/Edit/5
@@ -135,36 +136,37 @@ namespace BugscapeMVC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,CompanyId,Description,StartDate,EndDate,ProjectPriorityId,ImageFileName,ImageContentType,ImageFileData,Archived")] Project project)
+        public async Task<IActionResult> Edit(AddProjectWithPMViewModel model)
         {
-            if (id != project.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
+            if (model is not null)
             {
                 try
                 {
-                    _context.Update(project);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ProjectExists(project.Id))
+                    if (model.Project?.ImageFormFile is not null)
                     {
-                        return NotFound();
+                        model.Project.ImageFileData = await _fileService.ConvertFileToByteArrayAsync(model.Project.ImageFormFile);
+                        model.Project.ImageFileName = model.Project.ImageFormFile.FileName;
+                        model.Project.ImageContentType = model.Project.ImageFormFile.ContentType;
                     }
-                    else
+
+                    if (model.Project is null) return RedirectToAction("Edit");
+
+                    await _projectService.UpdateProjectAsync(model.Project);
+
+                    if (!string.IsNullOrEmpty(model.PmId))
                     {
-                        throw;
+                        await _projectService.AddProjectManagerAsync(model.PmId, model.Project.Id);
                     }
+
+                    return RedirectToAction("Index");
                 }
-                return RedirectToAction(nameof(Index));
+                catch (Exception)
+                { 
+                    throw;
+                }
             }
-            ViewData["CompanyId"] = new SelectList(_context.Companies, "Id", "Name", project.CompanyId);
-            ViewData["ProjectPriorityId"] = new SelectList(_context.ProjectPriorities, "Id", "Name", project.ProjectPriorityId);
-            return View(project);
+  
+            return RedirectToAction("Edit");
         }
 
         // GET: Projects/Delete/5
