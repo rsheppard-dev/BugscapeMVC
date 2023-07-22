@@ -19,8 +19,15 @@ namespace BugscapeMVC.Services
 
         public async Task AddNewProjectAsync(Project project)
         {
-            _context.Add(project);
-            await _context.SaveChangesAsync();
+            try
+            {
+                _context.Add(project);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {     
+                throw;
+            }
         }
 
         public async Task<bool> AddProjectManagerAsync(string userId, int projectId)
@@ -83,9 +90,25 @@ namespace BugscapeMVC.Services
 
         public async Task ArchiveProjectAsync(Project project)
         {
-            project.Archived = true;
-            _context.Update(project);
-            await _context.SaveChangesAsync();
+            try
+            {
+                project.Archived = true;
+                await UpdateProjectAsync(project);
+
+                // archive all tickets attached to project
+                foreach (Ticket ticket in project.Tickets)
+                {
+                    ticket.ArchivedByProject = true;
+
+                    _context.Update(ticket);
+                }
+
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {   
+                throw;
+            }
         }
 
         public async Task<List<AppUser>> GetAllProjectMembersExceptPMAsync(int projectId)
@@ -346,6 +369,29 @@ namespace BugscapeMVC.Services
             catch (Exception ex)
             {
                 Console.WriteLine($"ERROR: Failed to remove users from project.\nException: {ex.Message}");
+                throw;
+            }
+        }
+
+        public async Task RestoreProjectAsync(Project project)
+        {
+            try
+            {
+                project.Archived = false;
+                await UpdateProjectAsync(project);
+
+                // restore all tickets attached to project
+                foreach (Ticket ticket in project.Tickets)
+                {
+                    ticket.ArchivedByProject = false;
+
+                    _context.Update(ticket);
+                }
+
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {   
                 throw;
             }
         }

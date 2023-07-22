@@ -57,13 +57,13 @@ namespace BugscapeMVC.Controllers
         // GET: Projects/Create
         public async Task<IActionResult> Create()
         {
-            int companyId = User.Identity?.GetCompanyId() ?? 0;
+            int? companyId = User.Identity?.GetCompanyId() ?? null;
 
-            if (companyId == 0) return NotFound();
+            if (companyId is null) return NotFound();
 
             AddProjectWithPMViewModel model = new()
             {
-                PMList = new SelectList(await _roleService.GetUsersInRoleAsync(Roles.ProjectManager.ToString(), companyId), "Id", "FullName"),
+                PMList = new SelectList(await _roleService.GetUsersInRoleAsync(Roles.ProjectManager.ToString(), companyId.Value), "Id", "FullName"),
                 PriorityList = new SelectList(await _lookupService.GetProjectPrioritiesAsync(), "Id", "Name")
             };
 
@@ -79,9 +79,9 @@ namespace BugscapeMVC.Controllers
         {
             if (model is not null)
             {
-                int companyId = User.Identity?.GetCompanyId() ?? 0;
+                int? companyId = User.Identity?.GetCompanyId() ?? null;
 
-                if (companyId == 0) return RedirectToAction("Create");
+                if (companyId is null) return RedirectToAction("Create");
 
                 try
                 {
@@ -94,7 +94,7 @@ namespace BugscapeMVC.Controllers
 
                     if (model.Project is null) return RedirectToAction("Create");
 
-                    model.Project.CompanyId = companyId;
+                    model.Project.CompanyId = companyId.Value;
 
                     await _projectService.AddNewProjectAsync(model.Project);
 
@@ -117,14 +117,14 @@ namespace BugscapeMVC.Controllers
         // GET: Projects/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {       
-            int companyId = User.Identity?.GetCompanyId() ?? 0;
+            int? companyId = User.Identity?.GetCompanyId() ?? null;
 
-            if (companyId == 0 || id is null) return NotFound();
+            if (companyId is null || id is null) return NotFound();
 
             AddProjectWithPMViewModel model = new()
             {
-                Project = await _projectService.GetProjectByIdAsync(id.Value, companyId),
-                PMList = new SelectList(await _roleService.GetUsersInRoleAsync(Roles.ProjectManager.ToString(), companyId), "Id", "FullName"),
+                Project = await _projectService.GetProjectByIdAsync(id.Value, companyId.Value),
+                PMList = new SelectList(await _roleService.GetUsersInRoleAsync(Roles.ProjectManager.ToString(), companyId.Value), "Id", "FullName"),
                 PriorityList = new SelectList(await _lookupService.GetProjectPrioritiesAsync(), "Id", "Name")
             };
 
@@ -169,18 +169,18 @@ namespace BugscapeMVC.Controllers
             return RedirectToAction("Edit");
         }
 
-        // GET: Projects/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        // GET: Projects/Archive/5
+        public async Task<IActionResult> Archive(int? id)
         {
-            if (id == null || _context.Projects == null)
+            int? companyId = User.Identity?.GetCompanyId() ?? null;
+
+            if (id == null || _context.Projects == null || companyId == null)
             {
                 return NotFound();
             }
 
-            var project = await _context.Projects
-                .Include(p => p.Company)
-                .Include(p => p.ProjectPriority)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            Project? project = await _projectService.GetProjectByIdAsync(id.Value, companyId.Value);
+
             if (project == null)
             {
                 return NotFound();
@@ -190,21 +190,80 @@ namespace BugscapeMVC.Controllers
         }
 
         // POST: Projects/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost, ActionName("Archive")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> ArchiveConfirmed(int id)
         {
-            if (_context.Projects == null)
+            int? companyId = User.Identity?.GetCompanyId() ?? null;
+
+            if (_context.Projects is null)
             {
                 return Problem("Entity set 'ApplicationDbContext.Projects'  is null.");
             }
-            var project = await _context.Projects.FindAsync(id);
-            if (project != null)
+
+            if (companyId is null)
             {
-                _context.Projects.Remove(project);
+                return Problem("Company ID is null.");
             }
-            
-            await _context.SaveChangesAsync();
+
+            Project? project = await _projectService.GetProjectByIdAsync(id, companyId.Value);
+
+            if (project is null)
+            {
+                return Problem("Project not found.");
+            }
+        
+            await _projectService.ArchiveProjectAsync(project);
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // GET: Projects/Restore/5
+        public async Task<IActionResult> Restore(int? id)
+        {
+            int? companyId = User.Identity?.GetCompanyId() ?? null;
+
+            if (id == null || _context.Projects == null || companyId == null)
+            {
+                return NotFound();
+            }
+
+            Project? project = await _projectService.GetProjectByIdAsync(id.Value, companyId.Value);
+
+            if (project == null)
+            {
+                return NotFound();
+            }
+
+            return View(project);
+        }
+
+        // POST: Projects/Restore/5
+        [HttpPost, ActionName("Restore")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RestoreConfirmed(int id)
+        {
+            int? companyId = User.Identity?.GetCompanyId() ?? null;
+
+            if (_context.Projects is null)
+            {
+                return Problem("Entity set 'ApplicationDbContext.Projects'  is null.");
+            }
+
+            if (companyId is null)
+            {
+                return Problem("Company ID is null.");
+            }
+
+            Project? project = await _projectService.GetProjectByIdAsync(id, companyId.Value);
+
+            if (project is null)
+            {
+                return Problem("Project not found.");
+            }
+        
+            await _projectService.RestoreProjectAsync(project);
+
             return RedirectToAction(nameof(Index));
         }
 

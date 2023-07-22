@@ -1,4 +1,6 @@
 @model IEnumerable<BugscapeMVC.Models.Project>
+@using BugscapeMVC.Services.Interfaces
+@inject IFileService fileService
 
 @{
     ViewData["Title"] = "Index";
@@ -23,12 +25,6 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.EndDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ImageFileName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ImageContentType)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.ImageFileData)
@@ -61,13 +57,14 @@
                 @Html.DisplayFor(modelItem => item.EndDate)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.ImageFileName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ImageContentType)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ImageFileData)
+                @if (item.ImageFileData is null || item.ImageContentType is null)
+                {
+                    <img id="imageFileData" class="img-fluid img-thumbnail" src="~/images/default_project.png">
+                }
+                else
+                {
+                    <img id="imageFileData" class="img-fluid img-thumbnail" src="@fileService.ConvertByteArrayToFile(item.ImageFileData, item.ImageContentType)">
+                }
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Archived)
@@ -81,7 +78,14 @@
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                @if (item.Archived)
+                {
+                    <a asp-action="Restore" asp-route-id="@item.Id">Restore</a>
+                }
+                else
+                {
+                    <a asp-action="Archive" asp-route-id="@item.Id">Archive</a>
+                }
             </td>
         </tr>
 }
