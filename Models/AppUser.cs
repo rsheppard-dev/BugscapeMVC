@@ -30,7 +30,7 @@ namespace BugscapeMVC.Models
         public byte[]? AvatarFileData { get; set; }
 
          [Display(Name = "Company")]
-        public int? CompanyId { get; set; }
+        public int CompanyId { get; set; }
 
         // navigation properties
         public virtual Company? Company { get; set; }
