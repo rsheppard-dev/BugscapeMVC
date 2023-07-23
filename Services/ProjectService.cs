@@ -8,15 +8,20 @@ namespace BugscapeMVC.Services
 {
     public class ProjectService : IProjectService
     {
+        #region Properties
         private readonly ApplicationDbContext _context;
         private readonly IRoleService _roleService;
+        #endregion
 
+        #region Constructor
         public ProjectService(ApplicationDbContext context, IRoleService roleService)
         {
             _context = context;
             _roleService = roleService;
         }
+        #endregion
 
+        #region  Add New Project
         public async Task AddNewProjectAsync(Project project)
         {
             try
@@ -29,7 +34,9 @@ namespace BugscapeMVC.Services
                 throw;
             }
         }
+        #endregion
 
+        #region Add Project Manager
         public async Task<bool> AddProjectManagerAsync(string userId, int projectId)
         {
             AppUser? currentPM = await GetProjectManagerAsync(projectId);
@@ -58,7 +65,9 @@ namespace BugscapeMVC.Services
                 return false;
             }
         }
+        #endregion
 
+        #region Add User to Project
         public async Task<bool> AddUserToProjectAsync(string userId, int projectId)
         {
             AppUser? user = await _context.Users.FindAsync(userId);
@@ -87,7 +96,9 @@ namespace BugscapeMVC.Services
 
             return false;
         }
+        #endregion
 
+        #region Archive Project
         public async Task ArchiveProjectAsync(Project project)
         {
             try
@@ -110,7 +121,9 @@ namespace BugscapeMVC.Services
                 throw;
             }
         }
+        #endregion
 
+        #region Get All Project Members Except PM
         public async Task<List<AppUser>> GetAllProjectMembersExceptPMAsync(int projectId)
         {
             List<AppUser> developers = await GetProjectMembersByRoleAsync(projectId, Roles.Developer.ToString());
@@ -121,7 +134,9 @@ namespace BugscapeMVC.Services
 
             return teamMembers;
         }
+        #endregion
 
+        #region Get All Projects By Company
         public async Task<List<Project>> GetAllProjectsByCompanyAsync(int companyId)
         {
             List<Project> projects = await _context.Projects
@@ -150,7 +165,9 @@ namespace BugscapeMVC.Services
 
             return projects;
         }
+        #endregion
 
+        #region Get All Projects By Priority
         public async Task<List<Project>> GetAllProjectsByPriorityAsync(int companyId, string priorityName)
         {
             List<Project> projects = await GetAllProjectsByCompanyAsync(companyId);
@@ -158,7 +175,9 @@ namespace BugscapeMVC.Services
 
             return projects.Where(project => project.ProjectPriorityId == priorityId).ToList();
         }
+        #endregion
 
+        #region Get Archived Projects By Company
         public async Task<List<Project>> GetArchivedProjectsByCompanyAsync(int companyId)
         {
             List<Project> projects = await GetAllProjectsByCompanyAsync(companyId);
@@ -166,12 +185,16 @@ namespace BugscapeMVC.Services
 
             return result;
         }
+        #endregion
 
+        #region Get Developers on Project
         public Task<List<AppUser>> GetDevelopersOnProjectAsync(int projectId)
         {
             throw new NotImplementedException();
         }
+        #endregion
 
+        #region Get Project By ID
         public async Task<Project?> GetProjectByIdAsync(int projectId, int companyId)
         {
             Project? project = await _context.Projects
@@ -182,7 +205,9 @@ namespace BugscapeMVC.Services
 
             return project;
         }
+        #endregion
 
+        #region Get Project Manager
         public async Task<AppUser?> GetProjectManagerAsync(int projectId)
         {
             Project? project = await _context.Projects
@@ -201,7 +226,9 @@ namespace BugscapeMVC.Services
 
             return null;
         }
+        #endregion
 
+        #region Get Project Members By Role
         public async Task<List<AppUser>> GetProjectMembersByRoleAsync(int projectId, string role)
         {
             List<AppUser> members = new();
@@ -222,12 +249,16 @@ namespace BugscapeMVC.Services
 
             return members;
         }
+        #endregion
 
+        #region Get Submitters On Project
         public Task<List<AppUser>> GetSubmittersOnProjectAsync(int projectId)
         {
             throw new NotImplementedException();
         }
+        #endregion
 
+        #region Get User Projects
         public async Task<List<Project>> GetUserProjectsAsync(string userId)
         {
             try
@@ -265,7 +296,9 @@ namespace BugscapeMVC.Services
                 throw;
             }
         }
+        #endregion
 
+        #region Get Users Not On Project
         public async Task<List<AppUser>> GetUsersNotOnProjectAsync(int projectId, int companyId)
         {
             List<AppUser> users = await _context.Users
@@ -274,7 +307,9 @@ namespace BugscapeMVC.Services
 
             return users.Where(user => user.CompanyId == companyId).ToList();
         }
+        #endregion
 
+        #region Is User On Project?
         public async Task<bool> IsUserOnProjectAsync(string userId, int projectId)
         {
             Project? project = await _context.Projects
@@ -290,14 +325,18 @@ namespace BugscapeMVC.Services
 
             return result;
         }
+        #endregion
 
+        #region Lookup Project Priority ID
         public async Task<int?> LookupProjectPriorityIdAsync(string priorityName)
         {
             int? priorityId = (await _context.ProjectPriorities.FirstOrDefaultAsync(priority => priority.Name == priorityName))?.Id;
 
             return priorityId;
         }
+        #endregion
 
+        #region Remove Project Manager
         public async Task RemoveProjectManagerAsync(int projectId)
         {
             Project? project = await _context.Projects
@@ -322,7 +361,9 @@ namespace BugscapeMVC.Services
                 throw;
             }
         }
+        #endregion
 
+        #region Remove User From Project
         public async Task RemoveUserFromProjectAsync(string userId, int projectId)
         {
             try
@@ -348,7 +389,9 @@ namespace BugscapeMVC.Services
                 throw;
             }
         }
+        #endregion
 
+        #region Remove Users From Project By Role
         public async Task RemoveUsersFromProjectByRoleAsync(string role, int projectId)
         {
             try
@@ -372,7 +415,9 @@ namespace BugscapeMVC.Services
                 throw;
             }
         }
+        #endregion
 
+        #region Restore Project
         public async Task RestoreProjectAsync(Project project)
         {
             try
@@ -395,11 +440,14 @@ namespace BugscapeMVC.Services
                 throw;
             }
         }
+        #endregion
 
+        #region Update Project
         public async Task UpdateProjectAsync(Project project)
         {
             _context.Update(project);
             await _context.SaveChangesAsync();
         }
+        #endregion
     }
 }

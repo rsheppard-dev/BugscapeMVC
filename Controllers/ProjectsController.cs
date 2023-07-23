@@ -7,6 +7,7 @@ using BugscapeMVC.Extensions;
 using BugscapeMVC.Models.ViewModels;
 using BugscapeMVC.Services.Interfaces;
 using BugscapeMVC.Models.Enums;
+using Microsoft.AspNetCore.Identity;
 
 namespace BugscapeMVC.Controllers
 {
@@ -17,14 +18,16 @@ namespace BugscapeMVC.Controllers
         private readonly ILookupService _lookupService;
         private readonly IFileService _fileService;
         private readonly IProjectService _projectService;
+        private readonly UserManager<AppUser> _userManager;
 
-        public ProjectsController(ApplicationDbContext context, IRoleService roleService, ILookupService lookupService, IFileService fileService, IProjectService projectService)
+        public ProjectsController(ApplicationDbContext context, IRoleService roleService, ILookupService lookupService, IFileService fileService, IProjectService projectService, UserManager<AppUser> userManager)
         {
             _context = context;
             _roleService = roleService;
             _lookupService = lookupService;
             _fileService = fileService;
             _projectService = projectService;
+            _userManager = userManager;
         }
 
         // GET: Projects
@@ -32,6 +35,18 @@ namespace BugscapeMVC.Controllers
         {
             var applicationDbContext = _context.Projects.Include(p => p.Company).Include(p => p.ProjectPriority);
             return View(await applicationDbContext.ToListAsync());
+        }
+
+        // GET: MyProjects
+        public async Task<IActionResult> MyProjects()
+        {
+            string? userId = _userManager.GetUserId(User);
+
+            if (userId is null) return NotFound();
+            
+            List<Project> projects = await _projectService.GetUserProjectsAsync(userId);
+
+            return View(projects);
         }
 
         // GET: Projects/Details/5
