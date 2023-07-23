@@ -218,13 +218,29 @@ namespace BugscapeMVC.Services
         #region Get Project By ID
         public async Task<Project?> GetProjectByIdAsync(int projectId, int companyId)
         {
-            Project? project = await _context.Projects
-                .Include(project => project.ProjectPriority)
-                .Include(project => project.Members)
-                .Include(project => project.Tickets)
-                .FirstOrDefaultAsync(project => project.Id == projectId && project.CompanyId == companyId);
+            try
+            {
+                Project? project = await _context.Projects
+                    .Include(project => project.ProjectPriority)
+                    .Include(project => project.Members)
+                    .Include(project => project.Tickets)
+                        .ThenInclude(ticket => ticket.TicketPriority)
+                    .Include(project => project.Tickets)
+                        .ThenInclude(ticket => ticket.TicketStatus)
+                    .Include(project => project.Tickets)
+                        .ThenInclude(ticket => ticket.TicketType)
+                    .Include(project => project.Tickets)
+                        .ThenInclude(ticket => ticket.DeveloperUser)
+                    .Include(project => project.Tickets)
+                        .ThenInclude(ticket => ticket.OwnerUser)
+                    .FirstOrDefaultAsync(project => project.Id == projectId && project.CompanyId == companyId);
 
-            return project;
+                return project;
+            }
+            catch (Exception)
+            {               
+                throw;
+            }
         }
         #endregion
 

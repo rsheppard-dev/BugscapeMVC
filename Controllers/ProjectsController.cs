@@ -87,15 +87,12 @@ namespace BugscapeMVC.Controllers
         // GET: Projects/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Projects == null)
-            {
-                return NotFound();
-            }
+            int? companyId = User.Identity?.GetCompanyId();
 
-            Project? project = await _context.Projects
-                .Include(p => p.Company)
-                .Include(p => p.ProjectPriority)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            if (id is null || _context.Projects is null || companyId is null)
+                return NotFound();
+
+            Project? project = await _projectService.GetProjectByIdAsync(id.Value, companyId.Value);
 
             if (project is null) return NotFound();
 

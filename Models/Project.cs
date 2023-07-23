@@ -23,7 +23,7 @@ namespace BugscapeMVC.Models
 
         [DataType(DataType.Date)]
         [Display(Name = "End Date")]
-        public DateTimeOffset? EndDate { get; set; }
+        public DateTimeOffset EndDate { get; set; }
 
         [Display(Name = "Priority")]
         public int? ProjectPriorityId { get; set; }

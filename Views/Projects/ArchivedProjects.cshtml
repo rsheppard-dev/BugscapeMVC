@@ -80,10 +80,12 @@
                 @Html.DisplayFor(modelItem => item.ProjectPriority.Name)
             </td>
             <td>
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a>
 
                 @{
-                    bool isProjectPM = (await ProjectService.GetProjectManagerAsync(item.Id))?.Id == user?.Id;
+                    AppUser? projectManager = await ProjectService.GetProjectManagerAsync(item.Id);
+                    bool isProjectPM = projectManager?.Id == user?.Id;
+
                 }
 
                 @if(User.IsInRole(nameof(Roles.Admin)) || isProjectPM)
