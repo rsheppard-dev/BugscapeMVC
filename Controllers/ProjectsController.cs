@@ -18,9 +18,10 @@ namespace BugscapeMVC.Controllers
         private readonly ILookupService _lookupService;
         private readonly IFileService _fileService;
         private readonly IProjectService _projectService;
+        private readonly ICompanyInfoService _companyInfoService;
         private readonly UserManager<AppUser> _userManager;
 
-        public ProjectsController(ApplicationDbContext context, IRoleService roleService, ILookupService lookupService, IFileService fileService, IProjectService projectService, UserManager<AppUser> userManager)
+        public ProjectsController(ApplicationDbContext context, IRoleService roleService, ILookupService lookupService, IFileService fileService, IProjectService projectService, UserManager<AppUser> userManager, ICompanyInfoService companyInfoService)
         {
             _context = context;
             _roleService = roleService;
@@ -28,6 +29,7 @@ namespace BugscapeMVC.Controllers
             _fileService = fileService;
             _projectService = projectService;
             _userManager = userManager;
+            _companyInfoService = companyInfoService;
         }
 
         // GET: Projects
@@ -49,6 +51,39 @@ namespace BugscapeMVC.Controllers
             return View(projects);
         }
 
+        // GET: AllProjects
+        public async Task<IActionResult> AllProjects()
+        {
+            int? companyId = User.Identity?.GetCompanyId();
+
+            if (companyId is null) return NotFound();
+
+            List<Project> projects;
+            
+            if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)))
+            {
+                projects = await _companyInfoService.GetAllProjectsAsync(companyId.Value);
+            }
+            else
+            {
+                projects = await _projectService.GetAllProjectsByCompanyAsync(companyId.Value);
+            }
+
+            return View(projects);
+        }
+
+        // GET: ArchivedProjects
+        public async Task<IActionResult> ArchivedProjects()
+        {
+            int? companyId = User.Identity?.GetCompanyId();
+
+            if (companyId is null) return NotFound();
+            
+            List<Project> projects = await _projectService.GetArchivedProjectsByCompanyAsync(companyId.Value);
+
+            return View(projects);
+        }
+
         // GET: Projects/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -57,14 +92,12 @@ namespace BugscapeMVC.Controllers
                 return NotFound();
             }
 
-            var project = await _context.Projects
+            Project? project = await _context.Projects
                 .Include(p => p.Company)
                 .Include(p => p.ProjectPriority)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (project == null)
-            {
-                return NotFound();
-            }
+
+            if (project is null) return NotFound();
 
             return View(project);
         }
@@ -72,7 +105,7 @@ namespace BugscapeMVC.Controllers
         // GET: Projects/Create
         public async Task<IActionResult> Create()
         {
-            int? companyId = User.Identity?.GetCompanyId() ?? null;
+            int? companyId = User.Identity?.GetCompanyId();
 
             if (companyId is null) return NotFound();
 
@@ -94,7 +127,7 @@ namespace BugscapeMVC.Controllers
         {
             if (model is not null)
             {
-                int? companyId = User.Identity?.GetCompanyId() ?? null;
+                int? companyId = User.Identity?.GetCompanyId();
 
                 if (companyId is null) return RedirectToAction("Create");
 
@@ -132,7 +165,7 @@ namespace BugscapeMVC.Controllers
         // GET: Projects/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {       
-            int? companyId = User.Identity?.GetCompanyId() ?? null;
+            int? companyId = User.Identity?.GetCompanyId();
 
             if (companyId is null || id is null) return NotFound();
 
@@ -187,7 +220,7 @@ namespace BugscapeMVC.Controllers
         // GET: Projects/Archive/5
         public async Task<IActionResult> Archive(int? id)
         {
-            int? companyId = User.Identity?.GetCompanyId() ?? null;
+            int? companyId = User.Identity?.GetCompanyId();
 
             if (id == null || _context.Projects == null || companyId == null)
             {
@@ -209,7 +242,7 @@ namespace BugscapeMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ArchiveConfirmed(int id)
         {
-            int? companyId = User.Identity?.GetCompanyId() ?? null;
+            int? companyId = User.Identity?.GetCompanyId();
 
             if (_context.Projects is null)
             {
@@ -236,7 +269,7 @@ namespace BugscapeMVC.Controllers
         // GET: Projects/Restore/5
         public async Task<IActionResult> Restore(int? id)
         {
-            int? companyId = User.Identity?.GetCompanyId() ?? null;
+            int? companyId = User.Identity?.GetCompanyId();
 
             if (id == null || _context.Projects == null || companyId == null)
             {
@@ -258,7 +291,7 @@ namespace BugscapeMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RestoreConfirmed(int id)
         {
-            int? companyId = User.Identity?.GetCompanyId() ?? null;
+            int? companyId = User.Identity?.GetCompanyId();
 
             if (_context.Projects is null)
             {

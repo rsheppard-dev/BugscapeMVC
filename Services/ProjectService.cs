@@ -180,10 +180,31 @@ namespace BugscapeMVC.Services
         #region Get Archived Projects By Company
         public async Task<List<Project>> GetArchivedProjectsByCompanyAsync(int companyId)
         {
-            List<Project> projects = await GetAllProjectsByCompanyAsync(companyId);
-            List<Project> result = projects.Where(project => project.Archived).ToList();
+            List<Project> projects = await _context.Projects
+                .Where(project => project.CompanyId == companyId && project.Archived)
+                .Include(project => project.Members)
+                .Include(project => project.ProjectPriority)
+                .Include(project => project.Tickets)
+                    .ThenInclude(ticket => ticket.Comments)
+                .Include(project => project.Tickets)
+                    .ThenInclude(ticket => ticket.Attachments)
+                .Include(project => project.Tickets)
+                    .ThenInclude(ticket => ticket.History)
+                .Include(project => project.Tickets)
+                    .ThenInclude(ticket => ticket.Notifications)
+                .Include(project => project.Tickets)
+                    .ThenInclude(ticket => ticket.DeveloperUser)
+                .Include(project => project.Tickets)
+                    .ThenInclude(ticket => ticket.OwnerUser)
+                .Include(project => project.Tickets)
+                    .ThenInclude(ticket => ticket.TicketPriority)
+                .Include(project => project.Tickets)
+                    .ThenInclude(ticket => ticket.TicketStatus)
+                .Include(project => project.Tickets)
+                    .ThenInclude(ticket => ticket.TicketType)
+                .ToListAsync();
 
-            return result;
+            return projects;
         }
         #endregion
 
