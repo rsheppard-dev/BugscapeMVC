@@ -1,22 +1,30 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BugscapeMVC.Data;
 using BugscapeMVC.Models;
+using Microsoft.AspNetCore.Identity;
+using BugscapeMVC.Extensions;
+using BugscapeMVC.Models.Enums;
+using BugscapeMVC.Services.Interfaces;
 
 namespace BugscapeMVC.Controllers
 {
     public class TicketsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IProjectService _projectService;
+        private readonly ILookupService _lookupService;
+        private readonly ITicketService _ticketService;
+        private readonly UserManager<AppUser> _userManager;
 
-        public TicketsController(ApplicationDbContext context)
+        public TicketsController(ApplicationDbContext context, UserManager<AppUser> userManager, IProjectService projectService, ILookupService lookupService, ITicketService ticketService)
         {
             _context = context;
+            _userManager = userManager;
+            _projectService = projectService;
+            _lookupService = lookupService;
+            _ticketService = ticketService;
         }
 
         // GET: Tickets
@@ -51,14 +59,25 @@ namespace BugscapeMVC.Controllers
         }
 
         // GET: Tickets/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["DeveloperUserId"] = new SelectList(_context.Users, "Id", "Id");
-            ViewData["OwnerUserId"] = new SelectList(_context.Users, "Id", "Id");
-            ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Name");
-            ViewData["TicketPriorityId"] = new SelectList(_context.TicketPriorities, "Id", "Name");
-            ViewData["TicketStatusId"] = new SelectList(_context.TicketStatuses, "Id", "Name");
-            ViewData["TicketTypeId"] = new SelectList(_context.TicketTypes, "Id", "Name");
+            string? userId = _userManager.GetUserId(User);
+            int? companyId = User.Identity?.GetCompanyId();
+
+            if (userId is null || companyId is null) return NotFound();
+
+            if (User.IsInRole(nameof(Roles.Admin)))
+            {
+                ViewData["ProjectId"] = new SelectList(await _projectService.GetAllProjectsByCompanyAsync(companyId.Value), "Id", "Name");
+            }
+            else
+            {
+                ViewData["ProjectId"] = new SelectList(await _projectService.GetUserProjectsAsync(userId), "Id", "Name");
+            }
+
+            ViewData["TicketPriorityId"] = new SelectList(await _lookupService.GetTicketPrioritiesAsync(), "Id", "Name");
+            ViewData["TicketTypeId"] = new SelectList(await _lookupService.GetTicketTypesAsync(), "Id", "Name");
+            
             return View();
         }
 
@@ -67,20 +86,38 @@ namespace BugscapeMVC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Description,Created,Updated,Archived,ProjectId,TicketTypeId,TicketPriorityId,TicketStatusId,OwnerUserId,DeveloperUserId")] Ticket ticket)
+        public async Task<IActionResult> Create([Bind("Id,Title,Description,ProjectId,TicketTypeId,TicketPriorityId")] Ticket ticket)
         {
+            string? userId = _userManager.GetUserId(User);
+            int? companyId = User.Identity?.GetCompanyId();
+
+            if (userId is null || companyId is null) return NotFound();
+
             if (ModelState.IsValid)
             {
-                _context.Add(ticket);
-                await _context.SaveChangesAsync();
+                ticket.Created = DateTime.Now;
+                ticket.OwnerUserId = userId;
+                ticket.TicketStatusId = (await _ticketService.LookupTicketStatusIdAsync(nameof(TicketStatuses.New))).Value;   
+
+                await _ticketService.AddNewTicketAsync(ticket);
+
+                // todo: add ticket history and notification
+
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["DeveloperUserId"] = new SelectList(_context.Users, "Id", "Id", ticket.DeveloperUserId);
-            ViewData["OwnerUserId"] = new SelectList(_context.Users, "Id", "Id", ticket.OwnerUserId);
-            ViewData["ProjectId"] = new SelectList(_context.Projects, "Id", "Name", ticket.ProjectId);
-            ViewData["TicketPriorityId"] = new SelectList(_context.TicketPriorities, "Id", "Name", ticket.TicketPriorityId);
-            ViewData["TicketStatusId"] = new SelectList(_context.TicketStatuses, "Id", "Name", ticket.TicketStatusId);
-            ViewData["TicketTypeId"] = new SelectList(_context.TicketTypes, "Id", "Name", ticket.TicketTypeId);
+
+            if (User.IsInRole(nameof(Roles.Admin)))
+            {
+                ViewData["ProjectId"] = new SelectList(await _projectService.GetAllProjectsByCompanyAsync(companyId.Value), "Id", "Name");
+            }
+            else
+            {
+                ViewData["ProjectId"] = new SelectList(await _projectService.GetUserProjectsAsync(userId), "Id", "Name");
+            }
+
+            ViewData["TicketPriorityId"] = new SelectList(await _lookupService.GetTicketPrioritiesAsync(), "Id", "Name");
+            ViewData["TicketTypeId"] = new SelectList(await _lookupService.GetTicketTypesAsync(), "Id", "Name");
+            
             return View(ticket);
         }
 
