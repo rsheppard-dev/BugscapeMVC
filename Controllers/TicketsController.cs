@@ -187,23 +187,17 @@ namespace BugscapeMVC.Controllers
             return View(ticket);
         }
 
-        // GET: Tickets/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        // GET: Tickets/Archive/5
+        public async Task<IActionResult> Archive(int? id)
         {
-            if (id == null || _context.Tickets == null)
+            if (id is null || _context.Tickets is null)
             {
                 return NotFound();
             }
 
-            var ticket = await _context.Tickets
-                .Include(t => t.DeveloperUser)
-                .Include(t => t.OwnerUser)
-                .Include(t => t.Project)
-                .Include(t => t.TicketPriority)
-                .Include(t => t.TicketStatus)
-                .Include(t => t.TicketType)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (ticket == null)
+            Ticket? ticket = await _ticketService.GetTicketByIdAsync(id.Value);
+
+            if (ticket is null)
             {
                 return NotFound();
             }
@@ -211,22 +205,61 @@ namespace BugscapeMVC.Controllers
             return View(ticket);
         }
 
-        // POST: Tickets/Delete/5
-        [HttpPost, ActionName("Delete")]
+        // POST: Tickets/Archive/5
+        [HttpPost, ActionName("Archive")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> ArchiveConfirmed(int id)
         {
             if (_context.Tickets == null)
             {
                 return Problem("Entity set 'ApplicationDbContext.Tickets'  is null.");
             }
-            var ticket = await _context.Tickets.FindAsync(id);
-            if (ticket != null)
+
+            Ticket? ticket = await _ticketService.GetTicketByIdAsync(id);
+
+            if (ticket is not null)
             {
-                _context.Tickets.Remove(ticket);
+                await _ticketService.ArchiveTicketAsync(ticket);
             }
             
-            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        // GET: Tickets/Restore/5
+        public async Task<IActionResult> Restore(int? id)
+        {
+            if (id is null || _context.Tickets is null)
+            {
+                return NotFound();
+            }
+
+            Ticket? ticket = await _ticketService.GetTicketByIdAsync(id.Value);
+
+            if (ticket is null)
+            {
+                return NotFound();
+            }
+
+            return View(ticket);
+        }
+
+        // POST: Tickets/Restore/5
+        [HttpPost, ActionName("Restore")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RestoreConfirmed(int id)
+        {
+            if (_context.Tickets == null)
+            {
+                return Problem("Entity set 'ApplicationDbContext.Tickets'  is null.");
+            }
+
+            Ticket? ticket = await _ticketService.GetTicketByIdAsync(id);
+
+            if (ticket is not null)
+            {
+                await _ticketService.RestoreTicketAsync(ticket);
+            }
+            
             return RedirectToAction(nameof(Index));
         }
 

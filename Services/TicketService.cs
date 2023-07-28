@@ -293,7 +293,18 @@ namespace BugscapeMVC.Services
         {
             try
             {
-                return await _context.Tickets.FindAsync(ticketId);
+                return await _context.Tickets
+                    .Include(ticket => ticket.Attachments)
+                    .Include(ticket => ticket.Comments)
+                    .Include(ticket => ticket.DeveloperUser)
+                    .Include(ticket => ticket.History)
+                    .Include(ticket => ticket.Notifications)
+                    .Include(ticket => ticket.OwnerUser)
+                    .Include(ticket => ticket.TicketPriority)
+                    .Include(ticket => ticket.TicketStatus)
+                    .Include(ticket => ticket.TicketType)
+                    .Include(ticket => ticket.Project)
+                    .FirstOrDefaultAsync(ticket => ticket.Id == ticketId);
             }
             catch (Exception)
             {  
@@ -438,6 +449,19 @@ namespace BugscapeMVC.Services
             {
                 return (await _context.TicketTypes
                 .FirstOrDefaultAsync(type => type.Name == typeName))?.Id;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task RestoreTicketAsync(Ticket ticket)
+        {
+            try
+            {
+                ticket.Archived = false;
+                await UpdateTicketAsync(ticket);
             }
             catch (Exception)
             {
