@@ -346,6 +346,22 @@ namespace BugscapeMVC.Services
         }
         #endregion
 
+        #region Is Assigned Project Manager
+        public async Task<bool> IsAssignedProjectManagerAsync(string userId, int projectId)
+        {
+            try
+            {
+                string? projectManagerId = (await GetProjectManagerAsync(projectId))?.Id;
+
+                return userId == projectManagerId;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        #endregion
+
         #region Is User On Project?
         public async Task<bool> IsUserOnProjectAsync(string userId, int projectId)
         {

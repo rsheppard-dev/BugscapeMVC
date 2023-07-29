@@ -34,6 +34,48 @@ namespace BugscapeMVC.Controllers
             return View(await applicationDbContext.ToListAsync());
         }
 
+        // GET: MyTickets
+        public async Task<IActionResult> MyTickets()
+        {
+            string? userId = _userManager.GetUserId(User);
+            int? companyId = User.Identity?.GetCompanyId();
+
+            if (userId is null || companyId is null) return NoContent();
+
+            List<Ticket> tickets = await _ticketService.GetTicketsByUserIdAsync(userId, companyId.Value);
+
+            return View(tickets);
+        }
+
+        // GET: AllTickets
+        public async Task<IActionResult> AllTickets()
+        {
+            int? companyId = User.Identity?.GetCompanyId();
+
+            if (companyId is null) return NoContent();
+
+            List<Ticket> tickets = await _ticketService.GetAllTicketsByCompanyAsync(companyId.Value);
+
+            if (User.IsInRole(nameof(Roles.Developer)) || User.IsInRole(nameof(Roles.Submitter)))
+            {
+                return View(tickets.Where(ticket => ticket.Archived == false));
+            }
+
+            return View(tickets);
+        }
+
+        // GET: ArchivedTickets
+        public async Task<IActionResult> ArchivedTickets()
+        {
+            int? companyId = User.Identity?.GetCompanyId();
+
+            if (companyId is null) return NoContent();
+
+            List<Ticket> tickets = await _ticketService.GetArchivedTicketsAsync(companyId.Value);
+
+            return View(tickets);
+        }
+
         // GET: Tickets/Details/5
         public async Task<IActionResult> Details(int? id)
         {
