@@ -25,6 +25,7 @@ namespace BugscapeMVC.Services.Interfaces
         public Task<List<Ticket>> GetProjectTicketsByUserIdAsync(string userId, int companyId); 
         public Task<List<Ticket>> GetTicketsByRoleAsync(string role, string userId, int companyId);
         public Task<List<Ticket>> GetTicketsByUserIdAsync(string userId, int companyId);
+        public Task<List<Ticket>> GetUnassignedTicketsAsync(int companyId);
         public Task<int?> LookupTicketPriorityIdAsync(string priorityName);
         public Task<int?> LookupTicketStatusIdAsync(string statusName);
         public Task<int?> LookupTicketTypeIdAsync(string typeName);

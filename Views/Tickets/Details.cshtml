@@ -17,6 +17,24 @@
 
 <h1>Ticket Details</h1>
 
+@if (!string.IsNullOrEmpty(Model.DeveloperUserId))
+{
+			<a href="javascript:void(0);">
+		@if (Model.DeveloperUser?.AvatarFileData is not null && Model.DeveloperUser?.AvatarContentType is not null)
+		{
+					<img class="media-object" src="@FileService.ConvertByteArrayToFile(Model.DeveloperUser.AvatarFileData, Model.DeveloperUser.AvatarContentType)" alt="@Model.DeveloperUser.FullName" width="30px" height="30px">
+		}
+		else
+		{
+					<img class="media-object" src="~/images/default_profile.png" alt="@Model.DeveloperUser?.FullName" width="30" height="30">
+		}
+		</a>
+
+		<span class="text-muted" style="font-size:x-small;">
+			Developer: <strong>@Model.DeveloperUser?.FullName</strong>
+		</span>
+}
+
 <div>
 	<div classxfont-weighteighteightgetainer-fluid">
 		<div class="row gy-2">
@@ -74,16 +92,16 @@
 
 									@if (Model.DeveloperUserId == user?.Id || Model.OwnerUserId == user?.Id || projectManager?.Id == user?.Id || User.IsInRole(nameof(Roles.Admin)))
 									{
-																						<div class="form-group">
-																							<textarea asp-for="@(new TicketComment().Comment)" rows="8" class="form-control" required placeholder="Add comment..."></textarea>
-																						</div>
-																						<button class="btn btn-sm btn-primary">Submit</button>
+														<div class="form-group">
+															<textarea asp-for="@(new TicketComment().Comment)" rows="8" class="form-control" required placeholder="Add comment..."></textarea>
+														</div>
+														<button class="btn btn-sm btn-primary">Submit</button>
 									}
 									else
 									{
-																						<div class="form-group">
-																							<textarea disabled asp-for="@(new TicketComment().Comment)" rows="8" class="form-control" required placeholder="Add comment..."></textarea>
-																						</div>
+														<div class="form-group">
+															<textarea disabled asp-for="@(new TicketComment().Comment)" rows="8" class="form-control" required placeholder="Add comment..."></textarea>
+														</div>
 									}
 								</form>
 								<hr />
@@ -91,27 +109,27 @@
 									<ul class="right_chat list-unstyled mb-0">
 									@foreach (TicketComment comment in Model.Comments)
 									{
-																						<li class="online mb-4">
-																							<div class="media">
-																								<a href="javascript:void(0);">
+														<li class="online mb-4">
+															<div class="media">
+																<a href="javascript:void(0);">
 													@if (user?.AvatarFileData is not null && user?.AvatarContentType is not null)
 													{
-																																					<img class="media-object" src="@FileService.ConvertByteArrayToFile(user.AvatarFileData, user.AvatarContentType)" alt="@user.FullName" width="30px" height="30px">
+																						<img class="media-object" src="@FileService.ConvertByteArrayToFile(user.AvatarFileData, user.AvatarContentType)" alt="@user.FullName" width="30px" height="30px">
 													}
 													else
 													{
-																																					<img class="media-object" src="~/images/default_profile.png" alt="@user?.FullName" width="30" height="30">
+																						<img class="media-object" src="~/images/default_profile.png" alt="@user?.FullName" width="30" height="30">
 													}
-																								</a>
-																								<div class="media-body">
-																									<span class="text-muted" style="font-size:x-small;">
-																										@@ @comment.User!.FullName
-																										<small class="float-right">@comment.Created.ToString("dd.MM.yyyy h:ss tt")</small>:
-																									</span>
-																								</div>
-																								<span class="message text-primary">@Html.Raw(comment.Comment)</span>
-																							</div>
-																						</li>
+																</a>
+																<div class="media-body">
+																	<span class="text-muted" style="font-size:x-small;">
+																		@@ @comment.User?.FullName
+																		<small class="float-right">@comment.Created.ToString("dd.MM.yyyy h:ss tt")</small>:
+																	</span>
+																</div>
+																<span class="message text-primary">@Html.Raw(comment.Comment)</span>
+															</div>
+														</li>
 									}
 									</ul>
 							</div>
@@ -157,20 +175,20 @@
 									<div class="row">
 										@foreach (TicketAttachment attachment in Model.Attachments)
 										{
-													<div class="col col-sm-2">
-														<a asp-action="ShowFile" asp-controller="Tickets" asp-route-id="@attachment.Id">
-															<div class="icon">
-																	<img src="@FileService.GetFileIcon(attachment.FileName!)" alt="@attachment.FileName" width="50" height="50" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="@attachment.FileName">
-															</div>
-														</a>
+															<div class="col col-sm-2">
+																<a asp-action="ShowFile" asp-controller="Tickets" asp-route-id="@attachment.Id">
+																	<div class="icon">
+																			<img src="@FileService.GetFileIcon(attachment.FileName!)" alt="@attachment.FileName" width="50" height="50" data-bs-toggle="tooltip" data-bs-placement="top" title="" data-bs-original-title="@attachment.FileName">
+																	</div>
+																</a>
 
-														<div style="font-size:x-small">
-															<div class="file-name">
-																<strong>@attachment.Description</strong>
+																<div style="font-size:x-small">
+																	<div class="file-name">
+																		<strong>@attachment.Description</strong>
+																	</div>
+																	<small>Size: @FileService.FormatFileSize(attachment.FileData!.Length)</small>
+																</div>
 															</div>
-															<small>Size: @FileService.FormatFileSize(attachment.FileData!.Length)</small>
-														</div>
-													</div>
 										}
 									</div>
 								</div>
@@ -192,16 +210,16 @@
 						<div class="card-body" style="overflow-y:auto;height:1000px;background-color:antiquewhite">
 							@foreach (TicketHistory history in Model.History)
 							{
-									<div>
-										<span class="date">@history.Created.ToString("dd MMM yyyy")</span>
-										<h6>@history.Description</h6>
-										<span>By: <a href="" title="@history.User?.FullName">@history.User?.FullName</a></span>
-										<div>
-											<p>The ticket <b>@history.Property</b> was edited</p>
-											<p>@($"Previous {history.Property}: {history.OldValue}")</p>
-											<p>@($"Current {history.Property}: {history.NewValue}")</p>
-										</div>
-									</div>
+												<div>
+													<span class="date">@history.Created.ToString("dd MMM yyyy")</span>
+													<h6>@history.Description</h6>
+													<span>By: <a href="" title="@history.User?.FullName">@history.User?.FullName</a></span>
+													<div>
+														<p>The ticket <b>@history.Property</b> was edited</p>
+														<p>@($"Previous {history.Property}: {history.OldValue}")</p>
+														<p>@($"Current {history.Property}: {history.NewValue}")</p>
+													</div>
+												</div>
 							}
 						</div>
 					</div>

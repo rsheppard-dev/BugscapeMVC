@@ -541,6 +541,22 @@ namespace BugscapeMVC.Services
             }
         }
 
+        #region GetUnassignedTicketsAsync
+        public async Task<List<Ticket>> GetUnassignedTicketsAsync(int companyId)
+        {
+            try
+            {
+                List<Ticket> tickets = await GetAllTicketsByCompanyAsync(companyId);
+
+                return tickets.Where(ticket => string.IsNullOrEmpty(ticket.DeveloperUserId)).ToList();
+            }
+            catch (Exception)
+            { 
+                throw;
+            }
+        }
+        #endregion
+
         #endregion
 
         #region LookupTicketPriorityIdAsync

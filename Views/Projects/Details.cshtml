@@ -211,7 +211,7 @@
                                                     {
                                                         if (User.IsInRole(nameof(Roles.Admin)) || projectManager?.Id == user?.Id)
                                                         {
-                                                            <a class="btn btn-xs btn-info" asp-action="AssignDeveloper" asp-controller="Tickets" asp-route-ticketId="@ticket.Id">Assign Dev</a>
+                                                            <a class="btn btn-xs btn-info" asp-action="AssignDeveloper" asp-controller="Tickets" asp-route-id="@ticket.Id">Assign Dev</a>
                                                         }
 
                                                     }

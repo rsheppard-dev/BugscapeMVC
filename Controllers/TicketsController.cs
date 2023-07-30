@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Identity;
 using BugscapeMVC.Extensions;
 using BugscapeMVC.Models.Enums;
 using BugscapeMVC.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using BugscapeMVC.Models.ViewModels;
 
 namespace BugscapeMVC.Controllers
 {
@@ -36,7 +38,7 @@ namespace BugscapeMVC.Controllers
             return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: MyTickets
+        // GET: Tickets/MyTickets
         public async Task<IActionResult> MyTickets()
         {
             string? userId = _userManager.GetUserId(User);
@@ -49,7 +51,7 @@ namespace BugscapeMVC.Controllers
             return View(tickets);
         }
 
-        // GET: AllTickets
+        // GET: Tickets/AllTickets
         public async Task<IActionResult> AllTickets()
         {
             int? companyId = User.Identity?.GetCompanyId();
@@ -66,7 +68,7 @@ namespace BugscapeMVC.Controllers
             return View(tickets);
         }
 
-        // GET: ArchivedTickets
+        // GET: Tickets/ArchivedTickets
         public async Task<IActionResult> ArchivedTickets()
         {
             int? companyId = User.Identity?.GetCompanyId();
@@ -76,6 +78,64 @@ namespace BugscapeMVC.Controllers
             List<Ticket> tickets = await _ticketService.GetArchivedTicketsAsync(companyId.Value);
 
             return View(tickets);
+        }
+
+        // GET: Tickets/UnassignedTickets
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)}")]
+
+        public async Task<IActionResult> UnassignedTickets()
+        {
+            int? companyId = User.Identity?.GetCompanyId();
+            string? userId = _userManager.GetUserId(User);
+
+            if (companyId is null || userId is null) return NoContent();
+
+            List<Ticket> tickets = await _ticketService.GetUnassignedTicketsAsync(companyId.Value);
+
+            if (User.IsInRole(nameof(Roles.Admin)))
+            {
+                return View(tickets);
+            }
+
+            List<Ticket> pmTickets = new();
+
+            foreach (Ticket ticket in tickets)
+            {
+                if (await _projectService.IsAssignedProjectManagerAsync(userId, ticket.ProjectId))
+                {
+                    pmTickets.Add(ticket);
+                }
+            }
+
+            return View(pmTickets);
+        }
+
+        // GET: Tickets/AssignDeveloper
+        [HttpGet]
+        public async Task<IActionResult> AssignDeveloper(int id)
+        {
+            AssignDeveloperViewModel model = new()
+            {
+                Ticket = await _ticketService.GetTicketByIdAsync(id)
+            };
+
+            if (model.Ticket is null) return NotFound();
+
+            model.Developers = new SelectList(await _projectService.GetProjectMembersByRoleAsync(model.Ticket.ProjectId, nameof(Roles.Developer)), "Id", "FullName");
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AssignDeveloper(AssignDeveloperViewModel model)
+        {
+            if (model.DeveloperId is not null && model.Ticket is not null)
+            {
+                await _ticketService.AssignTicketAsync(model.Ticket.Id, model.DeveloperId);
+            }
+
+            return RedirectToAction(nameof(AssignDeveloper), new { id = model.Ticket?.Id });
         }
 
         // GET: Tickets/Details/5
