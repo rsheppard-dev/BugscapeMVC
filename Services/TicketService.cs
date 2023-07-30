@@ -8,10 +8,16 @@ namespace BugscapeMVC.Services
 {
     public class TicketService : ITicketService
     {
+        #region Fields
+
         private readonly ApplicationDbContext _context;
         private readonly IRoleService _roleService;
         private readonly IProjectService _projectService;
-        
+
+        #endregion
+
+        #region Constructors
+
         public TicketService(ApplicationDbContext context, IRoleService roleService, IProjectService projectService)
         {
             _context = context;
@@ -19,18 +25,43 @@ namespace BugscapeMVC.Services
             _projectService = projectService;
         }
 
+        #endregion
+
+        #region AddNewTicketAsync
+
         public async Task AddNewTicketAsync(Ticket ticket)
         {
-           try
-           {
+            try
+            {
                 _context.Add(ticket);
                 await _context.SaveChangesAsync();
-           }
-           catch (Exception)
-           {
-            throw;
-           }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
+
+        #endregion
+
+        #region AddTicketCommentAsync
+
+        public async Task AddTicketCommentAsync(TicketComment ticketComment)
+        {
+            try
+            {
+                await _context.AddAsync(ticketComment);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        #endregion
+
+        #region ArchiveTicketAsync
 
         public async Task ArchiveTicketAsync(Ticket ticket)
         {
@@ -45,6 +76,10 @@ namespace BugscapeMVC.Services
             }
         }
 
+        #endregion
+
+        #region AssignTicketAsync
+
         public async Task AssignTicketAsync(int ticketId, string userId)
         {
             Ticket? ticket = await _context.Tickets.FindAsync(ticketId);
@@ -56,7 +91,7 @@ namespace BugscapeMVC.Services
                 ticket.DeveloperUserId = userId;
                 // revisit code when assigning tickets - update to enum
                 ticket.TicketStatusId = (await LookupTicketStatusIdAsync("Development")).Value;
-                
+
                 await _context.SaveChangesAsync();
             }
             catch (Exception)
@@ -64,6 +99,10 @@ namespace BugscapeMVC.Services
 
             }
         }
+
+        #endregion
+
+        #region GetAllTicketsByCompanyAsync
 
         public async Task<List<Ticket>> GetAllTicketsByCompanyAsync(int companyId)
         {
@@ -90,14 +129,18 @@ namespace BugscapeMVC.Services
             {
                 throw;
             }
-            
+
         }
+
+        #endregion
+
+        #region GetAllTicketsByPriorityAsync
 
         public async Task<List<Ticket>> GetAllTicketsByPriorityAsync(int companyId, string priorityName)
         {
             int priorityId = (await LookupTicketPriorityIdAsync(priorityName)).Value;
 
-            try 
+            try
             {
                 List<Ticket> tickets = await _context.Projects
                     .Where(project => project.CompanyId == companyId)
@@ -122,6 +165,10 @@ namespace BugscapeMVC.Services
                 throw;
             }
         }
+
+        #endregion
+
+        #region GetAllTicketsByStatusAsync
 
         public async Task<List<Ticket>> GetAllTicketsByStatusAsync(int companyId, string statusName)
         {
@@ -153,6 +200,10 @@ namespace BugscapeMVC.Services
             }
         }
 
+        #endregion
+
+        #region GetAllTicketsByTypeAsync
+
         public async Task<List<Ticket>> GetAllTicketsByTypeAsync(int companyId, string typeName)
         {
             int typeId = (await LookupTicketTypeIdAsync(typeName)).Value;
@@ -183,6 +234,10 @@ namespace BugscapeMVC.Services
             }
         }
 
+        #endregion
+
+        #region GetArchivedTicketsAsync
+
         public async Task<List<Ticket>> GetArchivedTicketsAsync(int companyId)
         {
             try
@@ -199,6 +254,10 @@ namespace BugscapeMVC.Services
             }
         }
 
+        #endregion
+
+        #region GetProjectTicketsByPriorityAsync
+
         public async Task<List<Ticket>> GetProjectTicketsByPriorityAsync(string priorityName, int companyId, int projectId)
         {
             List<Ticket> tickets = new();
@@ -212,10 +271,14 @@ namespace BugscapeMVC.Services
                 return tickets;
             }
             catch (Exception)
-            { 
+            {
                 throw;
             }
         }
+
+        #endregion
+
+        #region GetProjectTicketsByRoleAsync
 
         public async Task<List<Ticket>> GetProjectTicketsByRoleAsync(string role, string userId, int projectId, int companyId)
         {
@@ -235,6 +298,10 @@ namespace BugscapeMVC.Services
             }
         }
 
+        #endregion
+
+        #region GetProjectTicketsByStatusAsync
+
         public async Task<List<Ticket>> GetProjectTicketsByStatusAsync(string statusName, int companyId, int projectId)
         {
             List<Ticket> tickets = new();
@@ -248,10 +315,14 @@ namespace BugscapeMVC.Services
                 return tickets;
             }
             catch (Exception)
-            { 
+            {
                 throw;
             }
         }
+
+        #endregion
+
+        #region GetProjectTicketsByTypeAsync
 
         public async Task<List<Ticket>> GetProjectTicketsByTypeAsync(string typeName, int companyId, int projectId)
         {
@@ -266,10 +337,14 @@ namespace BugscapeMVC.Services
                 return tickets;
             }
             catch (Exception)
-            { 
+            {
                 throw;
             }
         }
+
+        #endregion
+
+        #region GetProjectTicketsByUserIdAsync
 
         public async Task<List<Ticket>> GetProjectTicketsByUserIdAsync(string userId, int companyId)
         {
@@ -284,10 +359,14 @@ namespace BugscapeMVC.Services
                 return tickets;
             }
             catch (Exception)
-            { 
+            {
                 throw;
             }
         }
+
+        #endregion
+
+        #region GetTicketByIdAsync
 
         public async Task<Ticket?> GetTicketByIdAsync(int ticketId)
         {
@@ -307,10 +386,14 @@ namespace BugscapeMVC.Services
                     .FirstOrDefaultAsync(ticket => ticket.Id == ticketId);
             }
             catch (Exception)
-            {  
+            {
                 throw;
             }
         }
+
+        #endregion
+
+        #region GetTicketDeveloperAsync
 
         public async Task<AppUser?> GetTicketDeveloperAsync(int ticketId, int companyId)
         {
@@ -332,6 +415,10 @@ namespace BugscapeMVC.Services
                 throw;
             }
         }
+
+        #endregion
+
+        #region GetTicketsByRoleAsync
 
         public async Task<List<Ticket>> GetTicketsByRoleAsync(string role, string userId, int companyId)
         {
@@ -371,6 +458,10 @@ namespace BugscapeMVC.Services
                 throw;
             }
         }
+
+        #endregion
+
+        #region GetTicketsByUserIdAsync
 
         public async Task<List<Ticket>> GetTicketsByUserIdAsync(string userId, int companyId)
         {
@@ -417,6 +508,10 @@ namespace BugscapeMVC.Services
             }
         }
 
+        #endregion
+
+        #region LookupTicketPriorityIdAsync
+
         public async Task<int?> LookupTicketPriorityIdAsync(string priorityName)
         {
             try
@@ -429,6 +524,10 @@ namespace BugscapeMVC.Services
                 throw;
             }
         }
+
+        #endregion
+
+        #region LookupTicketStatusIdAsync
 
         public async Task<int?> LookupTicketStatusIdAsync(string statusName)
         {
@@ -443,6 +542,10 @@ namespace BugscapeMVC.Services
             }
         }
 
+        #endregion
+
+        #region LookupTicketTypeIdAsync
+
         public async Task<int?> LookupTicketTypeIdAsync(string typeName)
         {
             try
@@ -455,6 +558,10 @@ namespace BugscapeMVC.Services
                 throw;
             }
         }
+
+        #endregion
+
+        #region RestoreTicketAsync
 
         public async Task RestoreTicketAsync(Ticket ticket)
         {
@@ -469,6 +576,10 @@ namespace BugscapeMVC.Services
             }
         }
 
+        #endregion
+
+        #region UpdateTicketAsync
+
         public async Task UpdateTicketAsync(Ticket ticket)
         {
             try
@@ -477,9 +588,11 @@ namespace BugscapeMVC.Services
                 await _context.SaveChangesAsync();
             }
             catch (Exception)
-            {   
+            {
                 throw;
             }
         }
+
+        #endregion
     }
 }
