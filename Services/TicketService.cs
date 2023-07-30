@@ -42,6 +42,19 @@ namespace BugscapeMVC.Services
             }
         }
 
+        public async Task AddTicketAttachmentAsync(TicketAttachment ticketAttachment)
+        {
+            try
+            {
+                await _context.AddAsync(ticketAttachment);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {  
+                throw;
+            }
+        }
+
         #endregion
 
         #region AddTicketCommentAsync
@@ -357,6 +370,26 @@ namespace BugscapeMVC.Services
                     .ToList();
 
                 return tickets;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        #endregion
+
+        #region GetTicketAttachmentsByIdAsync
+        
+        public async Task<TicketAttachment?> GetTicketAttachmentByIdAsync(int ticketAttachmentId)
+        {
+            try
+            {
+                TicketAttachment? ticketAttachment = await _context.TicketAttachments
+                    .Include(ticket => ticket.User)
+                    .FirstOrDefaultAsync(ticket => ticket.Id == ticketAttachmentId);
+
+                return ticketAttachment;
             }
             catch (Exception)
             {

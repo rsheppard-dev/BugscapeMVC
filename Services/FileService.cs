@@ -61,7 +61,9 @@ namespace BugscapeMVC.Services
 
             fileImage = Path.GetExtension(file).ToLower().Replace(".", "");
 
-            return $"/img/png/{fileImage}.png";
+            fileImage = fileImage == "jpeg" ? "jpg" : fileImage;
+
+            return $"/images/contentType/{fileImage}.png";
         }
     }
 }

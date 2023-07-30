@@ -6,6 +6,7 @@ namespace BugscapeMVC.Services.Interfaces
     {
         // CRUD methods
         public Task AddNewTicketAsync(Ticket ticket);
+        public Task AddTicketAttachmentAsync(TicketAttachment ticketAttachment);
         public Task AddTicketCommentAsync(TicketComment ticketComment);
         public Task ArchiveTicketAsync(Ticket ticket);
         public Task AssignTicketAsync(int ticketId, string userId);
@@ -14,13 +15,14 @@ namespace BugscapeMVC.Services.Interfaces
         public Task<List<Ticket>> GetAllTicketsByStatusAsync(int companyId, string statusName);
         public Task<List<Ticket>> GetAllTicketsByTypeAsync(int companyId, string typeName);
         public Task<List<Ticket>> GetArchivedTicketsAsync(int companyId);
+        public Task<TicketAttachment?> GetTicketAttachmentByIdAsync(int ticketAttachmentId);
         public Task<Ticket?> GetTicketByIdAsync(int ticketId);
         public Task<AppUser?> GetTicketDeveloperAsync(int ticketId, int companyId);
         public Task<List<Ticket>> GetProjectTicketsByPriorityAsync(string priorityName, int companyId, int projectId);
         public Task<List<Ticket>> GetProjectTicketsByRoleAsync(string role, string userId, int projectId, int companyId);
         public Task<List<Ticket>> GetProjectTicketsByStatusAsync(string statusName, int companyId, int projectId);
         public Task<List<Ticket>> GetProjectTicketsByTypeAsync(string typeName, int companyId, int projectId);
-        public Task<List<Ticket>> GetProjectTicketsByUserIdAsync(string userId, int companyId);
+        public Task<List<Ticket>> GetProjectTicketsByUserIdAsync(string userId, int companyId); 
         public Task<List<Ticket>> GetTicketsByRoleAsync(string role, string userId, int companyId);
         public Task<List<Ticket>> GetTicketsByUserIdAsync(string userId, int companyId);
         public Task<int?> LookupTicketPriorityIdAsync(string priorityName);

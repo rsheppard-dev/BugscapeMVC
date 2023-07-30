@@ -16,15 +16,17 @@ namespace BugscapeMVC.Controllers
         private readonly IProjectService _projectService;
         private readonly ILookupService _lookupService;
         private readonly ITicketService _ticketService;
+        private readonly IFileService _fileService;
         private readonly UserManager<AppUser> _userManager;
 
-        public TicketsController(ApplicationDbContext context, UserManager<AppUser> userManager, IProjectService projectService, ILookupService lookupService, ITicketService ticketService)
+        public TicketsController(ApplicationDbContext context, UserManager<AppUser> userManager, IProjectService projectService, ILookupService lookupService, ITicketService ticketService, IFileService fileService)
         {
             _context = context;
             _userManager = userManager;
             _projectService = projectService;
             _lookupService = lookupService;
             _ticketService = ticketService;
+            _fileService = fileService;
         }
 
         // GET: Tickets
@@ -115,6 +117,50 @@ namespace BugscapeMVC.Controllers
             }
 
             return RedirectToAction("Details", new { id = ticketComment.TicketId });
+        }
+
+        // POST: Tickets/AddTicketAttachment
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddTicketAttachment([Bind("Id,TicketId,Description,FormFile")] TicketAttachment ticketAttachment)
+        {
+            string statusMessage;
+
+            if (ModelState.IsValid && ticketAttachment.FormFile is not null)
+            {
+                ticketAttachment.FileData = await _fileService.ConvertFileToByteArrayAsync(ticketAttachment.FormFile);
+                ticketAttachment.FileContentType = ticketAttachment.FormFile.ContentType;
+                ticketAttachment.FileName = ticketAttachment.FormFile.FileName;
+
+                ticketAttachment.Created = DateTime.Now;
+                ticketAttachment.UserId = _userManager.GetUserId(User);
+
+                await _ticketService.AddTicketAttachmentAsync(ticketAttachment);
+
+                statusMessage = "Success: New attachment added to ticket.";
+            }
+            else
+            {
+                statusMessage = "Error: Invalid data.";
+            }
+
+            return RedirectToAction("Details", new { id = ticketAttachment.TicketId, statusMessage });
+        }
+
+        // GET: Tickets/ShowFile
+        public async Task<IActionResult> ShowFile(int id)
+        {
+            TicketAttachment? ticketAttachment = await _ticketService.GetTicketAttachmentByIdAsync(id);
+
+            if (ticketAttachment is null) return NotFound();
+
+            string fileName = ticketAttachment.FileName!;
+            byte[] fileData = ticketAttachment.FileData!;
+            string ext = Path.GetExtension(fileName);
+
+            Response.Headers.Add("Content-Disposition", $"inline; filename={fileName}");
+
+            return File(fileData, $"application/{ext}");
         }
 
         // GET: Tickets/Create
