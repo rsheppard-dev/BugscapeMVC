@@ -288,10 +288,33 @@ namespace BugscapeMVC.Services
         }
         #endregion
 
-        #region Get Submitters On Project
-        public Task<List<AppUser>> GetSubmittersOnProjectAsync(int projectId)
+        #region Get Unassigned Projects
+        public async Task<List<Project>> GetUnassignedProjectsAsync(int companyId)
         {
-            throw new NotImplementedException();
+            List<Project> result = new();
+            List<Project> projects = new();
+
+            try
+            {
+                projects = await _context.Projects
+                    .Include(project => project.ProjectPriority)
+                    .Where(project => project.CompanyId == companyId)
+                    .ToListAsync();
+
+                foreach (Project project in projects)
+                {
+                    if ((await GetProjectMembersByRoleAsync(project.Id, nameof(Roles.ProjectManager))).Count == 0)
+                    {
+                        result.Add(project);
+                    }
+                }
+
+                return result;
+            }
+            catch (Exception)
+            {     
+                throw;
+            }
         }
         #endregion
 

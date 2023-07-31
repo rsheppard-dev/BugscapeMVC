@@ -8,6 +8,7 @@ using BugscapeMVC.Models.ViewModels;
 using BugscapeMVC.Services.Interfaces;
 using BugscapeMVC.Models.Enums;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BugscapeMVC.Controllers
 {
@@ -39,7 +40,7 @@ namespace BugscapeMVC.Controllers
             return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: MyProjects
+        // GET: Projects/MyProjects
         public async Task<IActionResult> MyProjects()
         {
             string? userId = _userManager.GetUserId(User);
@@ -51,7 +52,7 @@ namespace BugscapeMVC.Controllers
             return View(projects);
         }
 
-        // GET: AllProjects
+        // GET: Projects/AllProjects
         public async Task<IActionResult> AllProjects()
         {
             int? companyId = User.Identity?.GetCompanyId();
@@ -72,7 +73,7 @@ namespace BugscapeMVC.Controllers
             return View(projects);
         }
 
-        // GET: ArchivedProjects
+        // GET: Projects/ArchivedProjects
         public async Task<IActionResult> ArchivedProjects()
         {
             int? companyId = User.Identity?.GetCompanyId();
@@ -82,6 +83,52 @@ namespace BugscapeMVC.Controllers
             List<Project> projects = await _projectService.GetArchivedProjectsByCompanyAsync(companyId.Value);
 
             return View(projects);
+        }
+
+        // GET: Projects/UnassignedProjects
+        public async Task<IActionResult> UnassignedProjects()
+        {
+            int? companyId = User.Identity?.GetCompanyId();
+
+            if (companyId is null) return NoContent();
+
+            List<Project> projects = new();
+
+            projects = await _projectService.GetUnassignedProjectsAsync(companyId.Value);
+
+            return View(projects);
+        }
+
+        // GET: Projects/AssignPM
+        [Authorize(Roles = nameof(Roles.Admin))]
+        public async Task<IActionResult> AssignPM(int id)
+        {
+            int? companyId = User.Identity?.GetCompanyId();
+
+            if (companyId is null) return NoContent();
+
+            AssignPMViewModel model = new()
+            {
+                Project = await _projectService.GetProjectByIdAsync(id, companyId.Value),
+                ProjectManagers = new SelectList(await _roleService.GetUsersInRoleAsync(nameof(Roles.ProjectManager), companyId.Value), "Id", "FullName")
+            };
+
+            return View(model);
+        }
+
+        // POST: Projects/AssignPM
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AssignPM(AssignPMViewModel model)
+        {
+            if (!string.IsNullOrEmpty(model.ProjectManagerId) && model.Project is not null)
+            {
+                await _projectService.AddProjectManagerAsync(model.ProjectManagerId, model.Project.Id);
+
+                return RedirectToAction(nameof(Details), new { id = model.Project.Id });
+            }
+
+            return RedirectToAction(nameof(AssignPM), new { id = model.Project?.Id });
         }
 
         // GET: Projects/Details/5
