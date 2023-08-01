@@ -1,0 +1,40 @@
+@model BugscapeMVC.Models.ViewModels.AssignMembersViewModel
+
+@{
+    ViewData["Title"] = "Assign Members";
+}
+
+<div class="container">
+    <h2>Assign Members For</h2>
+    <div class="row">
+        <div class="col-md-6">
+            <h3>@Model.Project?.Name</h3>
+
+            <div class="card">
+                <div class="card-header">
+                    <label asp-for="Users" class="control-label">Assign team members to project</label>
+                </div>
+                <div class="card-body">
+                    <form asp-action="AssignMembers" asp-controller="Projects" method="post">
+                        <input type="hidden" asp-for="Project.Id">
+                        <div class="col-12 mb-3">
+                            <div class="form-group">
+                                <select required multiple aria-multiselectable="true" asp-for="SelectedUsers" asp-items="@Model.Users" class="form-control">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-lg-offet-2 col-lg-10">
+                                <input type="submit" value="Assign Members" class="btn alert-primary">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <a asp-action="Detials" asp-controller="Projects" asp-route-id="@Model.Project?.Id">Back to Details</a>
+    </div>
+</div>

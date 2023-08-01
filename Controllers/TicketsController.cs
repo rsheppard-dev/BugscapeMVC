@@ -133,6 +133,8 @@ namespace BugscapeMVC.Controllers
             if (model.DeveloperId is not null && model.Ticket is not null)
             {
                 await _ticketService.AssignTicketAsync(model.Ticket.Id, model.DeveloperId);
+
+                return RedirectToAction(nameof(Details), new { id = model.Ticket?.Id });
             }
 
             return RedirectToAction(nameof(AssignDeveloper), new { id = model.Ticket?.Id });

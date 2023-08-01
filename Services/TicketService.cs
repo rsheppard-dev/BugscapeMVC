@@ -459,30 +459,28 @@ namespace BugscapeMVC.Services
 
             try
             {
-                if (Enum.TryParse(role, out Roles parsedRole))
+                switch (role)
                 {
-                    switch (parsedRole)
-                    {
-                        case Roles.Admin:
-                            tickets = await GetAllTicketsByCompanyAsync(companyId);
-                            break;
-                        case Roles.ProjectManager:
-                            tickets = await GetTicketsByUserIdAsync(userId, companyId);
-                            break;
-                        case Roles.Developer:
-                            tickets = (await GetAllTicketsByCompanyAsync(companyId))
-                                .Where(ticket => ticket.DeveloperUserId == userId)
-                                .ToList();
-                            break;
-                        case Roles.Submitter:
-                            tickets = (await GetAllTicketsByCompanyAsync(companyId))
-                                .Where(ticket => ticket.OwnerUserId == userId)
-                                .ToList();
-                            break;
-                        default:
-                            break;
-                    }
+                    case nameof(Roles.Admin):
+                        tickets = await GetAllTicketsByCompanyAsync(companyId);
+                        break;
+                    case nameof(Roles.ProjectManager):
+                        tickets = await GetTicketsByUserIdAsync(userId, companyId);
+                        break;
+                    case nameof(Roles.Developer):
+                        tickets = (await GetAllTicketsByCompanyAsync(companyId))
+                            .Where(ticket => ticket.DeveloperUserId == userId)
+                            .ToList();
+                        break;
+                    case nameof(Roles.Submitter):
+                        tickets = (await GetAllTicketsByCompanyAsync(companyId))
+                            .Where(ticket => ticket.OwnerUserId == userId)
+                            .ToList();
+                        break;
+                    default:
+                        break;
                 }
+                
 
                 return tickets;
             }

@@ -20,9 +20,10 @@ namespace BugscapeMVC.Controllers
         private readonly IFileService _fileService;
         private readonly IProjectService _projectService;
         private readonly ICompanyInfoService _companyInfoService;
+        private readonly ITicketService _ticketService;
         private readonly UserManager<AppUser> _userManager;
 
-        public ProjectsController(ApplicationDbContext context, IRoleService roleService, ILookupService lookupService, IFileService fileService, IProjectService projectService, UserManager<AppUser> userManager, ICompanyInfoService companyInfoService)
+        public ProjectsController(ApplicationDbContext context, IRoleService roleService, ILookupService lookupService, IFileService fileService, IProjectService projectService, UserManager<AppUser> userManager, ICompanyInfoService companyInfoService, ITicketService ticketService)
         {
             _context = context;
             _roleService = roleService;
@@ -31,9 +32,11 @@ namespace BugscapeMVC.Controllers
             _projectService = projectService;
             _userManager = userManager;
             _companyInfoService = companyInfoService;
+            _ticketService = ticketService;
         }
 
         // GET: Projects
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Projects.Include(p => p.Company).Include(p => p.ProjectPriority);
@@ -41,6 +44,7 @@ namespace BugscapeMVC.Controllers
         }
 
         // GET: Projects/MyProjects
+        [HttpGet]
         public async Task<IActionResult> MyProjects()
         {
             string? userId = _userManager.GetUserId(User);
@@ -53,6 +57,7 @@ namespace BugscapeMVC.Controllers
         }
 
         // GET: Projects/AllProjects
+        [HttpGet]
         public async Task<IActionResult> AllProjects()
         {
             int? companyId = User.Identity?.GetCompanyId();
@@ -74,6 +79,7 @@ namespace BugscapeMVC.Controllers
         }
 
         // GET: Projects/ArchivedProjects
+        [HttpGet]
         public async Task<IActionResult> ArchivedProjects()
         {
             int? companyId = User.Identity?.GetCompanyId();
@@ -86,6 +92,7 @@ namespace BugscapeMVC.Controllers
         }
 
         // GET: Projects/UnassignedProjects
+        [HttpGet]
         public async Task<IActionResult> UnassignedProjects()
         {
             int? companyId = User.Identity?.GetCompanyId();
@@ -99,7 +106,8 @@ namespace BugscapeMVC.Controllers
             return View(projects);
         }
 
-        // GET: Projects/AssignPM
+        // GET: Projects/AssignPM/5
+        [HttpGet]
         [Authorize(Roles = nameof(Roles.Admin))]
         public async Task<IActionResult> AssignPM(int id)
         {
@@ -131,7 +139,66 @@ namespace BugscapeMVC.Controllers
             return RedirectToAction(nameof(AssignPM), new { id = model.Project?.Id });
         }
 
+        // GET: Projects/AssignMembers/5
+        [HttpGet]
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)}")]
+        public async Task<IActionResult> AssignMembers(int id)
+        {
+            int? companyId = User.Identity?.GetCompanyId();
+
+            if (companyId is null) return NoContent();
+
+            Project? project = await _projectService.GetProjectByIdAsync(id, companyId.Value);
+
+            if (project is null) return NotFound();
+
+            List<AppUser> developers = await _roleService.GetUsersInRoleAsync(nameof(Roles.Developer), companyId.Value);
+            List<AppUser> submitters = await _roleService.GetUsersInRoleAsync(nameof(Roles.Submitter), companyId.Value);
+
+            List<AppUser> companyMembers = developers.Concat(submitters)
+                .OrderBy(member => member.LastName)
+                .ThenBy(member => member.FirstName)
+                .ToList();
+
+            List<string> projectMembers = project.Members.Select(member => member.Id).ToList();
+
+            AssignMembersViewModel model = new()
+            {
+                Project = project,
+                Users = new MultiSelectList(companyMembers, "Id", "FullName", projectMembers)
+            }; 
+
+            return View(model);
+        }
+
+        // POST: Projects/AssignMembers
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AssignMembers(AssignMembersViewModel model)
+        {
+            if (model.SelectedUsers is not null && model.Project is not null)
+            {
+                List<string> memberIds = (await _projectService.GetAllProjectMembersExceptPMAsync(model.Project.Id))
+                    .Select(member => member.Id)
+                    .ToList();
+
+                // remove previous members from projects
+                foreach (string member in memberIds)
+                    await _projectService.RemoveUserFromProjectAsync(member, model.Project.Id);
+
+                // add updated members to project
+                foreach (string member in model.SelectedUsers)
+                    await _projectService.AddUserToProjectAsync(member, model.Project.Id);
+
+                // return user to project details
+                return RedirectToAction("Details", new { id = model.Project.Id });
+            }
+
+            return RedirectToAction("AssignMembers", new { id = model.Project?.Id });
+        }
+
         // GET: Projects/Details/5
+        [HttpGet]
         public async Task<IActionResult> Details(int? id)
         {
             int? companyId = User.Identity?.GetCompanyId();
@@ -147,6 +214,7 @@ namespace BugscapeMVC.Controllers
         }
 
         // GET: Projects/Create
+        [HttpGet]
         public async Task<IActionResult> Create()
         {
             int? companyId = User.Identity?.GetCompanyId();
@@ -207,6 +275,7 @@ namespace BugscapeMVC.Controllers
         }
 
         // GET: Projects/Edit/5
+        [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {       
             int? companyId = User.Identity?.GetCompanyId();
@@ -262,6 +331,7 @@ namespace BugscapeMVC.Controllers
         }
 
         // GET: Projects/Archive/5
+        [HttpGet]
         public async Task<IActionResult> Archive(int? id)
         {
             int? companyId = User.Identity?.GetCompanyId();
@@ -311,6 +381,7 @@ namespace BugscapeMVC.Controllers
         }
 
         // GET: Projects/Restore/5
+        [HttpGet]
         public async Task<IActionResult> Restore(int? id)
         {
             int? companyId = User.Identity?.GetCompanyId();

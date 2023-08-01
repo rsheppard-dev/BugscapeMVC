@@ -94,7 +94,7 @@
                                         <p class="text-muted m-b-0">Project Manager</p>
                                         @if (User.IsInRole(nameof(Roles.Admin)) || user?.Id == projectManager.Id)
                                         {
-                                            <a class="btn btn-xs btn-primary" style="font:small" asp-action="AssignUsers" asp-controller="Projects" asp-route-id="@Model.Id">Manage Team</a>
+                                            <a class="btn btn-xs btn-primary" style="font:small" asp-action="AssignMembers" asp-controller="Projects" asp-route-id="@Model.Id">Manage Team</a>
                                         }
                                     </div>
                                 </div>
@@ -107,7 +107,7 @@
                                         <h5 class="text-muted m-b-0">Not Assigned</h5>
                                         @if (User.IsInRole(nameof(Roles.Admin)))
                                         {
-                                            <span><a asp-action="AssignProjectManager" asp-controller="Home" asp-route-id="@Model.Id" class="btn btn-xs btn-primary">Assign PM</a></span>
+                                            <span><a asp-action="AssignProjectManager" asp-controller="Home" asp-route-id="@Model.Id" class="btn btn-xs alert-primary">Assign PM</a></span>
                                         }
                                     </div>
                                 </div>
@@ -132,18 +132,19 @@
                                             <div class="media">
                                                 @if (member.AvatarFileData is not null && member.AvatarContentType is not null)
                                                 {
-                                                    <img class="rounded-circle" src="@FileService.ConvertByteArrayToFile(member.AvatarFileData, member.AvatarContentType)" alt="@member.FullName" width="60" height="60">
+                                                    <img class="rounded-circle" src="@FileService.ConvertByteArrayToFile(member.AvatarFileData, member.AvatarContentType)" alt="@member.FullName" width="30" height="30">
                                                 }
                                                 else
                                                 {
-                                                    <img class="rounded-circle" src="~/images/default_profile.png" alt="@projectManager?.FullName" width="60" height="60">
+                                                    <img class="rounded-circle" src="~/images/default_profile.png" alt="@projectManager?.FullName" width="30" height="30">
                                                 }
-                                                <div>
-                                                    <span>@member.FullName</span>
-                                                    <span>@((await UserManager.GetRolesAsync(member)).FirstOrDefault())</span>
-                                                </div>
                                             </div>
                                         </a>
+
+                                        <div>
+                                            <span>@member.FullName</span>
+                                            <span style="font-size:x-small;">[@((await UserManager.GetRolesAsync(member)).FirstOrDefault())]</span>
+                                        </div>
                                     </li>
                                 }
                             </ul>
