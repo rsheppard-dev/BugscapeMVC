@@ -19,9 +19,10 @@ namespace BugscapeMVC.Controllers
         private readonly ILookupService _lookupService;
         private readonly ITicketService _ticketService;
         private readonly IFileService _fileService;
+        private readonly ITicketHistoryService _historyService;
         private readonly UserManager<AppUser> _userManager;
 
-        public TicketsController(ApplicationDbContext context, UserManager<AppUser> userManager, IProjectService projectService, ILookupService lookupService, ITicketService ticketService, IFileService fileService)
+        public TicketsController(ApplicationDbContext context, UserManager<AppUser> userManager, IProjectService projectService, ILookupService lookupService, ITicketService ticketService, IFileService fileService, ITicketHistoryService historyService)
         {
             _context = context;
             _userManager = userManager;
@@ -29,6 +30,7 @@ namespace BugscapeMVC.Controllers
             _lookupService = lookupService;
             _ticketService = ticketService;
             _fileService = fileService;
+            _historyService = historyService;
         }
 
         // GET: Tickets
@@ -324,6 +326,12 @@ namespace BugscapeMVC.Controllers
 
             if (ModelState.IsValid)
             {
+                string? userId = _userManager.GetUserId(User);
+
+                if (string.IsNullOrEmpty(userId)) return NoContent();   
+
+                Ticket oldTicket = await _ticketService.GetTicketAsNoTrackingAsync(id);
+
                 try
                 {
                     ticket.Updated = DateTimeOffset.Now;
@@ -343,7 +351,10 @@ namespace BugscapeMVC.Controllers
                     }
                 }
                  
-                 // todo: add ticket history
+                Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
+
+                await _historyService.AddHistoryAsync(oldTicket, newTicket, userId);
+
                 return RedirectToAction(nameof(Index));
             }
             

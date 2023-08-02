@@ -99,9 +99,7 @@ namespace BugscapeMVC.Controllers
 
             if (companyId is null) return NoContent();
 
-            List<Project> projects = new();
-
-            projects = await _projectService.GetUnassignedProjectsAsync(companyId.Value);
+            List<Project> projects = await _projectService.GetUnassignedProjectsAsync(companyId.Value);
 
             return View(projects);
         }

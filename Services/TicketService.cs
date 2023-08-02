@@ -376,11 +376,32 @@ namespace BugscapeMVC.Services
                 throw;
             }
         }
+        #endregion
 
+        #region  GetTicketAsNoTrackingAsync
+        public async Task<Ticket> GetTicketAsNoTrackingAsync(int ticketId)
+        {
+            try
+            {
+                return await _context.Tickets
+                    .Include(ticket => ticket.DeveloperUser)
+                    .Include(ticket => ticket.TicketPriority)
+                    .Include(ticket => ticket.TicketStatus)
+                    .Include(ticket => ticket.TicketType)
+                    .Include(ticket => ticket.Project)
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(ticket => ticket.Id == ticketId) ?? throw new Exception("Invalid ticket ID.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+        }
         #endregion
 
         #region GetTicketAttachmentsByIdAsync
-        
+
         public async Task<TicketAttachment?> GetTicketAttachmentByIdAsync(int ticketAttachmentId)
         {
             try
