@@ -13,7 +13,7 @@ namespace BugscapeMVC.Services
             _context = context;
         }
 
-        public async Task AddHistoryAsync(Ticket oldTicket, Ticket newTicket, string userId)
+        public async Task AddHistoryAsync(Ticket? oldTicket, Ticket newTicket, string userId)
         {
             // if new ticket has been added
             if (oldTicket is null && newTicket is not null)
@@ -137,15 +137,15 @@ namespace BugscapeMVC.Services
                 }
 
                 // check changes to ticket developer
-                if (oldTicket?.DeveloperUser is not null &&
+                if (newTicket?.DeveloperUser is not null &&
                     newTicket?.DeveloperUser?.FullName is not null &&
-                    oldTicket.DeveloperUserId != newTicket.DeveloperUserId)
+                    oldTicket?.DeveloperUserId != newTicket.DeveloperUserId)
                 {
                     TicketHistory history = new()
                     {
                         TicketId = newTicket.Id,
                         Property = "Developer",
-                        OldValue = oldTicket.DeveloperUser.FullName ?? "Not Assigned",
+                        OldValue = oldTicket?.DeveloperUser?.FullName ?? "Not Assigned",
                         NewValue = newTicket.DeveloperUser.FullName,
                         Created = DateTimeOffset.Now,
                         UserId = userId,
@@ -172,7 +172,7 @@ namespace BugscapeMVC.Services
             {
                 Ticket? ticket = await _context.Tickets.FindAsync(ticketId) ?? throw new Exception("Ticket not found.");
 
-                string description = model.ToLower().Replace("Ticket", "");
+                string description = model.ToLower().Replace("ticket", "");
                 description = $"New {description} added to ticket: {ticket.Title}";
 
                 TicketHistory history = new()

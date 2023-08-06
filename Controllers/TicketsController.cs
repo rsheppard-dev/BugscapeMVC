@@ -134,7 +134,23 @@ namespace BugscapeMVC.Controllers
         {
             if (model.DeveloperId is not null && model.Ticket is not null)
             {
-                await _ticketService.AssignTicketAsync(model.Ticket.Id, model.DeveloperId);
+                string? userId = _userManager.GetUserId(User);
+                Ticket? oldTicket = await _ticketService.GetTicketAsNoTrackingAsync(model.Ticket.Id);
+
+                if (userId is null || oldTicket is null) return NotFound();
+
+                try
+                {
+                    await _ticketService.AssignTicketAsync(model.Ticket.Id, model.DeveloperId);
+                }
+                catch (Exception)
+                {
+                    throw;
+                }
+
+                Ticket? newTicket = await _ticketService.GetTicketAsNoTrackingAsync(model.Ticket.Id);
+
+                await _historyService.AddHistoryAsync(oldTicket, newTicket, userId);
 
                 return RedirectToAction(nameof(Details), new { id = model.Ticket?.Id });
             }
@@ -169,10 +185,13 @@ namespace BugscapeMVC.Controllers
             {
                 try
                 {
-                    ticketComment.UserId = _userManager.GetUserId(User);
+                    ticketComment.UserId = _userManager.GetUserId(User) ?? throw new Exception("UserId cannot be null.");
                     ticketComment.Created = DateTime.Now;
 
                     await _ticketService.AddTicketCommentAsync(ticketComment);
+
+                    // add history
+                    await _historyService.AddHistoryAsync(ticketComment.TicketId, nameof(TicketComment), ticketComment.UserId);
                 }
                 catch (Exception)
                 {
@@ -192,14 +211,24 @@ namespace BugscapeMVC.Controllers
 
             if (ModelState.IsValid && ticketAttachment.FormFile is not null)
             {
-                ticketAttachment.FileData = await _fileService.ConvertFileToByteArrayAsync(ticketAttachment.FormFile);
-                ticketAttachment.FileContentType = ticketAttachment.FormFile.ContentType;
-                ticketAttachment.FileName = ticketAttachment.FormFile.FileName;
+                try
+                {
+                    ticketAttachment.FileData = await _fileService.ConvertFileToByteArrayAsync(ticketAttachment.FormFile);
+                    ticketAttachment.FileContentType = ticketAttachment.FormFile.ContentType;
+                    ticketAttachment.FileName = ticketAttachment.FormFile.FileName;
 
-                ticketAttachment.Created = DateTime.Now;
-                ticketAttachment.UserId = _userManager.GetUserId(User);
+                    ticketAttachment.Created = DateTime.Now;
+                    ticketAttachment.UserId = _userManager.GetUserId(User) ?? throw new Exception("UserId cannot be null.");
 
-                await _ticketService.AddTicketAttachmentAsync(ticketAttachment);
+                    await _ticketService.AddTicketAttachmentAsync(ticketAttachment);
+
+                    // add history
+                    await _historyService.AddHistoryAsync(ticketAttachment.TicketId, nameof(TicketAttachment), ticketAttachment.UserId);
+                }
+                catch (Exception)
+                {      
+                    throw;
+                }
 
                 statusMessage = "Success: New attachment added to ticket.";
             }
@@ -264,13 +293,24 @@ namespace BugscapeMVC.Controllers
 
             if (ModelState.IsValid)
             {
-                ticket.Created = DateTime.Now;
-                ticket.OwnerUserId = userId;
-                ticket.TicketStatusId = (await _ticketService.LookupTicketStatusIdAsync(nameof(TicketStatuses.New))).Value;   
+                try
+                {
+                    ticket.Created = DateTime.Now;
+                    ticket.OwnerUserId = userId;
+                    ticket.TicketStatusId = (await _ticketService.LookupTicketStatusIdAsync(nameof(TicketStatuses.New))).Value;   
 
-                await _ticketService.AddNewTicketAsync(ticket);
+                    await _ticketService.AddNewTicketAsync(ticket);
 
-                // todo: add ticket history and notification
+                    // add ticket history
+                    var newTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
+                    await _historyService.AddHistoryAsync(null, newTicket, userId);
+
+                    // todo: add notification
+                }
+                catch (Exception)
+                { 
+                    throw;
+                }
 
                 return RedirectToAction(nameof(Index));
             }
