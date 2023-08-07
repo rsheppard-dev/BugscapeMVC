@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using BugscapeMVC.Data;
 using BugscapeMVC.Models;
 using Microsoft.AspNetCore.Identity;
 using BugscapeMVC.Extensions;
@@ -14,7 +13,6 @@ namespace BugscapeMVC.Controllers
 {
     public class TicketsController : Controller
     {
-        private readonly ApplicationDbContext _context;
         private readonly IProjectService _projectService;
         private readonly ILookupService _lookupService;
         private readonly ITicketService _ticketService;
@@ -22,22 +20,14 @@ namespace BugscapeMVC.Controllers
         private readonly ITicketHistoryService _historyService;
         private readonly UserManager<AppUser> _userManager;
 
-        public TicketsController(ApplicationDbContext context, UserManager<AppUser> userManager, IProjectService projectService, ILookupService lookupService, ITicketService ticketService, IFileService fileService, ITicketHistoryService historyService)
+        public TicketsController(UserManager<AppUser> userManager, IProjectService projectService, ILookupService lookupService, ITicketService ticketService, IFileService fileService, ITicketHistoryService historyService)
         {
-            _context = context;
             _userManager = userManager;
             _projectService = projectService;
             _lookupService = lookupService;
             _ticketService = ticketService;
             _fileService = fileService;
             _historyService = historyService;
-        }
-
-        // GET: Tickets
-        public async Task<IActionResult> Index()
-        {
-            var applicationDbContext = _context.Tickets.Include(t => t.DeveloperUser).Include(t => t.OwnerUser).Include(t => t.Project).Include(t => t.TicketPriority).Include(t => t.TicketStatus).Include(t => t.TicketType);
-            return View(await applicationDbContext.ToListAsync());
         }
 
         // GET: Tickets/MyTickets
@@ -161,7 +151,7 @@ namespace BugscapeMVC.Controllers
         // GET: Tickets/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Tickets == null)
+            if (id == null)
             {
                 return NotFound();
             }
@@ -333,7 +323,7 @@ namespace BugscapeMVC.Controllers
         // GET: Tickets/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Tickets == null)
+            if (id == null)
             {
                 return NotFound();
             }
@@ -408,7 +398,7 @@ namespace BugscapeMVC.Controllers
         // GET: Tickets/Archive/5
         public async Task<IActionResult> Archive(int? id)
         {
-            if (id is null || _context.Tickets is null)
+            if (id is null)
             {
                 return NotFound();
             }
@@ -428,11 +418,6 @@ namespace BugscapeMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ArchiveConfirmed(int id)
         {
-            if (_context.Tickets == null)
-            {
-                return Problem("Entity set 'ApplicationDbContext.Tickets'  is null.");
-            }
-
             Ticket? ticket = await _ticketService.GetTicketByIdAsync(id);
 
             if (ticket is not null)
@@ -446,7 +431,7 @@ namespace BugscapeMVC.Controllers
         // GET: Tickets/Restore/5
         public async Task<IActionResult> Restore(int? id)
         {
-            if (id is null || _context.Tickets is null)
+            if (id is null)
             {
                 return NotFound();
             }
@@ -466,11 +451,6 @@ namespace BugscapeMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RestoreConfirmed(int id)
         {
-            if (_context.Tickets == null)
-            {
-                return Problem("Entity set 'ApplicationDbContext.Tickets'  is null.");
-            }
-
             Ticket? ticket = await _ticketService.GetTicketByIdAsync(id);
 
             if (ticket is not null)

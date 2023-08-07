@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using BugscapeMVC.Data;
 using BugscapeMVC.Models;
 using BugscapeMVC.Extensions;
 using BugscapeMVC.Models.ViewModels;
@@ -14,7 +13,6 @@ namespace BugscapeMVC.Controllers
 {
     public class ProjectsController : Controller
     {
-        private readonly ApplicationDbContext _context;
         private readonly IRoleService _roleService;
         private readonly ILookupService _lookupService;
         private readonly IFileService _fileService;
@@ -23,9 +21,8 @@ namespace BugscapeMVC.Controllers
         private readonly ITicketService _ticketService;
         private readonly UserManager<AppUser> _userManager;
 
-        public ProjectsController(ApplicationDbContext context, IRoleService roleService, ILookupService lookupService, IFileService fileService, IProjectService projectService, UserManager<AppUser> userManager, ICompanyInfoService companyInfoService, ITicketService ticketService)
+        public ProjectsController(IRoleService roleService, ILookupService lookupService, IFileService fileService, IProjectService projectService, UserManager<AppUser> userManager, ICompanyInfoService companyInfoService, ITicketService ticketService)
         {
-            _context = context;
             _roleService = roleService;
             _lookupService = lookupService;
             _fileService = fileService;
@@ -33,14 +30,6 @@ namespace BugscapeMVC.Controllers
             _userManager = userManager;
             _companyInfoService = companyInfoService;
             _ticketService = ticketService;
-        }
-
-        // GET: Projects
-        [HttpGet]
-        public async Task<IActionResult> Index()
-        {
-            var applicationDbContext = _context.Projects.Include(p => p.Company).Include(p => p.ProjectPriority);
-            return View(await applicationDbContext.ToListAsync());
         }
 
         // GET: Projects/MyProjects
@@ -201,7 +190,7 @@ namespace BugscapeMVC.Controllers
         {
             int? companyId = User.Identity?.GetCompanyId();
 
-            if (id is null || _context.Projects is null || companyId is null)
+            if (id is null || companyId is null)
                 return NotFound();
 
             Project? project = await _projectService.GetProjectByIdAsync(id.Value, companyId.Value);
@@ -297,7 +286,7 @@ namespace BugscapeMVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(AddProjectWithPMViewModel model)
         {
-            if (model is not null)
+            if (model is not null && model.Project is not null)
             {
                 try
                 {
@@ -319,9 +308,18 @@ namespace BugscapeMVC.Controllers
 
                     return RedirectToAction("Index");
                 }
-                catch (Exception)
-                { 
-                    throw;
+                catch (DbUpdateConcurrencyException)
+                {
+                    bool projectExists = await ProjectExistsAsync(model.Project.Id);
+
+                    if (!projectExists)
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
                 }
             }
   
@@ -334,7 +332,7 @@ namespace BugscapeMVC.Controllers
         {
             int? companyId = User.Identity?.GetCompanyId();
 
-            if (id == null || _context.Projects == null || companyId == null)
+            if (id == null || companyId == null)
             {
                 return NotFound();
             }
@@ -355,11 +353,6 @@ namespace BugscapeMVC.Controllers
         public async Task<IActionResult> ArchiveConfirmed(int id)
         {
             int? companyId = User.Identity?.GetCompanyId();
-
-            if (_context.Projects is null)
-            {
-                return Problem("Entity set 'ApplicationDbContext.Projects'  is null.");
-            }
 
             if (companyId is null)
             {
@@ -384,7 +377,7 @@ namespace BugscapeMVC.Controllers
         {
             int? companyId = User.Identity?.GetCompanyId();
 
-            if (id == null || _context.Projects == null || companyId == null)
+            if (id == null || companyId == null)
             {
                 return NotFound();
             }
@@ -406,11 +399,6 @@ namespace BugscapeMVC.Controllers
         {
             int? companyId = User.Identity?.GetCompanyId();
 
-            if (_context.Projects is null)
-            {
-                return Problem("Entity set 'ApplicationDbContext.Projects'  is null.");
-            }
-
             if (companyId is null)
             {
                 return Problem("Company ID is null.");
@@ -428,9 +416,17 @@ namespace BugscapeMVC.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ProjectExists(int id)
+        private async Task<bool> ProjectExistsAsync(int id)
         {
-          return (_context.Projects?.Any(e => e.Id == id)).GetValueOrDefault();
+            try
+            {
+                int? companyId = User.Identity?.GetCompanyId() ?? throw new Exception("Company ID not valid.");
+                return (await _projectService.GetAllProjectsByCompanyAsync(companyId.Value)).Any(project => project.Id == id);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }
