@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace BugscapeMVC.Controllers
 {
+    [Authorize]
     public class ProjectsController : Controller
     {
         private readonly IRoleService _roleService;
@@ -82,6 +83,7 @@ namespace BugscapeMVC.Controllers
 
         // GET: Projects/UnassignedProjects
         [HttpGet]
+        [Authorize(Roles = nameof(Roles.Admin))]
         public async Task<IActionResult> UnassignedProjects()
         {
             int? companyId = User.Identity?.GetCompanyId();
@@ -114,6 +116,7 @@ namespace BugscapeMVC.Controllers
         // POST: Projects/AssignPM
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = nameof(Roles.Admin))]
         public async Task<IActionResult> AssignPM(AssignPMViewModel model)
         {
             if (!string.IsNullOrEmpty(model.ProjectManagerId) && model.Project is not null)
@@ -161,6 +164,7 @@ namespace BugscapeMVC.Controllers
         // POST: Projects/AssignMembers
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)}")]
         public async Task<IActionResult> AssignMembers(AssignMembersViewModel model)
         {
             if (model.SelectedUsers is not null && model.Project is not null)
@@ -202,6 +206,7 @@ namespace BugscapeMVC.Controllers
 
         // GET: Projects/Create
         [HttpGet]
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)}")]
         public async Task<IActionResult> Create()
         {
             int? companyId = User.Identity?.GetCompanyId();
@@ -222,6 +227,7 @@ namespace BugscapeMVC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)}")]
         public async Task<IActionResult> Create(AddProjectWithPMViewModel model)
         {
             if (model is not null)
@@ -263,6 +269,7 @@ namespace BugscapeMVC.Controllers
 
         // GET: Projects/Edit/5
         [HttpGet]
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)}")]
         public async Task<IActionResult> Edit(int? id)
         {       
             int? companyId = User.Identity?.GetCompanyId();
@@ -284,6 +291,7 @@ namespace BugscapeMVC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)}")]
         public async Task<IActionResult> Edit(AddProjectWithPMViewModel model)
         {
             if (model is not null && model.Project is not null)
@@ -328,6 +336,7 @@ namespace BugscapeMVC.Controllers
 
         // GET: Projects/Archive/5
         [HttpGet]
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)}")]
         public async Task<IActionResult> Archive(int? id)
         {
             int? companyId = User.Identity?.GetCompanyId();
@@ -350,6 +359,7 @@ namespace BugscapeMVC.Controllers
         // POST: Projects/Delete/5
         [HttpPost, ActionName("Archive")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)}")]
         public async Task<IActionResult> ArchiveConfirmed(int id)
         {
             int? companyId = User.Identity?.GetCompanyId();
@@ -373,6 +383,7 @@ namespace BugscapeMVC.Controllers
 
         // GET: Projects/Restore/5
         [HttpGet]
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)}")]
         public async Task<IActionResult> Restore(int? id)
         {
             int? companyId = User.Identity?.GetCompanyId();
@@ -395,6 +406,7 @@ namespace BugscapeMVC.Controllers
         // POST: Projects/Restore/5
         [HttpPost, ActionName("Restore")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)}")]
         public async Task<IActionResult> RestoreConfirmed(int id)
         {
             int? companyId = User.Identity?.GetCompanyId();
