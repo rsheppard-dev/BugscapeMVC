@@ -256,7 +256,7 @@ namespace BugscapeMVC.Controllers
                         await _projectService.AddProjectManagerAsync(model.PmId, model.Project.Id);
                     }
 
-                    return RedirectToAction("Index");
+                    return RedirectToAction("MyProjects");
                 }
                 catch (Exception)
                 { 
@@ -314,7 +314,7 @@ namespace BugscapeMVC.Controllers
                         await _projectService.AddProjectManagerAsync(model.PmId, model.Project.Id);
                     }
 
-                    return RedirectToAction("Index");
+                    return RedirectToAction("MyProjects");
                 }
                 catch (DbUpdateConcurrencyException)
                 {

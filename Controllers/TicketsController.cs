@@ -312,7 +312,7 @@ namespace BugscapeMVC.Controllers
                     throw;
                 }
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(AllTickets));
             }
 
             if (User.IsInRole(nameof(Roles.Admin)))
@@ -396,7 +396,7 @@ namespace BugscapeMVC.Controllers
 
                 await _historyService.AddHistoryAsync(oldTicket, newTicket, userId);
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(AllTickets));
             }
             
             ViewData["TicketPriorityId"] = new SelectList(await _lookupService.GetTicketPrioritiesAsync(), "Id", "Name", ticket.TicketPriorityId);

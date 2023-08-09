@@ -1,0 +1,338 @@
+@model BugscapeMVC.Models.ViewModels.DashboardViewModel
+
+@using Microsoft.AspNetCore.Identity
+@using BugscapeMVC.Services.Interfaces
+
+@inject UserManager<AppUser> UserManager
+@inject IFileService FileService
+@inject IRoleService RolesService
+
+@{
+    ViewData["Title"] = "Dashboard";
+    AppUser? user = await UserManager.GetUserAsync(User);
+}
+
+<h1>Dashboard</h1>
+<a href="javascript:void(0);">
+    @if (user?.AvatarFileData is not null && user?.AvatarContentType is not null)
+    {
+        <img class="media-object" src="@FileService.ConvertByteArrayToFile(user.AvatarFileData, user.AvatarContentType)" alt="@user.FullName" width="30px" height="30px">
+    }
+    else
+    {
+        <img class="media-object" src="~/images/default_profile.png" alt="@user?.FullName" width="30" height="30">
+    }
+</a>
+
+<strong>@user?.FullName</strong>
+<span class="text-muted" style="font-size:x-small;">
+    <strong>@Model.Company?.Name</strong>
+</span>
+
+
+<div>
+    <div classxfont-weighteighteightgetainer-fluid">
+        <!-- Info Pills -->
+        <div class="row mt-2">
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <a asp-action="AllProjects" asp-controller="Projects" style="text-decoration:none">
+                    <div class="card text-center bg-info">
+                        <div class="body">
+                            <div class="p-15 text-light">
+                                <h3>@Model.Projects?.Where(p => p.StartDate < DateTime.Now && p.EndDate > DateTime.Now).Count()</h3>
+                                <span>Active Projects</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <a asp-action="AllTickets" asp-controller="Tickets" style="text-decoration:none">
+                    <div class="card text-center bg-secondary">
+                        <div class="body">
+                            <div class="p-15 text-light">
+
+                                <h3>@Model.Tickets?.Count()</h3>
+                                <span>Total Tickets</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="card text-center bg-warning">
+                    <div class="body">
+                        <div class="p-15 text-light">
+                            <h3>@Model.Tickets?.Where(t => string.IsNullOrEmpty(t.DeveloperUserId)).Count()</h3>
+                            <span>Unassigned Tickets</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="card text-center bg-dark">
+                    <div class="body">
+                        <div class="p-15 text-light">
+                            <h3>
+                                @(
+                                    Model.Projects?.Count()
+                                    + Model.Tickets?.Count()
+                                    + Model.Members?.Count()
+                                    )
+                            </h3>
+                            <span>Total Data</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row gy-2">
+            <div class="col-md-12 col">
+                <div class="row col-cols-4 mt-5 bg-secondary">
+                    <div class="card col m-1 p-2">
+                        <div class="card-body">
+                            <h5>Projects by Priority</h5>
+                            <p>[Google Charts]</p>
+                            <div id="chart3D"></div>
+                        </div>
+                    </div>
+                    <div class="card col m-1 p-2">
+                        <div class="card-body">
+                            <h5>Project Tickets Count (%)</h5>
+                            <p>[Google Charts]</p>
+                            <div id="donut"></div>
+                        </div>
+                    </div>
+                    <div class="card col m-1 p-2">
+                        <div class="card-body">
+                            <h5>Chart 3</h5>
+                            <p>[Tickets]</p>
+                        </div>
+                    </div>
+                    <div class="card col m-1 p-2">
+                        <div class="card-body">
+                            <h5>Chart 4</h5>
+                            <p>[Tickets]</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row gy-2">
+            <div class="cols mt-5 bg-secondary">
+                <div class="card col m-1 p-2">
+                    <div class="card-body" style="height:380px">
+                        <h5>Chart 5</h5>
+                        <p>[Projects: Tickets vs Developers]</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <div class="mt-5 ">
+        <div class="row">
+            @* Projects Table *@
+            <div class="col">
+                <div class="bg-secondary">
+                    <div class="card m-1 p-2">
+                        <div class="card-header">
+                            <h2>Projects</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive" style="overflow-y:auto;height:600px;">
+                                @if (Model.Projects is not null)
+                                {
+                                <table class="table table-hover">
+                                    <thead class="">
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Start Date</th>
+                                            <th>End Date</th>
+                                            <th>Priority</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach (Project project in Model.Projects.OrderByDescending(project => project.EndDate))
+                                    {
+                                        <tr>
+                                            <td><a asp-action="Details" asp-controller="Projects" asp-route-id="@project.Id" style="color: black;"><strong>@project.Name</strong></a></td>
+                                            <td><span style="font-size: small;">@project.StartDate.ToString("dd.MM.yyyy")</span></td>
+                                            <td><span style="font-size: small;">@project.EndDate.ToString("dd.MM.yyyy")</span></td>
+                                            <td><span class="badge bg-dark">@project.ProjectPriority?.Name</span></td>
+                                            <td>
+                                                <a class="btn btn-sm btn-outline-secondary" asp-action="Details" asp-controller="Projects" asp-route-id="@project.Id"><i class="fs-5 bi-justify"></i></a>
+                                            </td>
+                                        </tr>
+                                    }
+                                    </tbody>
+                                </table>
+                                }
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @* Tickets Table *@
+            <div class="col">
+                <div class="bg-secondary">
+                    <div class="card m-1 p-2">
+                        <div class="card-header">
+                            <h2>Tickets</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive" style="overflow-y:auto;height:600px;">
+                                @if (Model.Tickets is not null)
+                                {
+                                <table class="table table-hover">
+                                    <thead class="">
+                                        <tr>
+                                            <th>Title</th>
+                                            <th>Developer</th>
+                                            <th>Status</th>
+                                            <th>Priority</th>
+                                            <th>Date</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (Ticket ticket in Model.Tickets.OrderByDescending(ticket => ticket.Created))
+                                        {
+                                            <tr>
+                                                <td><a asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id" style="color:black; font-size: small;"><strong>@ticket.Title</strong></a> </td>
+                                                <td>
+                                                    @if (ticket.DeveloperUser is null)
+                                                    {
+                                                        <span class="badge bg-warning text-dark">Unassigned</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span style="font-size: small;">@ticket.DeveloperUser.FullName</span>                                                            
+                                                    }
+                                                </td>
+                                                @if (ticket.TicketStatus?.Name == "New")
+                                                {
+                                                <td><span class="badge bg-success rounded-pill">@ticket.TicketStatus.Name</span></td>
+                                                }
+                                                else
+                                                {
+                                                <td><span class="badge bg-secondary rounded-pill">@ticket.TicketStatus?.Name</span></td>
+                                                }
+                                                <td><span class="badge bg-dark">@ticket.TicketPriority?.Name</span></td>
+                                                <td><span style="font-size: small;">@ticket.Created.ToString("dd-MM-yyyy")</span></td>
+                                                <td>
+                                                    <a class="btn btn-sm btn-outline-secondary" asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id"><i class="fs-5 bi-justify"></i></a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                                }
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2 ">
+                <div class="bg-dark">
+                    <div class="card m-1 p-2">
+                        <div class="card-header">
+                            <h2>Members</h2>
+                            <hr />
+                        </div>
+                        <div class="card-body" style="overflow-y:auto;height:600px;background-color:antiquewhite">
+                            @if (Model.Members is not null)
+                            {
+                                foreach (AppUser member in Model.Members)
+                                {
+                                    <div>
+                                        <span style="font-weight: bold">@member.FullName</span>
+                                        <h6>@((await RolesService.GetUserRolesAsync(member)).FirstOrDefault())</h6>
+                                    </div>
+                                    <hr>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <!--Google Charts-->
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+
+    <script type="text/javascript">
+        google.load("visualization", "1", { packages: ["corechart"] });
+        google.setOnLoadCallback(drawChart);
+        function drawChart() {
+            $.ajax({
+                type: "POST",
+                url: "/Home/GglProjectPriority",
+                data: '{}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    var data = google.visualization.arrayToDataTable(result);
+
+                    //3D Pie
+                    var options = {
+                        title: 'Project Priority',
+                        is3D: true,
+                        chartArea: { left: 0,bottom: 15,width: '100%', height: '100%'},
+                        legend: { position: 'bottom' }
+
+                    };
+
+                    var chart = new google.visualization.PieChart($("#chart3D")[0]);
+                    chart.draw(data, options);
+                },
+                failure: function (rresult) {
+                    alert(result.d);
+                },
+                error: function (result) {
+                    alert(result.d);
+                }
+            });
+        }
+    </script>
+    <script type="text/javascript">
+        google.load("visualization", "1", { packages: ["corechart"] });
+        google.setOnLoadCallback(drawChart);
+        function drawChart() {
+            $.ajax({
+                type: "POST",
+                url: "/Home/GglProjectPriority",
+                data: '{}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    var data = google.visualization.arrayToDataTable(result);
+
+                    //Donut
+                    var options = {
+                        title: 'Company Ticket Distribution',
+                        pieHole: 0.3,
+                        chartArea: { left: 0,bottom: 15,width: '100%', height: '100%'},
+                        legend: { position: 'bottom' }
+                    };
+                    var chart = new google.visualization.PieChart($("#donut")[0]);
+                    chart.draw(data, options);
+                },
+                failure: function (rresult) {
+                    alert(result.d);
+                },
+                error: function (result) {
+                    alert(result.d);
+                }
+            });
+        }
+    </script>
+}
