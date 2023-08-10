@@ -1,4 +1,5 @@
 {
 	"dotnet.defaultSolution": "BugscapeMVC.sln",
-	"editor.formatOnSave": false
+	"editor.formatOnSave": false,
+	"dotnetAcquisitionExtension.installTimeoutValue": 180
 }

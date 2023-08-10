@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using BugscapeMVC.Models;
 using BugscapeMVC.Models.ViewModels;
+using BugscapeMVC.Models.ChartModels;
 using BugscapeMVC.Extensions;
 using BugscapeMVC.Services.Interfaces;
 using BugscapeMVC.Models.Enums;
@@ -88,6 +89,72 @@ public class HomeController : Controller
         }
 
         return Json(chartData);
+    }
+
+
+    [HttpPost]
+    public async Task<JsonResult> AmCharts()
+    {
+
+        AmChartData amChartData = new();
+        List<AmItem> amItems = new(); 
+
+        int? companyId = User.Identity?.GetCompanyId() ?? throw new Exception();
+
+        List<Project> projects = (await _companyInfoService.GetAllProjectsAsync(companyId.Value)).Where(p=>p.Archived == false).ToList();
+
+        foreach(Project project in projects)
+        {
+            AmItem item = new()
+            {
+                Project = project.Name,
+                Tickets = project.Tickets.Count,
+                Developers = (await _projectService.GetProjectMembersByRoleAsync(project.Id, nameof(Roles.Developer))).Count
+            };
+
+            amItems.Add(item);  
+        }
+
+        amChartData.Data = amItems.ToArray();   
+
+
+        return Json(amChartData.Data);
+    }
+
+    [HttpPost]
+    public async Task<JsonResult> PlotlyBarChart()
+    {
+        PlotlyBarData plotlyData = new();
+        List<PlotlyBar> barData = new();
+
+        int? companyId = User.Identity?.GetCompanyId() ?? throw new Exception();
+
+        List<Project> projects = await _projectService.GetAllProjectsByCompanyAsync(companyId.Value);
+
+        //Bar One
+        PlotlyBar barOne = new()
+        {
+            X = projects.Select(p => p.Name).ToArray(),
+            Y = projects.SelectMany(p => p.Tickets).GroupBy(t => t.ProjectId).Select(g => g.Count()).ToArray(),
+            Name = "Tickets",
+            Type =  "bar"
+        };
+
+        //Bar Two
+        PlotlyBar barTwo = new()
+        {
+            X = projects.Select(p => p.Name).ToArray(),
+            Y = projects.Select(async p=> (await _projectService.GetProjectMembersByRoleAsync(p.Id, nameof(Roles.Developer))).Count).Select(c=>c.Result).ToArray(),
+            Name = "Developers",
+            Type = "bar"
+        };
+
+        barData.Add(barOne);    
+        barData.Add(barTwo);
+
+        plotlyData.Data = barData;
+
+        return Json(plotlyData);
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
