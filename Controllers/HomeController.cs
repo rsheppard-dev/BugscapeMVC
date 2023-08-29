@@ -6,6 +6,7 @@ using BugscapeMVC.Models.ChartModels;
 using BugscapeMVC.Extensions;
 using BugscapeMVC.Services.Interfaces;
 using BugscapeMVC.Models.Enums;
+using Microsoft.AspNetCore.Identity;
 
 namespace BugscapeMVC.Controllers;
 
@@ -13,16 +14,21 @@ public class HomeController : Controller
 {
     private readonly ICompanyInfoService _companyInfoService;
     private readonly IProjectService _projectService;
+    private readonly UserManager<AppUser> _userManager;
 
-    public HomeController(ICompanyInfoService companyInfoService, IProjectService projectService)
+    public HomeController(ICompanyInfoService companyInfoService, IProjectService projectService, UserManager<AppUser> userManager)
     {
         _companyInfoService = companyInfoService;
         _projectService = projectService;
+        _userManager = userManager;
     }
 
     public IActionResult Index()
     {
-        return View();
+        if (string.IsNullOrEmpty(_userManager.GetUserId(User)))
+            return View();
+        else
+            return RedirectToAction(nameof(Dashboard));
     }
 
     public async Task<IActionResult> Dashboard()

@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .form-card {
+        @apply hidden bg-blue-200 rounded-md px-3 py-2;
+    }
+
+    .dropdown .trigger.active .switch {
+        @apply rotate-45;
+    }
+
+    .dropdown .content {
+        @apply hidden;
+    }
+
+    .dropdown .content.active {
+        @apply flex;
+    }
+
+}

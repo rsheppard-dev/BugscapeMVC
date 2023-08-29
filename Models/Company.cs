@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BugscapeMVC.Models
 {
@@ -12,6 +13,17 @@ namespace BugscapeMVC.Models
 
         [Display(Name = "Company Description")]
         public string? Description { get; set; }
+
+        [NotMapped]
+        public IFormFile? LogoFormFile { get; set; }
+
+        [Display(Name = "Logo File Name")]
+        public string? LogoFileName { get; set; }
+
+         [Display(Name = "File Extension")]
+        public string? LogoContentType { get; set; }
+
+        public byte[]? LogoFileData { get; set; }
 
         // navigation properties
         public virtual ICollection<AppUser> Members { get; set; } = new HashSet<AppUser>();
