@@ -52,18 +52,18 @@
             </div>
             <div class="form-group">
                 <label class="control-label">Project Image</label>
-                <input id="imageInput" asp-for="Project.ImageFormFile" class="form-control" type="file" accept="image/jpg, image/jpeg, image/png, image/webp, image/gif" />
+                <input data-image-input asp-for="Project.ImageFormFile" class="form-control" type="file" accept="image/jpg, image/jpeg, image/png, image/webp, image/gif" />
                 <span asp-validation-for="Project.ImageFormFile" class="text-danger"></span>
             </div>
             <div>
                 <label>Image Preview</label>
                 @if (Model.Project?.ImageFileData is null || Model.Project?.ImageContentType is null)
                 {
-                    <img id="imageFileData" class="img-fluid img-thumbnail" src="~/images/default_project.png">
+                    <img data-image-output class="img-fluid img-thumbnail" src="~/images/default_project.png">
                 }
                 else
                 {
-                    <img id="imageFileData" class="img-fluid img-thumbnail" src="@fileService.ConvertByteArrayToFile(Model.Project.ImageFileData, Model.Project.ImageContentType)">
+                    <img data-image-output class="img-fluid img-thumbnail" src="@fileService.ConvertByteArrayToFile(Model.Project.ImageFileData, Model.Project.ImageContentType)">
                 }
             </div>
             @if (User.IsInRole(Roles.Admin.ToString()))
@@ -87,9 +87,13 @@
 </div>
 
 @section Scripts {
-    <script  src="~/js/previewImage.js"></script>
+    <script  src="~/js/imagePreview.js"></script>
     <script>
-        previewImage('imageInput', 'imageFileData')
+        const input = document.querySelector('[data-image-input]');
+        const output = document.querySelector('[data-image-output]');
+        const instance = new ImagePreview(input, output);
+
+        instance.init();
     </script>
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
