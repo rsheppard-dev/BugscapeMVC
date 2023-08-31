@@ -19,7 +19,7 @@ namespace BugscapeMVC.Services
 
         public async Task SendEmailAsync(string emailTo, string subject, string htmlMessage)
         {
-            string emailSender = _mailSettings.Mail ?? Environment.GetEnvironmentVariable("Email")!;
+            string emailSender = _mailSettings.Email ?? Environment.GetEnvironmentVariable("Email")!;
             string displayName = _mailSettings.DisplayName ?? Environment.GetEnvironmentVariable("DisplayName")!;
 
             MimeMessage email = new()

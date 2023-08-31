@@ -7,16 +7,21 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BugscapeMVC.Data;
 using BugscapeMVC.Models;
+using BugscapeMVC.Models.ViewModels;
+using Microsoft.AspNetCore.Identity;
+using BugscapeMVC.Models.Enums;
 
 namespace BugscapeMVC.Controllers
 {
     public class CompaniesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<AppUser> _userManager;
 
-        public CompaniesController(ApplicationDbContext context)
+        public CompaniesController(ApplicationDbContext context, UserManager<AppUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Companies
@@ -49,22 +54,6 @@ namespace BugscapeMVC.Controllers
         public IActionResult Create()
         {
             return View();
-        }
-
-        // POST: Companies/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description")] Company company)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(company);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(company);
         }
 
         // GET: Companies/Edit/5

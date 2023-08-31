@@ -19,6 +19,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using BugscapeMVC.Data;
+using Microsoft.EntityFrameworkCore;
+using BugscapeMVC.Models.Enums;
 
 namespace BugscapeMVC.Areas.Identity.Pages.Account
 {
@@ -30,13 +33,15 @@ namespace BugscapeMVC.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<AppUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly ApplicationDbContext _context;
 
         public RegisterModel(
             UserManager<AppUser> userManager,
             IUserStore<AppUser> userStore,
             SignInManager<AppUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            ApplicationDbContext context)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -44,6 +49,7 @@ namespace BugscapeMVC.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _context = context;
         }
 
         /// <summary>
@@ -78,6 +84,10 @@ namespace BugscapeMVC.Areas.Identity.Pages.Account
             [Required]
             [Display(Name = "Last Name")]
             public string LastName { get; set; }
+
+            [Required]
+            [Display(Name = "Company Name")]
+            public string CompanyName { get; set; }
 
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -121,11 +131,29 @@ namespace BugscapeMVC.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
+                Company company = new()
+                {
+                    Name = Input.CompanyName
+                };
+
+                try
+                {
+                    _context.Add(company);
+                    await _context.SaveChangesAsync();
+                }
+                catch (Exception)
+                {
+                    
+                    throw;
+                }
+
                 var user = CreateUser();
+                user.CompanyId = company.Id;
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
+                await _userManager.AddToRoleAsync(user, nameof(Roles.Admin));
 
                 if (result.Succeeded)
                 {
@@ -150,6 +178,11 @@ namespace BugscapeMVC.Areas.Identity.Pages.Account
                     else
                     {
                         await _signInManager.SignInAsync(user, isPersistent: false);
+
+                        // remove company if user not created
+                        _context.Remove(company);
+                        await _context.SaveChangesAsync();
+
                         return LocalRedirect(returnUrl);
                     }
                 }

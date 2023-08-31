@@ -15,6 +15,7 @@ namespace BugscapeMVC.Models
         public string? Description { get; set; }
 
         [NotMapped]
+        [Display(Name = "Company Logo")]
         public IFormFile? LogoFormFile { get; set; }
 
         [Display(Name = "Logo File Name")]

@@ -57,7 +57,7 @@
                         {
                             <img class="h-6 w-6" src="@FileService.ConvertByteArrayToFile(company.LogoFileData, company.LogoContentType)" alt="@company.Name">
                         }
-                        <span class="font-lato text-dark whitespace-nowrap">@company.Name</span>
+                        <span class="font-lato text-dark whitespace-nowrap truncate">@company.Name</span>
                     </div>
                     }
 
@@ -76,8 +76,13 @@
                     }
                     else
                     {
-                    <a asp-area="Identity" asp-page="/Account/Register">Register</a>
-                    <a asp-area="Identity" asp-page="/Account/Login">Sign In</a>
+                    <div class="hidden md:flex items-center gap-4">
+                            <a asp-area="Identity" asp-page="/Account/Register"
+                                class="font-lato text-dark rounded-md px-4 py-2 bg-success text-xs hover:bg-opacity-80 transition-opacity">Register</a>
+                            <a asp-area="Identity" asp-page="/Account/Login"
+                                class="font-lato text-dark rounded-md px-4 py-2 bg-info text-xs hover:bg-opacity-80 transition-opacity">Sign
+                                In</a>
+                    </div>
                     }
                     <form id="logoutForm" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
                     </form>
