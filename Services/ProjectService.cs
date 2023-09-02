@@ -37,15 +37,15 @@ namespace BugscapeMVC.Services
         #endregion
 
         #region Add Project Manager
-        public async Task<bool> AddProjectManagerAsync(string userId, int projectId)
+        public async Task<bool> AddProject_ManagerAsync(string userId, int projectId)
         {
-            AppUser? currentPM = await GetProjectManagerAsync(projectId);
+            AppUser? currentPM = await GetProject_ManagerAsync(projectId);
 
             if (currentPM is not null)
             {
                 try
                 {
-                    await RemoveProjectManagerAsync(projectId);
+                    await RemoveProject_ManagerAsync(projectId);
                 }
                 catch (Exception ex)
                 {
@@ -245,7 +245,7 @@ namespace BugscapeMVC.Services
         #endregion
 
         #region Get Project Manager
-        public async Task<AppUser?> GetProjectManagerAsync(int projectId)
+        public async Task<AppUser?> GetProject_ManagerAsync(int projectId)
         {
             Project? project = await _context.Projects
                 .Include(project => project.Members)
@@ -255,7 +255,7 @@ namespace BugscapeMVC.Services
 
             foreach (AppUser member in project.Members)
             {
-                if (await _roleService.HasRoleAsync(member, Roles.ProjectManager.ToString()))
+                if (await _roleService.HasRoleAsync(member, Roles.Project_Manager.ToString()))
                 {
                     return member;
                 }
@@ -303,7 +303,7 @@ namespace BugscapeMVC.Services
 
                 foreach (Project project in projects)
                 {
-                    if ((await GetProjectMembersByRoleAsync(project.Id, nameof(Roles.ProjectManager))).Count == 0)
+                    if ((await GetProjectMembersByRoleAsync(project.Id, nameof(Roles.Project_Manager))).Count == 0)
                     {
                         result.Add(project);
                     }
@@ -370,13 +370,13 @@ namespace BugscapeMVC.Services
         #endregion
 
         #region Is Assigned Project Manager
-        public async Task<bool> IsAssignedProjectManagerAsync(string userId, int projectId)
+        public async Task<bool> IsAssignedProject_ManagerAsync(string userId, int projectId)
         {
             try
             {
-                string? projectManagerId = (await GetProjectManagerAsync(projectId))?.Id;
+                string? Project_ManagerId = (await GetProject_ManagerAsync(projectId))?.Id;
 
-                return userId == projectManagerId;
+                return userId == Project_ManagerId;
             }
             catch (Exception)
             {
@@ -413,7 +413,7 @@ namespace BugscapeMVC.Services
         #endregion
 
         #region Remove Project Manager
-        public async Task RemoveProjectManagerAsync(int projectId)
+        public async Task RemoveProject_ManagerAsync(int projectId)
         {
             Project? project = await _context.Projects
                 .Include(project => project.Members)
@@ -425,7 +425,7 @@ namespace BugscapeMVC.Services
             {
                 foreach (AppUser member in project.Members)
                 {
-                    if (await _roleService.HasRoleAsync(member, Roles.ProjectManager.ToString()))
+                    if (await _roleService.HasRoleAsync(member, Roles.Project_Manager.ToString()))
                     {
                         await RemoveUserFromProjectAsync(member.Id, projectId);
                     }

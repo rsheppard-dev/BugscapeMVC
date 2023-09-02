@@ -3,6 +3,7 @@ using System;
 using BugscapeMVC.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BugscapeMVC.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230831143853_Migration003")]
+    partial class Migration003
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -170,21 +173,19 @@ namespace BugscapeMVC.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("InviteeEmail")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("InviteeFirstName")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("InviteeId")
                         .HasColumnType("text");
 
                     b.Property<string>("InviteeLastName")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("InvitorId")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<bool>("IsValid")
@@ -193,10 +194,7 @@ namespace BugscapeMVC.Migrations
                     b.Property<DateTimeOffset?>("JoinDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Message")
-                        .HasColumnType("text");
-
-                    b.Property<int>("Role")
+                    b.Property<int>("ProjectId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -206,6 +204,8 @@ namespace BugscapeMVC.Migrations
                     b.HasIndex("InviteeId");
 
                     b.HasIndex("InvitorId");
+
+                    b.HasIndex("ProjectId");
 
                     b.ToTable("Invites");
                 });
@@ -714,13 +714,23 @@ namespace BugscapeMVC.Migrations
 
                     b.HasOne("BugscapeMVC.Models.AppUser", "Invitor")
                         .WithMany()
-                        .HasForeignKey("InvitorId");
+                        .HasForeignKey("InvitorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BugscapeMVC.Models.Project", "Project")
+                        .WithMany()
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Company");
 
                     b.Navigation("Invitee");
 
                     b.Navigation("Invitor");
+
+                    b.Navigation("Project");
                 });
 
             modelBuilder.Entity("BugscapeMVC.Models.Notification", b =>

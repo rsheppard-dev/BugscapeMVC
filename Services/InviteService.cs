@@ -23,6 +23,7 @@ namespace BugscapeMVC.Services
             {
                 invite.IsValid = false;
                 invite.InviteeId = userId;
+                invite.JoinDate = DateTimeOffset.Now;
 
                 await _context.SaveChangesAsync();
                 return true;
@@ -69,7 +70,6 @@ namespace BugscapeMVC.Services
                 Invite? invite = await _context.Invites
                     .Where(invite => invite.CompanyId == companyId)
                     .Include(invite => invite.Company)
-                    .Include(invite => invite.Project)
                     .Include(invite => invite.Invitor)
                     .FirstOrDefaultAsync(invite => invite.Id == inviteId);
 
@@ -88,7 +88,6 @@ namespace BugscapeMVC.Services
                 Invite? invite = await _context.Invites
                     .Where(invite => invite.CompanyId == companyId)
                     .Include(invite => invite.Company)
-                    .Include(invite => invite.Project)
                     .Include(invite => invite.Invitor)
                     .FirstOrDefaultAsync(invite => invite.CompanyToken == token && invite.InviteeEmail == email);
 
@@ -96,6 +95,19 @@ namespace BugscapeMVC.Services
             }
             catch (Exception)
             {
+                throw;
+            }
+        }
+
+        public async Task UpdateInviteAsync(Invite invite)
+        {
+            try
+            {
+                _context.Update(invite);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            { 
                 throw;
             }
         }
@@ -120,7 +132,7 @@ namespace BugscapeMVC.Services
 
                 if (validDate)
                 {
-                    result = invite.IsValid;
+                    result = true;
                 }
 
                 return result;

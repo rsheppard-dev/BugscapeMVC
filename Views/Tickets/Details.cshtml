@@ -10,7 +10,7 @@
 
 @{
     AppUser? user = await UserManager.GetUserAsync(User);
-    AppUser? projectManager = await ProjectService.GetProjectManagerAsync(Model.ProjectId);
+    AppUser? Project_Manager = await ProjectService.GetProject_ManagerAsync(Model.ProjectId);
 
     ViewData["Title"] = "Details";
 }
@@ -26,7 +26,7 @@
         }
         else
         {
-                                                                                                                                    <img class="media-object" src="~/images/default_profile.png" alt="@Model.DeveloperUser?.FullName" width="30" height="30">
+                                                                                                                                    <img class="media-object" src="~/images/default-avatar.png" alt="@Model.DeveloperUser?.FullName" width="30" height="30">
         }
                                                                 </a>
 
@@ -90,7 +90,7 @@
                                 <form asp-action="AddTicketComment" asp-controller="Tickets" method="post" class="form-horizontal form-bordered">
                                     <input type="hidden" asp-for="Id" name="TicketId">
 
-                                    @if (Model.DeveloperUserId == user?.Id || Model.OwnerUserId == user?.Id || projectManager?.Id == user?.Id || User.IsInRole(nameof(Roles.Admin)))
+                                    @if (Model.DeveloperUserId == user?.Id || Model.OwnerUserId == user?.Id || Project_Manager?.Id == user?.Id || User.IsInRole(nameof(Roles.Admin)))
                                     {
                                             <div class="form-group">
                                                 <textarea asp-for="@(new TicketComment().Comment)" rows="8" class="form-control" required placeholder="Add comment..."></textarea>
@@ -118,7 +118,7 @@
                                                     }
                                                     else
                                                     {
-                                                            <img class="media-object" src="~/images/default_profile.png" alt="@user?.FullName" width="30" height="30">
+                                                            <img class="media-object" src="~/images/default-avatar.png" alt="@user?.FullName" width="30" height="30">
                                                     }
                                                     </a>
                                                     <div class="media-body">

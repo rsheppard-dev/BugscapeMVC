@@ -3,9 +3,9 @@ namespace BugscapeMVC.Models.Enums
     public enum Roles
     {
         Admin,
-        ProjectManager,
+        Project_Manager,
         Developer,
         Submitter,
-        DemoUser
+        Demo_User
     }
 }

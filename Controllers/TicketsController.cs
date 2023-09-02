@@ -78,7 +78,7 @@ namespace BugscapeMVC.Controllers
 
         // GET: Tickets/UnassignedTickets
         [HttpGet]
-        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)}")]
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.Project_Manager)}")]
 
         public async Task<IActionResult> UnassignedTickets()
         {
@@ -98,7 +98,7 @@ namespace BugscapeMVC.Controllers
 
             foreach (Ticket ticket in tickets)
             {
-                if (await _projectService.IsAssignedProjectManagerAsync(userId, ticket.ProjectId))
+                if (await _projectService.IsAssignedProject_ManagerAsync(userId, ticket.ProjectId))
                 {
                     pmTickets.Add(ticket);
                 }
@@ -109,7 +109,7 @@ namespace BugscapeMVC.Controllers
 
         // GET: Tickets/AssignDeveloper
         [HttpGet]
-        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)}")]
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.Project_Manager)}")]
         public async Task<IActionResult> AssignDeveloper(int id)
         {
             AssignDeveloperViewModel model = new()
@@ -126,7 +126,7 @@ namespace BugscapeMVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)}")]
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.Project_Manager)}")]
         public async Task<IActionResult> AssignDeveloper(AssignDeveloperViewModel model)
         {
             if (model.DeveloperId is not null && model.Ticket is not null)
@@ -408,7 +408,7 @@ namespace BugscapeMVC.Controllers
 
         // GET: Tickets/Archive/5
         [HttpGet]
-        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)}")]
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.Project_Manager)}")]
         public async Task<IActionResult> Archive(int? id)
         {
             if (id is null)
@@ -429,7 +429,7 @@ namespace BugscapeMVC.Controllers
         // POST: Tickets/Archive/5
         [HttpPost, ActionName("Archive")]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)}")]
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.Project_Manager)}")]
         public async Task<IActionResult> ArchiveConfirmed(int id)
         {
             Ticket? ticket = await _ticketService.GetTicketByIdAsync(id);
@@ -444,7 +444,7 @@ namespace BugscapeMVC.Controllers
 
         // GET: Tickets/Restore/5
         [HttpGet]
-        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)}")]
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.Project_Manager)}")]
         public async Task<IActionResult> Restore(int? id)
         {
             if (id is null)
@@ -465,7 +465,7 @@ namespace BugscapeMVC.Controllers
         // POST: Tickets/Restore/5
         [HttpPost, ActionName("Restore")]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)}")]
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.Project_Manager)}")]
         public async Task<IActionResult> RestoreConfirmed(int id)
         {
             Ticket? ticket = await _ticketService.GetTicketByIdAsync(id);

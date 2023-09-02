@@ -9,6 +9,7 @@ namespace BugscapeMVC.Services.Interfaces
         public Task<bool> AnyInviteAsync(Guid token, string email, int companyId);
         public Task<Invite?> GetInviteAsync(int inviteId, int companyId);
         public Task<Invite?> GetInviteAsync(Guid token, string email, int companyId);
+        public Task UpdateInviteAsync(Invite invite);
         public Task<bool> ValidateInviteCodeAsync(Guid? token);
     }
 }

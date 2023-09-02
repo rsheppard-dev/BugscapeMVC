@@ -48,17 +48,24 @@
                     {
                     @if (company is not null)
                     {
-                    <div class="hidden md:flex md:gap-2 md:items-center">
+                    <a asp-action="Details" asp-controller="Companies" asp-route-id="@company.Id" class="hidden md:flex md:gap-2 md:items-center">
                         @if (company.LogoFileData is null || company.LogoContentType is null)
                         {
-                            <img class="h-6 w-6" src="~/images/default-logo.png" alt="@company.Name">
+                            @if (!string.IsNullOrEmpty(company.Name))
+                            {
+                                string firstCharacter = company.Name[0].ToString().ToUpper();
+                                    
+                                <div class="rounded-full bg-info h-6 w-6 flex items-center justify-center font-lato font-bold text-white">
+                                    @firstCharacter
+                                </div>
+                            }
                         }
                         else
                         {
                             <img class="h-6 w-6" src="@FileService.ConvertByteArrayToFile(company.LogoFileData, company.LogoContentType)" alt="@company.Name">
                         }
                         <span class="font-lato text-dark whitespace-nowrap truncate">@company.Name</span>
-                    </div>
+                    </a>
                     }
 
                     <button class="relative">
@@ -127,7 +134,7 @@
                         <div class="content gap-5">
                             <div class="flex bg-light w-1"></div>
                             <div class="flex flex-col gap-4 font-normal text-sm">
-                            @if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)))
+                            @if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.Project_Manager)))
                             {
                                 <a asp-area="" asp-controller="Projects" asp-action="Create">New Project</a>
                             }
@@ -169,7 +176,7 @@
                             }
                             <a asp-area="" asp-controller="Tickets" asp-action="AllTickets">All Tickets</a>
                             <a asp-area="" asp-controller="Tickets" asp-action="ArchivedTickets">Archived Tickets</a>
-                            @if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)))
+                            @if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.Project_Manager)))
                             {
                                 <a asp-area="" asp-controller="Tickets" asp-action="UnassignedTickets">Unassigned Tickets</a>
                             }
@@ -219,7 +226,7 @@
                         }
                         <div class="font-lato">
                             <span class="font-bold block">@user.FullName</span>
-                            <span class="text-sm block">@((RoleService.GetUserRolesAsync(user)).Result.FirstOrDefault())</span>
+                            <span class="text-sm block">@((RoleService.GetUserRolesAsync(user)).Result.FirstOrDefault()?.Replace("_", " "))</span>
                         </div>
                     </div>
                 </a>

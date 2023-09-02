@@ -1,0 +1,65 @@
+@model BugscapeMVC.Models.ViewModels.JoinViewModel
+
+@{
+    ViewData["Title"] = $"Join {Model.Invite.Company?.Name}";
+}
+
+<h1 class="font-rockwell text-xl mb-4 text-dark">Join @Model.Invite.Company?.Name</h1>
+
+<hr class="mb-4" />
+
+@if (Model.Invite.IsValid)
+{
+    <h1 class="mb-4 font-lato">Hi @Model.Invite.InviteeFirstName. You have been invited to join this team as a
+    <strong class="font-bold">@Model.Invite.Role.ToString().Replace("_", " ").ToLower()</strong>.</h1>
+    
+    <form asp-action="Join" asp-controller="Invites" method="post" class="flex flex-col gap-4 text-dark font-lato">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="Invite.Id">
+        <input type="hidden" asp-for="Invite.CompanyId">
+        <input type="hidden" asp-for="Invite.CompanyToken">
+        <input type="hidden" asp-for="Invite.InviteDate">
+        <input type="hidden" asp-for="Invite.InvitorId">
+        <input type="hidden" asp-for="Invite.IsValid">
+        <input type="hidden" asp-for="Invite.Role">
+
+        <div class="flex flex-col gap-2 text-sm">
+            <label asp-for="Invite.InviteeEmail"></label>
+            <input asp-for="Invite.InviteeEmail" disabled aria-disabled="true" class="disabled:bg-gray-300" />
+            <input type="hidden" asp-for="Invite.InviteeEmail" />
+        </div>
+
+        <div class="flex flex-col gap-2 text-sm">
+            <label asp-for="Invite.InviteeFirstName"></label>
+            <input asp-for="Invite.InviteeFirstName" />
+            <span asp-validation-for="Invite.InviteeFirstName" class="text-danger"></span>
+        </div>
+
+        <div class="flex flex-col gap-2 text-sm">
+            <label asp-for="Invite.InviteeLastName"></label>
+            <input asp-for="Invite.InviteeLastName" />
+            <span asp-validation-for="Invite.InviteeLastName" class="text-danger"></span>
+        </div>
+
+        <div class="flex flex-col gap-2 text-sm">
+            <label asp-for="Password"></label>
+            <input asp-for="Password" />
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+
+        <div class="flex flex-col gap-2 text-sm">
+            <label asp-for="ConfirmPassword"></label>
+            <input asp-for="ConfirmPassword" />
+            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+        </div>
+
+        <div class="flex justify-end">
+            <input type="submit" value="Join"
+                class="px-4 py-2 rounded-md cursor-pointer bg-success font-lato hover:bg-opacity-80 transition-opacity" />
+        </div>
+    </form>
+}
+else
+{
+    <p>Sorry, your invite has expired.</p>
+}
