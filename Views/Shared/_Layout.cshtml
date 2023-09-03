@@ -23,7 +23,7 @@
     <link rel="stylesheet" href="https://use.typekit.net/asq2vkb.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
-<body class="bg-lightest container scrollbar-thin scrollbar-thumb-light scrollbar-track-white scrollbar-thumb-rounded-xl">
+<body class="bg-lightest container scrollbar scrollbar-thumb-light scrollbar-track-lightest scrollbar-thumb-rounded-xl">
     <header class="fixed bottom-[calc(100vh-theme(spacing.24))] left-0 right-0 top-0 z-50 bg-lightest">
         <div class="container">
             <div class="flex items-center justify-between h-24 gap-10">
@@ -107,9 +107,9 @@
     <div class="flex min-h-screen">
         @if (user is not null)
         {
-        <aside class="hidden md:block fixed top-24 h-[calc(100vh-theme(spacing.24))] overflow-y-auto mr-6 scrollbar-thin scrollbar-thumb-light scrollbar-track-white scrollbar-thumb-rounded-xl">
+        <aside class="hidden md:block fixed top-24 h-[calc(100vh-theme(spacing.24))] overflow-y-auto mr-6 scrollbar-thin scrollbar-thumb-light scrollbar-track-lightest scrollbar-thumb-rounded-xl">
             <nav class="bg-mid rounded-t-xl min-w-[theme.spacing.64] min-h-[calc(100vh-theme(spacing.24))] pt-12 pb-4 px-8 flex flex-col justify-between gap-8">
-                <div class="space-y-6 font-dark font-bold">
+                <div class="space-y-6 font-dark font-bold text-sm font-lato uppercase">
                     <a class="flex gap-4 items-center group" asp-action="Dashboard" asp-controller="Home">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" viewBox="0 0 30 30" class="fill-light">
                             <path id="Icon_material-dashboard" data-name="Icon material-dashboard" d="M4.5,21.167H17.833V4.5H4.5ZM4.5,34.5H17.833v-10H4.5Zm16.667,0H34.5V17.833H21.167Zm0-30v10H34.5V4.5Z" transform="translate(-4.5 -4.5)" />
@@ -118,7 +118,7 @@
                     </a>
 
                     <div class="dropdown space-y-4">
-                        <div class="trigger cursor-pointer flex items-center justify-between">
+                        <div class="trigger cursor-pointer flex items-center justify-between group">
                             <div class="flex items-center gap-4">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" viewBox="0 0 30 24" class="fill-light">
                                     <path id="Icon_awesome-project-diagram" data-name="Icon awesome-project-diagram" d="M18,15H12a1.5,1.5,0,0,0-1.5,1.5v6A1.5,1.5,0,0,0,12,24h6a1.5,1.5,0,0,0,1.5-1.5v-6A1.5,1.5,0,0,0,18,15ZM9,1.5A1.5,1.5,0,0,0,7.5,0h-6A1.5,1.5,0,0,0,0,1.5v6A1.5,1.5,0,0,0,1.5,9H5.987l3.429,6A2.99,2.99,0,0,1,12,13.5h.013L9,8.227V6H19.5V3H9ZM28.5,0h-6A1.5,1.5,0,0,0,21,1.5v6A1.5,1.5,0,0,0,22.5,9h6A1.5,1.5,0,0,0,30,7.5v-6A1.5,1.5,0,0,0,28.5,0Z" />
@@ -126,14 +126,14 @@
                                 <span>Projects</span>
                             </div>
                             
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="switch fill-light h-4 w-4 transition-transform">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="switch fill-light h-4 w-4 group-hover:scale-125 transition-transform">
                                 <path id="Icon_awesome-plus" data-name="Icon awesome-plus" d="M18.571,10.107H12.143V3.679A1.429,1.429,0,0,0,10.714,2.25H9.286A1.429,1.429,0,0,0,7.857,3.679v6.429H1.429A1.429,1.429,0,0,0,0,11.536v1.429a1.429,1.429,0,0,0,1.429,1.429H7.857v6.429A1.429,1.429,0,0,0,9.286,22.25h1.429a1.429,1.429,0,0,0,1.429-1.429V14.393h6.429A1.429,1.429,0,0,0,20,12.964V11.536A1.429,1.429,0,0,0,18.571,10.107Z" transform="translate(0 -2.25)" />
                             </svg>
                         </div>
 
-                        <div class="content gap-5">
+                        <div class="content gap-10">
                             <div class="flex bg-light w-1"></div>
-                            <div class="flex flex-col gap-4 font-normal text-sm">
+                            <div class="flex flex-col gap-4 font-normal text-xs">
                             @if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.Project_Manager)))
                             {
                                 <a asp-area="" asp-controller="Projects" asp-action="Create">New Project</a>
@@ -153,7 +153,7 @@
                     </div>
 
                     <div class="dropdown space-y-4">
-                        <div class="trigger cursor-pointer flex items-center justify-between">
+                        <div class="trigger cursor-pointer flex items-center justify-between group">
                             <div class="flex items-center gap-4">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" viewBox="0 0 30 20" class="fill-light">
                                     <path id="Icon_awesome-ticket-alt" data-name="Icon awesome-ticket-alt" d="M6.667,9.5H23.333v10H6.667Zm20.833,5A2.5,2.5,0,0,0,30,17v5a2.5,2.5,0,0,1-2.5,2.5H2.5A2.5,2.5,0,0,1,0,22V17a2.5,2.5,0,0,0,0-5V7A2.5,2.5,0,0,1,2.5,4.5h25A2.5,2.5,0,0,1,30,7v5A2.5,2.5,0,0,0,27.5,14.5ZM25,9.083a1.25,1.25,0,0,0-1.25-1.25H6.25A1.25,1.25,0,0,0,5,9.083V19.917a1.25,1.25,0,0,0,1.25,1.25h17.5A1.25,1.25,0,0,0,25,19.917Z" transform="translate(0 -4.5)" />
@@ -161,14 +161,14 @@
                                 <span>Tickets</span>
                             </div>
                             
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="switch fill-light h-4 w-4 transition-transform">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="switch fill-light h-4 w-4 transition-transform group-hover:scale-125">
                                 <path id="Icon_awesome-plus" data-name="Icon awesome-plus" d="M18.571,10.107H12.143V3.679A1.429,1.429,0,0,0,10.714,2.25H9.286A1.429,1.429,0,0,0,7.857,3.679v6.429H1.429A1.429,1.429,0,0,0,0,11.536v1.429a1.429,1.429,0,0,0,1.429,1.429H7.857v6.429A1.429,1.429,0,0,0,9.286,22.25h1.429a1.429,1.429,0,0,0,1.429-1.429V14.393h6.429A1.429,1.429,0,0,0,20,12.964V11.536A1.429,1.429,0,0,0,18.571,10.107Z" transform="translate(0 -2.25)" />
                             </svg>
                         </div>
 
-                        <div class="content gap-5">
+                        <div class="content gap-10">
                             <div class="flex bg-light w-1"></div>
-                            <div class="flex flex-col gap-4 font-normal text-sm">
+                            <div class="flex flex-col gap-4 font-normal text-xs">
                             <a asp-area="" asp-controller="Tickets" asp-action="Create">New Ticket</a>
                             @if (!User.IsInRole(nameof(Roles.Admin)))
                             {

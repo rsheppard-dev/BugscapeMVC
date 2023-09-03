@@ -26,23 +26,228 @@
 	}
 </style>
 
-<h1>Dashboard</h1>
-<a href="javascript:void(0);">
-    @if (user?.AvatarFileData is not null && user?.AvatarContentType is not null)
-    {
-        <img class="media-object" src="@FileService.ConvertByteArrayToFile(user.AvatarFileData, user.AvatarContentType)" alt="@user.FullName" width="30px" height="30px">
-    }
-    else
-    {
-        <img class="media-object" src="~/images/default-avatar.png" alt="@user?.FullName" width="30" height="30">
-    }
-</a>
+<section class="grid grid-cols-12 justify-between gap-4 mb-6">
+    <a asp-action="Index" asp-controller="Projects" class="rounded-lg bg-info px-4 py-2 flex justify-between items-center gap-2 w-full col-span-6 xl:col-span-3">
+        <div class="flex flex-col gap-1 font-dark">
+            <span class="font-rockwell text-4xl">@Model.Projects?.Where(p => p.StartDate < DateTime.Now && p.EndDate > DateTime.Now).Count()</span>
+            <span class="font-lato text-sm">Active Projects</span>
+        </div>
+        <div class="w-14">
+            <img src="~/images/default-projects.png" alt="Active Projects">
+        </div>
+    </a>
 
-<strong>@user?.FullName</strong>
-<span class="text-muted" style="font-size:x-small;">
-    <strong>@Model.Company?.Name</strong>
-</span>
+    <a asp-action="Index" asp-controller="Tickets" class="rounded-lg bg-success px-4 py-2 flex justify-between items-center gap-2 w-full col-span-6 xl:col-span-3">
+        <div class="flex flex-col gap-1 font-dark">
+            <span class="font-rockwell text-4xl">@Model.Tickets?.Count()</span>
+            <span class="font-lato text-sm">Open Tickets</span>
+        </div>
+        <div class="w-14">
+            <img src="~/images/default-tickets.png" alt="Open Tickets">
+        </div>
+    </a>
 
+    <a asp-action="Index" asp-controller="Tickets" class="rounded-lg bg-warning px-4 py-2 flex justify-between items-center gap-2 w-full col-span-6 xl:col-span-3">
+        <div class="flex flex-col gap-1 font-dark">
+            <span class="font-rockwell text-4xl">@Model.Tickets?.Where(t => string.IsNullOrEmpty(t.DeveloperUserId)).Count()</span>
+            <span class="font-lato text-sm">Unassigned Tickets</span>
+        </div>
+        <div class="w-14">
+            <img src="~/images/unassigned-tickets.png" alt="Unassigned Tickets">
+        </div>
+    </a>
+
+    <a asp-action="Index" asp-controller="Tickets" class="rounded-lg bg-danger px-4 py-2 flex justify-between items-center gap-2 w-full col-span-6 xl:col-span-3">
+        <div class="flex flex-col gap-1 font-dark">
+            <span class="font-rockwell text-4xl">@Model.Company?.Members.Count()</span>
+            <span class="font-lato text-sm">Team Members</span>
+        </div>
+        <div class="w-14">
+            <img src="~/images/default-team.png" alt="Team Members">
+        </div>
+    </a>
+</section>
+
+<div class="grid grid-cols-12 gap-4 mb-6">
+    <section class="col-span-12 lg:col-span-8 rounded-md bg-white px-4 py-2 flex flex-col">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="font-rockwell text-dark text-xl font-bold">Projects</h2>
+            
+            <a asp-action="Index" asp-controller="Projects" class="bg-mid px-4 py-2 text-dark rounded-lg flex items-center gap-2 group">
+                <span class="font-lato text-sm">@Model.Projects?.Count</span>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 group-hover:translate-x-1 transition-transform">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                </svg>
+            </a>
+        </div>
+
+        @if (Model.Projects is null || Model.Projects?.Count == 0)
+        {
+            <p class="font-lato flex flex-col gap-4 grow">There are currently no projects to show.</p>
+        }
+        else
+        {        
+        <div class="grow relative overflow-x-auto rounded-t-lg scrollbar-thin scrollbar-thumb-light scrollbar-track-white">
+            <table class="w-full text-sm text-left text-dark font-lato">
+                <thead class="text-xs bg-light uppercase">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 whitespace-nowrap">
+                            Name
+                        </th>
+                        <th scope="col" class="px-6 py-3 whitespace-nowrap">
+                            Start Date
+                        </th>
+                        <th scope="col" class="px-6 py-3 whitespace-nowrap">
+                            End Date
+                        </th>
+                        <th scope="col" class="px-6 py-3 whitespace-nowrap">
+                            Priority
+                        </th>
+                        <th scope="col" class="px-6 py-3 whitespace-nowrap">
+                            Action
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int rowNumber = 0;
+                    }
+
+                    @foreach (Project project in Model.Projects!.OrderBy(project => project.EndDate))
+                    {
+                        string rowColor = rowNumber % 2 == 0 ? "bg-lightest" : "bg-mid"; // Define row colors based on the counter.
+                        rowNumber++;
+                    
+                    <tr class="@rowColor border-b">
+                        <th scope="row" class="px-6 py-4 whitespace-nowrap">
+                            @project.Name
+                        </th>
+                        <td class="px-6 py-4">
+                            @project.StartDate.ToString("dd.MM.yyyy")
+                        </td>
+                        <td class="px-6 py-4">
+                            @project.EndDate.ToString("dd.MM.yyyy")
+                        </td>
+                        <td class="px-6 py-4">
+                            @{
+                                string badgeClass = "bg-danger";
+
+                                switch (project.ProjectPriority?.Name)
+                                {
+                                    case nameof(Priorities.Urgent):
+                                        badgeClass = "bg-danger";
+                                        break;
+                                    case nameof(Priorities.High):
+                                        badgeClass = "bg-warning";
+                                        break;
+                                    case nameof(Priorities.Medium):
+                                        badgeClass = "bg-info";
+                                        break;
+                                    default:
+                                        badgeClass = "bg-success";
+                                        break;
+                                }
+                            }
+                            <span class="uppercase px-2 py-1 @badgeClass rounded-md text-xs font-bold">@project.ProjectPriority?.Name</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <a asp-action="Details" asp-controller="Projects" asp-route-id="@project.Id">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        }
+
+        @if (User.IsInRole(nameof(Roles.Admin)))
+        {
+        <div>
+            <hr class="my-4">
+
+            <a asp-action="Create" asp-controller="Projects" class="flex items-center gap-2 w-fit group">
+                <div class="bg-success group-hover:bg-opacity-80 transition-opacity flex items-center justify-center rounded-full p-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="fill-white h-4 w-4">
+                        <path id="Icon_awesome-plus" data-name="Icon awesome-plus" d="M18.571,10.107H12.143V3.679A1.429,1.429,0,0,0,10.714,2.25H9.286A1.429,1.429,0,0,0,7.857,3.679v6.429H1.429A1.429,1.429,0,0,0,0,11.536v1.429a1.429,1.429,0,0,0,1.429,1.429H7.857v6.429A1.429,1.429,0,0,0,9.286,22.25h1.429a1.429,1.429,0,0,0,1.429-1.429V14.393h6.429A1.429,1.429,0,0,0,20,12.964V11.536A1.429,1.429,0,0,0,18.571,10.107Z" transform="translate(0 -2.25)" />
+                    </svg>
+                </div>
+                <span class="font-lato font-bold">Create new project</span>
+            </a>
+        </div>
+        }
+    </section>
+
+    <section class="col-span-12 lg:col-span-4 rounded-md bg-white px-4 py-2 flex flex-col">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="font-rockwell text-dark text-xl font-bold">Team</h2>
+            
+            <a asp-action="Index" asp-controller="Projects" class="bg-mid group px-4 py-2 text-dark rounded-lg flex items-center gap-2">
+                <span class="font-lato text-sm">@Model.Members?.Count</span>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 group-hover:translate-x-1 transition-transform">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                </svg>
+            </a>
+        </div>
+
+        @if (Model.Members is null || Model.Members?.Count == 0)
+        {
+            <div class="flex flex-col gap-4 grow">
+                <p class="font-lato">There are currently no team members to show.</p>
+            </div>
+        }
+        else
+        {        
+            <div class="flex flex-col gap-4 grow">
+                @foreach (AppUser member in Model.Members!.OrderBy(member => member.FirstName).ThenBy(member => member.LastName))
+                {
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        @if (member.AvatarFileData is null || member.AvatarContentType is null)
+                        {
+                            <img class="h-10 w-10 object-cover rounded-full" src="~/images/default-avatar.png" alt="@member.FullName">
+                        }
+                        else
+                        {
+                            <img class="h-10 w-10 object-cover rounded-full" src="@FileService.ConvertByteArrayToFile(member.AvatarFileData, member.AvatarContentType)" alt="@member.FullName">
+                        }
+
+                        <div class="flex flex-col">
+                            <strong class="font-bold font-lato text-sm">@member.FullName</strong>
+                            <span class="font-lato text-gray-400 text-xs">@((RolesService.GetUserRolesAsync(member)).Result.FirstOrDefault()?.Replace("_", " "))</span>
+                        </div>
+                    </div>
+
+                    <a href="mailto:@member.Email" class="p-2 bg-mid rounded-full">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 stroke-dark">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                        </svg>
+                    </a>
+                </div>
+                }
+            </div>
+        }
+
+        @if (User.IsInRole(nameof(Roles.Admin)))
+        {
+        <div>
+            <hr class="my-4">
+
+            <a asp-action="Create" asp-controller="Invites" class="flex items-center gap-2 w-fit group">
+                <div class="bg-success group-hover:bg-opacity-80 transition-opacity flex items-center justify-center rounded-full p-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="fill-white h-4 w-4">
+                        <path id="Icon_awesome-plus" data-name="Icon awesome-plus" d="M18.571,10.107H12.143V3.679A1.429,1.429,0,0,0,10.714,2.25H9.286A1.429,1.429,0,0,0,7.857,3.679v6.429H1.429A1.429,1.429,0,0,0,0,11.536v1.429a1.429,1.429,0,0,0,1.429,1.429H7.857v6.429A1.429,1.429,0,0,0,9.286,22.25h1.429a1.429,1.429,0,0,0,1.429-1.429V14.393h6.429A1.429,1.429,0,0,0,20,12.964V11.536A1.429,1.429,0,0,0,18.571,10.107Z" transform="translate(0 -2.25)" />
+                    </svg>
+                </div>
+                <span class="font-lato font-bold">Invite new team member</span>
+            </a>
+        </div>
+        }
+    </section>
+</div>
 
 <div>
     <div classxfont-weighteighteightgetainer-fluid">
@@ -177,7 +382,7 @@
                                 @if (Model.Projects is not null)
                                 {
                                 <table class="table table-hover">
-                                    <thead class="">
+                                    <th class="">
                                         <tr>
                                             <th>Name</th>
                                             <th>Start Date</th>
@@ -185,7 +390,7 @@
                                             <th>Priority</th>
                                             <th>Action</th>
                                         </tr>
-                                    </thead>
+                                    </th>
                                     <tbody>
                                     @foreach (Project project in Model.Projects.OrderByDescending(project => project.EndDate))
                                     {
@@ -221,7 +426,7 @@
                                 @if (Model.Tickets is not null)
                                 {
                                 <table class="table table-hover">
-                                    <thead class="">
+                                    <th class="">
                                         <tr>
                                             <th>Title</th>
                                             <th>Developer</th>
@@ -230,7 +435,7 @@
                                             <th>Date</th>
                                             <th>Action</th>
                                         </tr>
-                                    </thead>
+                                    </th>
                                     <tbody>
                                         @foreach (Ticket ticket in Model.Tickets.OrderByDescending(ticket => ticket.Created))
                                         {
