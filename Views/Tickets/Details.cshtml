@@ -10,7 +10,7 @@
 
 @{
     AppUser? user = await UserManager.GetUserAsync(User);
-    AppUser? Project_Manager = await ProjectService.GetProject_ManagerAsync(Model.ProjectId);
+    AppUser? Project_Manager = await ProjectService.GetProjectManagerAsync(Model.ProjectId);
 
     ViewData["Title"] = "Details";
 }

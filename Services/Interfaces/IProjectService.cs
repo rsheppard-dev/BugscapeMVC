@@ -13,7 +13,7 @@ namespace BugscapeMVC.Services.Interfaces
         public Task<List<AppUser>> GetAllProjectMembersExceptPMAsync(int projectId);
         public Task<List<Project>> GetArchivedProjectsByCompanyAsync(int companyId);
         public Task<List<AppUser>> GetDevelopersOnProjectAsync(int projectId);
-        public Task<AppUser?> GetProject_ManagerAsync(int projectId);
+        public Task<AppUser?> GetProjectManagerAsync(int projectId);
         public Task<List<AppUser>> GetProjectMembersByRoleAsync(int projectId, string role);
         public Task<Project?> GetProjectByIdAsync(int projectId, int companyId);
         public Task<List<Project>> GetUnassignedProjectsAsync(int companyId);

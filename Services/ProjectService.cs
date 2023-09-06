@@ -39,7 +39,7 @@ namespace BugscapeMVC.Services
         #region Add Project Manager
         public async Task<bool> AddProject_ManagerAsync(string userId, int projectId)
         {
-            AppUser? currentPM = await GetProject_ManagerAsync(projectId);
+            AppUser? currentPM = await GetProjectManagerAsync(projectId);
 
             if (currentPM is not null)
             {
@@ -245,7 +245,7 @@ namespace BugscapeMVC.Services
         #endregion
 
         #region Get Project Manager
-        public async Task<AppUser?> GetProject_ManagerAsync(int projectId)
+        public async Task<AppUser?> GetProjectManagerAsync(int projectId)
         {
             Project? project = await _context.Projects
                 .Include(project => project.Members)
@@ -374,7 +374,7 @@ namespace BugscapeMVC.Services
         {
             try
             {
-                string? Project_ManagerId = (await GetProject_ManagerAsync(projectId))?.Id;
+                string? Project_ManagerId = (await GetProjectManagerAsync(projectId))?.Id;
 
                 return userId == Project_ManagerId;
             }

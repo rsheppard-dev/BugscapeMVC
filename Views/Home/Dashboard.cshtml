@@ -7,6 +7,7 @@
 @inject UserManager<AppUser> UserManager
 @inject IFileService FileService
 @inject IRoleService RolesService
+@inject IProjectService ProjectService
 
 @{
     ViewData["Title"] = "Dashboard";
@@ -57,9 +58,9 @@
 
 <div class="grid grid-cols-12 gap-6 mb-6">
     <section class="col-span-6 lg:col-span-4 rounded-md bg-white px-6 py-3 flex flex-col lg:order-2">
-        <h3 class="font-rockwell text-dark text-lg font-bold mb-4">Projects By Priority</h3>
-        <div>
-            <canvas data-chart="projects by priority"></canvas>
+        <h2 class="font-rockwell text-dark text-xl font-bold mb-4">Tickets By Priority</h2>
+        <div class="h-full flex items-center justify-center">
+            <canvas data-chart="tickets by priority"></canvas>
         </div>
     </section>
 
@@ -67,7 +68,7 @@
         <div class="flex justify-between items-center mb-6">
             <h2 class="font-rockwell text-dark text-xl font-bold">Team</h2>
             
-            <a asp-action="Index" asp-controller="Projects" class="bg-mid group px-4 py-2 text-dark rounded-lg flex items-center gap-2">
+            <a asp-action="Index" asp-controller="Projects" title="Members" class="bg-mid group px-4 py-2 text-dark rounded-lg flex items-center gap-2">
                 <span class="font-lato text-sm">@Model.Members?.Count</span>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 group-hover:translate-x-1 transition-transform">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
@@ -124,15 +125,16 @@
                         <path id="Icon_awesome-plus" data-name="Icon awesome-plus" d="M18.571,10.107H12.143V3.679A1.429,1.429,0,0,0,10.714,2.25H9.286A1.429,1.429,0,0,0,7.857,3.679v6.429H1.429A1.429,1.429,0,0,0,0,11.536v1.429a1.429,1.429,0,0,0,1.429,1.429H7.857v6.429A1.429,1.429,0,0,0,9.286,22.25h1.429a1.429,1.429,0,0,0,1.429-1.429V14.393h6.429A1.429,1.429,0,0,0,20,12.964V11.536A1.429,1.429,0,0,0,18.571,10.107Z" transform="translate(0 -2.25)" />
                     </svg>
                 </div>
-                <span class="font-lato font-bold">Invite new team member</span>
+                <span class="font-lato font-bold text-sm">Invite new team member</span>
             </a>
         </div>
         }
     </section>
 
     <section class="col-span-12 lg:col-span-8 rounded-md bg-white px-6 py-3 flex flex-col lg:order-1">
-        <h3 class="font-rockwell text-dark text-lg font-bold mb-4">Tickets Resolved</h3>
-        <div>
+        <h2 class="font-rockwell text-dark text-xl font-bold">Tickets Resolved</h2>
+        <span class="block font-lato text-gray-400 mb-4">Last 30 Days</span>
+        <div class="h-full flex justify-center items-center">
             <canvas data-chart="tickets resolved"></canvas>
         </div>
     </section>
@@ -141,7 +143,7 @@
         <div class="flex justify-between items-center mb-6">
             <h2 class="font-rockwell text-dark text-xl font-bold">Projects</h2>
             
-            <a asp-action="Index" asp-controller="Projects" class="bg-mid px-4 py-2 text-dark rounded-lg flex items-center gap-2 group">
+            <a asp-action="Index" asp-controller="Projects" title="Projects" class="bg-mid px-4 py-2 text-dark rounded-lg flex items-center gap-2 group">
                 <span class="font-lato text-sm">@Model.Projects?.Count</span>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 group-hover:translate-x-1 transition-transform">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
@@ -163,10 +165,10 @@
                             Name
                         </th>
                         <th scope="col" class="px-6 py-3 whitespace-nowrap">
-                            Start Date
+                            PM
                         </th>
                         <th scope="col" class="px-6 py-3 whitespace-nowrap">
-                            End Date
+                            Due
                         </th>
                         <th scope="col" class="px-6 py-3 whitespace-nowrap">
                             Priority
@@ -183,6 +185,7 @@
 
                     @foreach (Project project in Model.Projects!.OrderBy(project => project.EndDate))
                     {
+                        AppUser? projectManager = await ProjectService.GetProjectManagerAsync(project.Id);
                         string rowColor = rowNumber % 2 == 0 ? "bg-lightest" : "bg-mid"; // Define row colors based on the counter.
                         rowNumber++;
                     
@@ -191,7 +194,21 @@
                             @project.Name
                         </th>
                         <td class="px-6 py-4">
-                            @project.StartDate.ToString("dd.MM.yyyy")
+                            @if (projectManager is null)
+                            {
+                                <span class="bg-gray-200 text-dark uppercase px-2 py-1 rounded-md text-xs font-bold">Unassigned</span>
+                            }
+                            else
+                            {
+                                @if (projectManager?.AvatarFileData is null || projectManager?.AvatarContentType is null)
+                                {
+                                    <img class="h-8 w-8 object-cover rounded-full" src="~/images/default-avatar.png" alt="@projectManager?.FullName">
+                                }
+                                else
+                                {
+                                    <img class="h-8 w-8 object-cover rounded-full" src="@FileService.ConvertByteArrayToFile(projectManager.AvatarFileData, projectManager.AvatarContentType)" alt="@projectManager?.FullName">
+                                }
+                            }
                         </td>
                         <td class="px-6 py-4">
                             @project.EndDate.ToString("dd.MM.yyyy")
@@ -219,8 +236,8 @@
                             <span class="uppercase px-2 py-1 @badgeClass rounded-md text-xs font-bold">@project.ProjectPriority?.Name</span>
                         </td>
                         <td class="px-6 py-4">
-                            <a asp-action="Details" asp-controller="Projects" asp-route-id="@project.Id">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <a asp-action="Details" asp-controller="Projects" title="Project Details" asp-route-id="@project.Id">
+                                <svg xmlns="http://www.w3.org/2000/svg" title="Project Details" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
                                 </svg>
                             </a>
@@ -243,148 +260,140 @@
                         <path id="Icon_awesome-plus" data-name="Icon awesome-plus" d="M18.571,10.107H12.143V3.679A1.429,1.429,0,0,0,10.714,2.25H9.286A1.429,1.429,0,0,0,7.857,3.679v6.429H1.429A1.429,1.429,0,0,0,0,11.536v1.429a1.429,1.429,0,0,0,1.429,1.429H7.857v6.429A1.429,1.429,0,0,0,9.286,22.25h1.429a1.429,1.429,0,0,0,1.429-1.429V14.393h6.429A1.429,1.429,0,0,0,20,12.964V11.536A1.429,1.429,0,0,0,18.571,10.107Z" transform="translate(0 -2.25)" />
                     </svg>
                 </div>
-                <span class="font-lato font-bold">Create new project</span>
+                <span class="font-lato font-bold text-sm">Create new project</span>
             </a>
         </div>
         }
     </section>
-    
-</div>
-<div>
-    <hr />
-    <div class="mt-5 ">
-        <div class="row">
-            @* Projects Table *@
-            <div class="col">
-                <div class="bg-secondary">
-                    <div class="card m-1 p-2">
-                        <div class="card-header">
-                            <h2>Projects</h2>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive" style="overflow-y:auto;height:600px;">
-                                @if (Model.Projects is not null)
-                                {
-                                <table class="table table-hover">
-                                    <th class="">
-                                        <tr>
-                                            <th>Name</th>
-                                            <th>Start Date</th>
-                                            <th>End Date</th>
-                                            <th>Priority</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </th>
-                                    <tbody>
-                                    @foreach (Project project in Model.Projects.OrderByDescending(project => project.EndDate))
-                                    {
-                                        <tr>
-                                            <td><a asp-action="Details" asp-controller="Projects" asp-route-id="@project.Id" style="color: black;"><strong>@project.Name</strong></a></td>
-                                            <td><span style="font-size: small;">@project.StartDate.ToString("dd.MM.yyyy")</span></td>
-                                            <td><span style="font-size: small;">@project.EndDate.ToString("dd.MM.yyyy")</span></td>
-                                            <td><span class="badge bg-dark">@project.ProjectPriority?.Name</span></td>
-                                            <td>
-                                                <a class="btn btn-sm btn-outline-secondary" asp-action="Details" asp-controller="Projects" asp-route-id="@project.Id"><i class="fs-5 bi-justify"></i></a>
-                                            </td>
-                                        </tr>
-                                    }
-                                    </tbody>
-                                </table>
-                                }
-                            </div>
-                        </div>
-                        <div class="card-footer">
-                        </div>
-                    </div>
-                </div>
-            </div>
-            @* Tickets Table *@
-            <div class="col">
-                <div class="bg-secondary">
-                    <div class="card m-1 p-2">
-                        <div class="card-header">
-                            <h2>Tickets</h2>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive" style="overflow-y:auto;height:600px;">
-                                @if (Model.Tickets is not null)
-                                {
-                                <table class="table table-hover">
-                                    <th class="">
-                                        <tr>
-                                            <th>Title</th>
-                                            <th>Developer</th>
-                                            <th>Status</th>
-                                            <th>Priority</th>
-                                            <th>Date</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </th>
-                                    <tbody>
-                                        @foreach (Ticket ticket in Model.Tickets.OrderByDescending(ticket => ticket.Created))
-                                        {
-                                            <tr>
-                                                <td><a asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id" style="color:black; font-size: small;"><strong>@ticket.Title</strong></a> </td>
-                                                <td>
-                                                    @if (ticket.DeveloperUser is null)
-                                                    {
-                                                        <span class="badge bg-warning text-dark">Unassigned</span>
-                                                    }
-                                                    else
-                                                    {
-                                                        <span style="font-size: small;">@ticket.DeveloperUser.FullName</span>                                                            
-                                                    }
-                                                </td>
-                                                @if (ticket.TicketStatus?.Name == "New")
-                                                {
-                                                <td><span class="badge bg-success rounded-pill">@ticket.TicketStatus.Name</span></td>
-                                                }
-                                                else
-                                                {
-                                                <td><span class="badge bg-secondary rounded-pill">@ticket.TicketStatus?.Name</span></td>
-                                                }
-                                                <td><span class="badge bg-dark">@ticket.TicketPriority?.Name</span></td>
-                                                <td><span style="font-size: small;">@ticket.Created.ToString("dd.MM.yyyy")</span></td>
-                                                <td>
-                                                    <a class="btn btn-sm btn-outline-secondary" asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id"><i class="fs-5 bi-justify"></i></a>
-                                                </td>
-                                            </tr>
-                                        }
-                                    </tbody>
-                                </table>
-                                }
-                            </div>
-                        </div>
-                        <div class="card-footer">
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-2 ">
-                <div class="bg-dark">
-                    <div class="card m-1 p-2">
-                        <div class="card-header">
-                            <h2>Members</h2>
-                            <hr />
-                        </div>
-                        <div class="card-body" style="overflow-y:auto;height:600px;background-color:antiquewhite">
-                            @if (Model.Members is not null)
+
+    <section class="col-span-12 rounded-md bg-white px-6 py-3 flex flex-col order-5">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="font-rockwell text-dark text-xl font-bold">Tickets</h2>
+            
+            <a asp-action="Index" asp-controller="Tickets" title="Tickets" class="bg-mid px-4 py-2 text-dark rounded-lg flex items-center gap-2 group">
+                <span class="font-lato text-sm">@Model.Tickets?.Count</span>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 group-hover:translate-x-1 transition-transform">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                </svg>
+            </a>
+        </div>
+
+        @if (Model.Tickets is null || Model.Tickets?.Count == 0)
+        {
+            <p class="font-lato flex flex-col gap-4 grow">There are currently no tickets to show.</p>
+        }
+        else
+        {        
+        <div class="grow relative overflow-x-auto rounded-t-lg scrollbar-thin scrollbar-thumb-light scrollbar-track-white">
+            <table class="w-full text-sm text-left text-dark font-lato">
+                <thead class="text-xs bg-light uppercase">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 whitespace-nowrap">
+                            Title
+                        </th>
+                        <th scope="col" class="px-6 py-3 whitespace-nowrap">
+                            Developer
+                        </th>
+                        <th scope="col" class="px-6 py-3 whitespace-nowrap">
+                            Status
+                        </th>
+                        <th scope="col" class="px-6 py-3 whitespace-nowrap">
+                            Priority
+                        </th>
+                        <th scope="col" class="px-6 py-3 whitespace-nowrap">
+                            Date
+                        </th>
+                        <th scope="col" class="px-6 py-3 whitespace-nowrap">
+                            Action
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int rowNumber = 0;
+                    }
+
+                    @foreach (Ticket ticket in Model.Tickets!.OrderBy(ticket => ticket.Created))
+                    {
+                        string rowColor = rowNumber % 2 == 0 ? "bg-lightest" : "bg-mid"; // Define row colors based on the counter.
+                        rowNumber++;
+                    
+                    <tr class="@rowColor border-b">
+                        <th scope="row" class="px-6 py-4 whitespace-nowrap">
+                            @ticket.Title
+                        </th>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            @if (ticket.DeveloperUser is null)
                             {
-                                foreach (AppUser member in Model.Members)
+                                <span class="bg-gray-200 text-dark uppercase px-2 py-1 rounded-md text-xs font-bold">Unassigned</span>
+                            }
+                            else
+                            {
+                                @if (ticket.DeveloperUser?.AvatarFileData is null || ticket.DeveloperUser?.AvatarContentType is null)
                                 {
-                                    <div>
-                                        <span style="font-weight: bold">@member.FullName</span>
-                                        <h6>@((await RolesService.GetUserRolesAsync(member)).FirstOrDefault())</h6>
-                                    </div>
-                                    <hr>
+                                    <img class="h-8 w-8 object-cover rounded-full" src="~/images/default-avatar.png" alt="@ticket.DeveloperUser?.FullName">
+                                }
+                                else
+                                {
+                                    <img class="h-8 w-8 object-cover rounded-full" src="@FileService.ConvertByteArrayToFile(ticket.DeveloperUser.AvatarFileData, ticket.DeveloperUser.AvatarContentType)" alt="@ticket.DeveloperUser?.FullName">
                                 }
                             }
-                        </div>
-                    </div>
-                </div>
-            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="bg-dark text-white uppercase px-2 py-1 rounded-md text-xs font-bold">@ticket.TicketStatus?.Name</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            @{
+                                string badgeClass = "bg-danger";
+
+                                switch (ticket.TicketPriority?.Name)
+                                {
+                                    case nameof(Priorities.Urgent):
+                                        badgeClass = "bg-danger";
+                                        break;
+                                    case nameof(Priorities.High):
+                                        badgeClass = "bg-warning";
+                                        break;
+                                    case nameof(Priorities.Medium):
+                                        badgeClass = "bg-info";
+                                        break;
+                                    default:
+                                        badgeClass = "bg-success";
+                                        break;
+                                }
+                            }
+                            <span class="uppercase px-2 py-1 @badgeClass rounded-md text-xs font-bold">@ticket.TicketPriority?.Name</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span>@ticket.Created.ToString("dd.MM.yyyy")</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <a asp-action="Details" title="Ticket Details" asp-controller="Tickets" asp-route-id="@ticket.Id">
+                                <svg xmlns="http://www.w3.org/2000/svg" title="Ticket Details" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
+                                </svg>
+                            </a>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
         </div>
-    </div>
+        }
+
+        <div>
+            <hr class="my-4">
+
+            <a asp-action="Create" asp-controller="Tickets" class="flex items-center gap-2 w-fit group">
+                <div class="bg-success group-hover:bg-opacity-80 transition-opacity flex items-center justify-center rounded-full p-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="fill-white h-4 w-4">
+                        <path id="Icon_awesome-plus" data-name="Icon awesome-plus" d="M18.571,10.107H12.143V3.679A1.429,1.429,0,0,0,10.714,2.25H9.286A1.429,1.429,0,0,0,7.857,3.679v6.429H1.429A1.429,1.429,0,0,0,0,11.536v1.429a1.429,1.429,0,0,0,1.429,1.429H7.857v6.429A1.429,1.429,0,0,0,9.286,22.25h1.429a1.429,1.429,0,0,0,1.429-1.429V14.393h6.429A1.429,1.429,0,0,0,20,12.964V11.536A1.429,1.429,0,0,0,18.571,10.107Z" transform="translate(0 -2.25)" />
+                    </svg>
+                </div>
+                <span class="font-lato font-bold text-sm">Submit new ticket</span>
+            </a>
+        </div>
+    </section>
 </div>
 
 @section scripts {
@@ -392,10 +401,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js" integrity="sha512-SIMGYRUjwY8+gKg7nn9EItdD8LCADSDfJNutF9TPrvEo86sQmFMh6MyralfIyhADlajSxqc7G0gs7+MwWF/ogQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script>
-        const projectsByPriority = document.querySelector('[data-chart="projects by priority"]');
+        const ticketsByPriority = document.querySelector('[data-chart="tickets by priority"]');
         const ticketsResolved = document.querySelector('[data-chart="tickets resolved"]');
 
-        new Chart(projectsByPriority, {
+        new Chart(ticketsByPriority, {
             type: 'doughnut',
             data: {
                 labels: [
@@ -405,12 +414,12 @@
                     '@nameof(Priorities.Urgent)'
                 ],
                 datasets: [{
-                    label: 'Projects By Priority',
+                    label: 'Tickets By Priority',
                     data: [
-                        @Model.Projects?.Where(project => project.ProjectPriority?.Name == nameof(Priorities.Low)).Count(),
-                        @Model.Projects?.Where(project => project.ProjectPriority?.Name == nameof(Priorities.Medium)).Count(),
-                        @Model.Projects?.Where(project => project.ProjectPriority?.Name == nameof(Priorities.High)).Count(),
-                        @Model.Projects?.Where(project => project.ProjectPriority?.Name == nameof(Priorities.Urgent)).Count(),
+                        @Model.Tickets?.Where(ticket => ticket.TicketPriority?.Name == nameof(Priorities.Low)).Count(),
+                        @Model.Tickets?.Where(ticket => ticket.TicketPriority?.Name == nameof(Priorities.Medium)).Count(),
+                        @Model.Tickets?.Where(ticket => ticket.TicketPriority?.Name == nameof(Priorities.High)).Count(),
+                        @Model.Tickets?.Where(ticket => ticket.TicketPriority?.Name == nameof(Priorities.Urgent)).Count(),
                     ],
                     backgroundColor: [
                         '#0AD69F',
@@ -433,33 +442,42 @@
             },
         });
 
-        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        const currentMonthIndex = new Date().getMonth(); // Get the index of the current month (0-based)
-        const last12Months = [];
+        const today = new Date();
+        const days = [];
+        const dataSubmitted = [];
+        const dataResolved = [];
 
-        // Generate labels for the last 12 months, with the current month last
-        for (let i = 0; i < 12; i++) {
-            const monthIndex = (currentMonthIndex - i + 12) % 12; // Ensure the index wraps around for previous months
-            last12Months.unshift(months[monthIndex]); // Add the month to the beginning of the array
+        // Generate data for the last 30 days, starting from today and going backward
+        for (let i = 29; i >= 0; i--) {
+            const date = new Date(today);
+            date.setDate(today.getDate() - i); // Calculate the date for each day
+
+            // Format the date as desired (e.g., 'Sep 01')
+            const formattedDate = date.toLocaleString('default', { month: 'short', day: '2-digit' });
+
+            // Push the formatted date to the labels array
+            days.push(formattedDate);
+
+            // Generate some example data for Tickets Submitted and Tickets Resolved
+            dataSubmitted.push(Math.floor(Math.random() * 100));
+            dataResolved.push(Math.floor(Math.random() * 100));
         }
 
         new Chart(ticketsResolved, {
             type: 'line',
             data: {
-                labels: last12Months,
+                labels: days,
                 datasets: [
                     {
                         label: 'Tickets Submitted',
-                        data: [65, 59, 80, 81, 56, 55, 65, 59, 80, 81, 56, 55], // Data for Tickets Submitted
-                        fill: false,
-                        borderColor: '#0AD69F',
+                        data: dataSubmitted,
+                        borderColor: '#00B4D8',
                         tension: 0.1
                     },
                     {
                         label: 'Tickets Resolved',
-                        data: [40, 30, 100, 50, 24, 75, 40, 30, 100, 50, 24, 75,], // Data for Tickets Resolved
-                        fill: false,
-                        borderColor: '#00B4D8',
+                        data: dataResolved,
+                        borderColor: '#0AD69F',
                         tension: 0.1
                     }
                 ]
@@ -467,13 +485,43 @@
             options: {
                 plugins: {
                     legend: {
-                        position: 'bottom', // Place the legend at the bottom
+                        position: 'bottom',
                         labels: {
-                            usePointStyle: true, // Display legend keys as circles
+                            usePointStyle: true,
+                            generateLabels: function (chart) {
+                                const labels = Chart.defaults.plugins.legend.labels.generateLabels(chart);
+                                labels.forEach(function (label) {
+                                    const dataset = chart.data.datasets.find(d => d.label === label.text);
+                                    if (dataset) {
+                                        label.fillStyle = dataset.borderColor;
+                                    }
+                                });
+                                return labels;
+                            }
                         },
                     },
                 },
-            },
+                scales: {
+                    x: {
+                        display: true,
+                        title: {
+                            display: true,
+                            text: 'Date'
+                        },
+                        ticks: {
+                            autoSkip: true, // Automatically skip labels to avoid clutter
+                            maxTicksLimit: 6 // Maximum number of labels to display (adjust as needed)
+                        }
+                    },
+                    y: {
+                        display: true,
+                        title: {
+                            display: true,
+                            text: 'Value'
+                        }
+                    }
+                }
+            }
         });
     </script>
 }
