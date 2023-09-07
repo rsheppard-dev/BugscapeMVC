@@ -13,7 +13,7 @@
     ViewData["Title"] = "Project Details";
 
     AppUser? user = await UserManager.GetUserAsync(User);
-    AppUser? Project_Manager = await ProjectService.GetProjectManagerAsync(Model.Id);
+    AppUser? ProjectManager = await ProjectService.GetProjectManagerAsync(Model.Id);
 }
 
 <h1>Details</h1>
@@ -76,23 +76,23 @@
                             <hr />
                         </div>
                         <div class="body" style="overflow-y:auto;height:300px;">
-                            @if (Project_Manager is not null)
+                            @if (ProjectManager is not null)
                             {
                                 <div>
-                                    @if (Project_Manager.AvatarFileData is not null && Project_Manager.AvatarContentType is not null)
+                                    @if (ProjectManager.AvatarFileData is not null && ProjectManager.AvatarContentType is not null)
                                     {
-                                        <img class="rounded-circle" src="@FileService.ConvertByteArrayToFile(Project_Manager.AvatarFileData, Project_Manager.AvatarContentType)" alt="@Project_Manager.FullName" width="60" height="60">
+                                        <img class="rounded-circle" src="@FileService.ConvertByteArrayToFile(ProjectManager.AvatarFileData, ProjectManager.AvatarContentType)" alt="@ProjectManager.FullName" width="60" height="60">
                                     }
                                     else
                                     {
-                                        <img class="rounded-circle" src="~/images/default-avatar.png" alt="@Project_Manager.FullName" width="60" height="60">
+                                        <img class="rounded-circle" src="~/images/default-avatar.png" alt="@ProjectManager.FullName" width="60" height="60">
                                     }
 
                                     <div>
-                                        <h5>@Project_Manager.FullName</h5>
-                                        <span>@Project_Manager.Email</span>
+                                        <h5>@ProjectManager.FullName</h5>
+                                        <span>@ProjectManager.Email</span>
                                         <p class="text-muted m-b-0">Project Manager</p>
-                                        @if (User.IsInRole(nameof(Roles.Admin)) || user?.Id == Project_Manager.Id)
+                                        @if (User.IsInRole(nameof(Roles.Admin)) || user?.Id == ProjectManager.Id)
                                         {
                                             <a class="btn btn-xs btn-primary" style="font:small" asp-action="AssignMembers" asp-controller="Projects" asp-route-id="@Model.Id">Manage Team</a>
                                         }
@@ -107,7 +107,7 @@
                                         <h5 class="text-muted m-b-0">Not Assigned</h5>
                                         @if (User.IsInRole(nameof(Roles.Admin)))
                                         {
-                                            <span><a asp-action="AssignProject_Manager" asp-controller="Home" asp-route-id="@Model.Id" class="btn btn-xs alert-primary">Assign PM</a></span>
+                                            <span><a asp-action="AssignProjectManager" asp-controller="Home" asp-route-id="@Model.Id" class="btn btn-xs alert-primary">Assign PM</a></span>
                                         }
                                     </div>
                                 </div>
@@ -136,7 +136,7 @@
                                                 }
                                                 else
                                                 {
-                                                    <img class="rounded-circle" src="~/images/default-avatar.png" alt="@Project_Manager?.FullName" width="30" height="30">
+                                                    <img class="rounded-circle" src="~/images/default-avatar.png" alt="@ProjectManager?.FullName" width="30" height="30">
                                                 }
                                             </div>
                                         </a>
@@ -210,7 +210,7 @@
                                                     }
                                                     else
                                                     {
-                                                        if (User.IsInRole(nameof(Roles.Admin)) || Project_Manager?.Id == user?.Id)
+                                                        if (User.IsInRole(nameof(Roles.Admin)) || ProjectManager?.Id == user?.Id)
                                                         {
                                                             <a class="btn btn-xs btn-info" asp-action="AssignDeveloper" asp-controller="Tickets" asp-route-id="@ticket.Id">Assign Dev</a>
                                                         }
@@ -230,12 +230,12 @@
                                                 <td>@ticket.Created.ToString("dd-MM-yyyy")</td>
                                                 <td>
                                                     <a class="btn btn-sm btn-outline-info" asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id"><i class="fs-5 bi-justify"></i></a>
-                                                    @if (ticket.DeveloperUserId == user?.Id || ticket.OwnerUserId == user?.Id || (Project_Manager?.Id == user?.Id) || User.IsInRole(nameof(Roles.Admin)))
+                                                    @if (ticket.DeveloperUserId == user?.Id || ticket.OwnerUserId == user?.Id || (ProjectManager?.Id == user?.Id) || User.IsInRole(nameof(Roles.Admin)))
                                                     {
                                                         <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-controller="Tickets" asp-route-id="@ticket.Id"><i class="fs-5 bi-pencil"></i></a>
                                                     }
 
-                                                    @if (User.IsInRole("Admin") || (Project_Manager?.Id == user?.Id))
+                                                    @if (User.IsInRole("Admin") || (ProjectManager?.Id == user?.Id))
                                                     {
                                                         <a class="btn btn-sm btn-outline-danger"><i class="fs-5 bi-archive"></i></a>
                                                     }

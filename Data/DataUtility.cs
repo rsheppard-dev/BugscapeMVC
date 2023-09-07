@@ -59,7 +59,7 @@ namespace BugscapeMVC.Data
             await SeedRolesAsync(roleManagerSvc);
             await SeedDefaultCompaniesAsync(dbContextSvc);
             await SeedDefaultUsersAsync(userManagerSvc);
-            await SeedDemo_UsersAsync(userManagerSvc);
+            await SeedDemoUsersAsync(userManagerSvc);
             await SeedDefaultTicketTypeAsync(dbContextSvc);
             await SeedDefaultTicketStatusAsync(dbContextSvc);
             await SeedDefaultTicketPriorityAsync(dbContextSvc);
@@ -73,10 +73,10 @@ namespace BugscapeMVC.Data
         {
             //Seed Roles
             await roleManager.CreateAsync(new IdentityRole(Roles.Admin.ToString()));
-            await roleManager.CreateAsync(new IdentityRole(Roles.Project_Manager.ToString()));
+            await roleManager.CreateAsync(new IdentityRole(Roles.ProjectManager.ToString()));
             await roleManager.CreateAsync(new IdentityRole(Roles.Developer.ToString()));
             await roleManager.CreateAsync(new IdentityRole(Roles.Submitter.ToString()));
-            await roleManager.CreateAsync(new IdentityRole(Roles.Demo_User.ToString()));
+            await roleManager.CreateAsync(new IdentityRole(Roles.DemoUser.ToString()));
         }
 
         public static async Task SeedDefaultCompaniesAsync(ApplicationDbContext context)
@@ -168,7 +168,7 @@ namespace BugscapeMVC.Data
                      {
                          CompanyId = company1Id,
                          Name = "Build an Issue Tracking Web Application",
-                         Description="A custom designed .Net Core application with postgres database.  The application is a multi tennent application designed to track issue tickets' progress.  Implemented with identity and user roles, Tickets are maintained in projects which are maintained by users in the role of Project_Manager.  Each project has a team and team members.",
+                         Description="A custom designed .Net Core application with postgres database.  The application is a multi tennent application designed to track issue tickets' progress.  Implemented with identity and user roles, Tickets are maintained in projects which are maintained by users in the role of ProjectManager.  Each project has a team and team members.",
                          StartDate = new DateTime(2021,8,20),
                          EndDate = new DateTime(2021,8,20).AddMonths(6),
                          ProjectPriorityId = priorityHigh
@@ -266,11 +266,11 @@ namespace BugscapeMVC.Data
             }
 
 
-            //Seed Default Project_Manager1 User
+            //Seed Default ProjectManager1 User
             defaultUser = new AppUser
             {
-                UserName = "Project_Manager1@bugtracker.com",
-                Email = "Project_Manager1@bugtracker.com",
+                UserName = "ProjectManager1@bugtracker.com",
+                Email = "ProjectManager1@bugtracker.com",
                 FirstName = "John",
                 LastName = "Appuser",
                 EmailConfirmed = true,
@@ -282,24 +282,24 @@ namespace BugscapeMVC.Data
                 if (user == null)
                 {
                     await userManager.CreateAsync(defaultUser, "Abc&123!");
-                    await userManager.AddToRoleAsync(defaultUser, Roles.Project_Manager.ToString());
+                    await userManager.AddToRoleAsync(defaultUser, Roles.ProjectManager.ToString());
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine("*************  ERROR  *************");
-                Console.WriteLine("Error Seeding Default Project_Manager1 User.");
+                Console.WriteLine("Error Seeding Default ProjectManager1 User.");
                 Console.WriteLine(ex.Message);
                 Console.WriteLine("***********************************");
                 throw;
             }
 
 
-            //Seed Default Project_Manager2 User
+            //Seed Default ProjectManager2 User
             defaultUser = new AppUser
             {
-                UserName = "Project_Manager2@bugtracker.com",
-                Email = "Project_Manager2@bugtracker.com",
+                UserName = "ProjectManager2@bugtracker.com",
+                Email = "ProjectManager2@bugtracker.com",
                 FirstName = "Jane",
                 LastName = "Appuser",
                 EmailConfirmed = true,
@@ -311,13 +311,13 @@ namespace BugscapeMVC.Data
                 if (user == null)
                 {
                     await userManager.CreateAsync(defaultUser, "Abc&123!");
-                    await userManager.AddToRoleAsync(defaultUser, Roles.Project_Manager.ToString());
+                    await userManager.AddToRoleAsync(defaultUser, Roles.ProjectManager.ToString());
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine("*************  ERROR  *************");
-                Console.WriteLine("Error Seeding Default Project_Manager2 User.");
+                Console.WriteLine("Error Seeding Default ProjectManager2 User.");
                 Console.WriteLine(ex.Message);
                 Console.WriteLine("***********************************");
                 throw;
@@ -555,7 +555,7 @@ namespace BugscapeMVC.Data
 
         }
 
-        public static async Task SeedDemo_UsersAsync(UserManager<AppUser> userManager)
+        public static async Task SeedDemoUsersAsync(UserManager<AppUser> userManager)
         {
             //Seed Demo Admin User
             var defaultUser = new AppUser
@@ -574,7 +574,7 @@ namespace BugscapeMVC.Data
                 {
                     await userManager.CreateAsync(defaultUser, "Abc&123!");
                     await userManager.AddToRoleAsync(defaultUser, Roles.Admin.ToString());
-                    await userManager.AddToRoleAsync(defaultUser, Roles.Demo_User.ToString());
+                    await userManager.AddToRoleAsync(defaultUser, Roles.DemoUser.ToString());
 
                 }
             }
@@ -588,13 +588,13 @@ namespace BugscapeMVC.Data
             }
 
 
-            //Seed Demo Project_Manager User
+            //Seed Demo ProjectManager User
             defaultUser = new AppUser
             {
                 UserName = "demopm@bugtracker.com",
                 Email = "demopm@bugtracker.com",
                 FirstName = "Demo",
-                LastName = "Project_Manager",
+                LastName = "ProjectManager",
                 EmailConfirmed = true,
                 CompanyId = company2Id
             };
@@ -604,14 +604,14 @@ namespace BugscapeMVC.Data
                 if (user == null)
                 {
                     await userManager.CreateAsync(defaultUser, "Abc&123!");
-                    await userManager.AddToRoleAsync(defaultUser, Roles.Project_Manager.ToString());
-                    await userManager.AddToRoleAsync(defaultUser, Roles.Demo_User.ToString());
+                    await userManager.AddToRoleAsync(defaultUser, Roles.ProjectManager.ToString());
+                    await userManager.AddToRoleAsync(defaultUser, Roles.DemoUser.ToString());
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine("*************  ERROR  *************");
-                Console.WriteLine("Error Seeding Demo Project_Manager1 User.");
+                Console.WriteLine("Error Seeding Demo ProjectManager1 User.");
                 Console.WriteLine(ex.Message);
                 Console.WriteLine("***********************************");
                 throw;
@@ -635,7 +635,7 @@ namespace BugscapeMVC.Data
                 {
                     await userManager.CreateAsync(defaultUser, "Abc&123!");
                     await userManager.AddToRoleAsync(defaultUser, Roles.Developer.ToString());
-                    await userManager.AddToRoleAsync(defaultUser, Roles.Demo_User.ToString());
+                    await userManager.AddToRoleAsync(defaultUser, Roles.DemoUser.ToString());
                 }
             }
             catch (Exception ex)
@@ -665,7 +665,7 @@ namespace BugscapeMVC.Data
                 {
                     await userManager.CreateAsync(defaultUser, "Abc&123!");
                     await userManager.AddToRoleAsync(defaultUser, Roles.Submitter.ToString());
-                    await userManager.AddToRoleAsync(defaultUser, Roles.Demo_User.ToString());
+                    await userManager.AddToRoleAsync(defaultUser, Roles.DemoUser.ToString());
                 }
             }
             catch (Exception ex)
@@ -695,7 +695,7 @@ namespace BugscapeMVC.Data
                 {
                     await userManager.CreateAsync(defaultUser, "Abc&123!");
                     await userManager.AddToRoleAsync(defaultUser, Roles.Submitter.ToString());
-                    await userManager.AddToRoleAsync(defaultUser, Roles.Demo_User.ToString());
+                    await userManager.AddToRoleAsync(defaultUser, Roles.DemoUser.ToString());
                 }
             }
             catch (Exception ex)

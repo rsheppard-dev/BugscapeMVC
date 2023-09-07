@@ -91,7 +91,7 @@
             </td>
             <td>
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a>
-                @if (User.IsInRole(nameof(Roles.Admin)) || await ProjectService.IsAssignedProject_ManagerAsync(user?.Id!, item.ProjectId))
+                @if (User.IsInRole(nameof(Roles.Admin)) || await ProjectService.IsAssignedProjectManagerAsync(user?.Id!, item.ProjectId))
                 {
                     <a asp-action="Restore" asp-route-id="@item.Id">Restore</a>
                 }

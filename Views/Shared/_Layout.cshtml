@@ -27,7 +27,7 @@
     <header class="fixed bottom-[calc(100vh-theme(spacing.24))] left-0 right-0 top-0 z-50 bg-lightest">
         <div class="container">
             <div class="flex items-center justify-between h-24 gap-10">
-                <div class="flex items-center gap-4 md:gap-[88px]">
+                <div class="flex items-center gap-4 md:gap-[90px]">
                     <a asp-action="Index" asp-controller="Home" class="w-48">
                         <img src="~/images/logo.png" alt="Bugscape Logo" class="w-48">
                     </a>
@@ -107,7 +107,7 @@
     <div class="flex min-h-screen">
         @if (user is not null)
         {
-        <aside class="hidden md:block fixed top-24 h-[calc(100vh-theme(spacing.24))] overflow-y-auto mr-6 scrollbar-thin scrollbar-thumb-light scrollbar-track-lightest scrollbar-thumb-rounded-xl">
+        <aside class="z-10 hidden md:block fixed top-24 h-[calc(100vh-theme(spacing.24))] overflow-y-auto mr-6 scrollbar-thin scrollbar-thumb-light scrollbar-track-lightest scrollbar-thumb-rounded-xl">
             <nav class="bg-mid rounded-t-xl min-w-[theme.spacing.64] min-h-[calc(100vh-theme(spacing.24))] pt-12 pb-4 px-8 flex flex-col justify-between gap-8">
                 <div class="space-y-6 font-dark font-bold text-sm font-lato uppercase">
                     <a class="flex gap-4 items-center group" asp-action="Dashboard" asp-controller="Home">
@@ -134,7 +134,7 @@
                         <div class="content gap-10">
                             <div class="flex bg-light w-1"></div>
                             <div class="flex flex-col gap-4 font-normal text-xs">
-                            @if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.Project_Manager)))
+                            @if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)))
                             {
                                 <a asp-area="" asp-controller="Projects" asp-action="Create">New Project</a>
                             }
@@ -142,7 +142,7 @@
                             {
                                 <a asp-area="" asp-controller="Projects" asp-action="MyProjects">My Projects</a>
                             }
-                            <a asp-area="" asp-controller="Projects" asp-action="AllProjects">All Projects</a>
+                            <a asp-area="" asp-controller="Projects" asp-action="Index">All Projects</a>
                             <a asp-area="" asp-controller="Projects" asp-action="ArchivedProjects">Archived Projects</a>
                             @if (User.IsInRole(nameof(Roles.Admin)))
                             {
@@ -174,9 +174,9 @@
                             {
                                 <a  asp-area="" asp-controller="Tickets" asp-action="MyTickets">My Tickets</a>
                             }
-                            <a asp-area="" asp-controller="Tickets" asp-action="AllTickets">All Tickets</a>
+                            <a asp-area="" asp-controller="Tickets" asp-action="Index">All Tickets</a>
                             <a asp-area="" asp-controller="Tickets" asp-action="ArchivedTickets">Archived Tickets</a>
-                            @if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.Project_Manager)))
+                            @if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)))
                             {
                                 <a asp-area="" asp-controller="Tickets" asp-action="UnassignedTickets">Unassigned Tickets</a>
                             }

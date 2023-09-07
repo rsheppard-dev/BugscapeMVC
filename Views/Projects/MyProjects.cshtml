@@ -9,7 +9,7 @@
 
 <h1>My Projects</h1>
 
-@if(User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.Project_Manager)))
+@if(User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)))
 {
 <p>
     <a asp-action="Create">Create New</a>
@@ -82,7 +82,7 @@
             <td>
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                 
-                @if(User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.Project_Manager)))
+                @if(User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)))
                 {
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
                     

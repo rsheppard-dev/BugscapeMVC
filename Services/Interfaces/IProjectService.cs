@@ -5,7 +5,7 @@ namespace BugscapeMVC.Services.Interfaces
     public interface IProjectService
     {
         public Task AddNewProjectAsync(Project project);
-        public Task<bool> AddProject_ManagerAsync(string userId, int projectId);
+        public Task<bool> AddProjectManagerAsync(string userId, int projectId);
         public Task<bool> AddUserToProjectAsync(string userId, int projectId);
         public Task ArchiveProjectAsync(Project project);
         public Task<List<Project>> GetAllProjectsByCompanyAsync(int companyId);
@@ -19,10 +19,10 @@ namespace BugscapeMVC.Services.Interfaces
         public Task<List<Project>> GetUnassignedProjectsAsync(int companyId);
         public Task<List<AppUser>> GetUsersNotOnProjectAsync(int projectId, int companyId);
         public Task<List<Project>> GetUserProjectsAsync(string userId);
-        public Task<bool> IsAssignedProject_ManagerAsync(string userId, int projectId);
+        public Task<bool> IsAssignedProjectManagerAsync(string userId, int projectId);
         public Task<bool> IsUserOnProjectAsync(string userId, int projectId);
         public Task<int?> LookupProjectPriorityIdAsync(string priorityName);
-        public Task RemoveProject_ManagerAsync(int projectId);
+        public Task RemoveProjectManagerAsync(int projectId);
         public Task RemoveUsersFromProjectByRoleAsync(string role, int projectId);
         public Task RemoveUserFromProjectAsync(string userId, int projectId);
         public Task RestoreProjectAsync(Project project);

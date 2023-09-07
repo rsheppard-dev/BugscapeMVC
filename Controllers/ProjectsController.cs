@@ -46,9 +46,9 @@ namespace BugscapeMVC.Controllers
             return View(projects);
         }
 
-        // GET: Projects/AllProjects
+        // GET: Projects?sortBy=name&asc=true
         [HttpGet]
-        public async Task<IActionResult> AllProjects()
+        public async Task<IActionResult> Index(string search = "", string sortBy = "enddate", bool asc = true)
         {
             int? companyId = User.Identity?.GetCompanyId();
 
@@ -56,7 +56,7 @@ namespace BugscapeMVC.Controllers
 
             List<Project> projects;
             
-            if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.Project_Manager)))
+            if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)))
             {
                 projects = await _companyInfoService.GetAllProjectsAsync(companyId.Value);
             }
@@ -64,6 +64,11 @@ namespace BugscapeMVC.Controllers
             {
                 projects = await _projectService.GetAllProjectsByCompanyAsync(companyId.Value);
             }
+
+            projects = Sort(projects, sortBy, asc);
+
+            ViewData["sortBy"] = sortBy;
+            ViewData["asc"] = asc;
 
             return View(projects);
         }
@@ -107,7 +112,7 @@ namespace BugscapeMVC.Controllers
             AssignPMViewModel model = new()
             {
                 Project = await _projectService.GetProjectByIdAsync(id, companyId.Value),
-                Project_Managers = new SelectList(await _roleService.GetUsersInRoleAsync(nameof(Roles.Project_Manager), companyId.Value), "Id", "FullName")
+                ProjectManagers = new SelectList(await _roleService.GetUsersInRoleAsync(nameof(Roles.ProjectManager), companyId.Value), "Id", "FullName")
             };
 
             return View(model);
@@ -119,9 +124,9 @@ namespace BugscapeMVC.Controllers
         [Authorize(Roles = nameof(Roles.Admin))]
         public async Task<IActionResult> AssignPM(AssignPMViewModel model)
         {
-            if (!string.IsNullOrEmpty(model.Project_ManagerId) && model.Project is not null)
+            if (!string.IsNullOrEmpty(model.ProjectManagerId) && model.Project is not null)
             {
-                await _projectService.AddProject_ManagerAsync(model.Project_ManagerId, model.Project.Id);
+                await _projectService.AddProjectManagerAsync(model.ProjectManagerId, model.Project.Id);
 
                 return RedirectToAction(nameof(Details), new { id = model.Project.Id });
             }
@@ -131,7 +136,7 @@ namespace BugscapeMVC.Controllers
 
         // GET: Projects/AssignMembers/5
         [HttpGet]
-        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.Project_Manager)}")]
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)}")]
         public async Task<IActionResult> AssignMembers(int id)
         {
             int? companyId = User.Identity?.GetCompanyId();
@@ -164,7 +169,7 @@ namespace BugscapeMVC.Controllers
         // POST: Projects/AssignMembers
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.Project_Manager)}")]
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)}")]
         public async Task<IActionResult> AssignMembers(AssignMembersViewModel model)
         {
             if (model.SelectedUsers is not null && model.Project is not null)
@@ -206,7 +211,7 @@ namespace BugscapeMVC.Controllers
 
         // GET: Projects/Create
         [HttpGet]
-        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.Project_Manager)}")]
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)}")]
         public async Task<IActionResult> Create()
         {
             int? companyId = User.Identity?.GetCompanyId();
@@ -215,7 +220,7 @@ namespace BugscapeMVC.Controllers
 
             AddProjectWithPMViewModel model = new()
             {
-                PMList = new SelectList(await _roleService.GetUsersInRoleAsync(Roles.Project_Manager.ToString(), companyId.Value), "Id", "FullName"),
+                PMList = new SelectList(await _roleService.GetUsersInRoleAsync(Roles.ProjectManager.ToString(), companyId.Value), "Id", "FullName"),
                 PriorityList = new SelectList(await _lookupService.GetProjectPrioritiesAsync(), "Id", "Name")
             };
 
@@ -227,7 +232,7 @@ namespace BugscapeMVC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.Project_Manager)}")]
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)}")]
         public async Task<IActionResult> Create(AddProjectWithPMViewModel model)
         {
             if (model is not null)
@@ -253,7 +258,7 @@ namespace BugscapeMVC.Controllers
 
                     if (!string.IsNullOrEmpty(model.PmId))
                     {
-                        await _projectService.AddProject_ManagerAsync(model.PmId, model.Project.Id);
+                        await _projectService.AddProjectManagerAsync(model.PmId, model.Project.Id);
                     }
 
                     return RedirectToAction("MyProjects");
@@ -269,7 +274,7 @@ namespace BugscapeMVC.Controllers
 
         // GET: Projects/Edit/5
         [HttpGet]
-        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.Project_Manager)}")]
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)}")]
         public async Task<IActionResult> Edit(int? id)
         {       
             int? companyId = User.Identity?.GetCompanyId();
@@ -279,7 +284,7 @@ namespace BugscapeMVC.Controllers
             AddProjectWithPMViewModel model = new()
             {
                 Project = await _projectService.GetProjectByIdAsync(id.Value, companyId.Value),
-                PMList = new SelectList(await _roleService.GetUsersInRoleAsync(Roles.Project_Manager.ToString(), companyId.Value), "Id", "FullName"),
+                PMList = new SelectList(await _roleService.GetUsersInRoleAsync(Roles.ProjectManager.ToString(), companyId.Value), "Id", "FullName"),
                 PriorityList = new SelectList(await _lookupService.GetProjectPrioritiesAsync(), "Id", "Name")
             };
 
@@ -291,7 +296,7 @@ namespace BugscapeMVC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.Project_Manager)}")]
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)}")]
         public async Task<IActionResult> Edit(AddProjectWithPMViewModel model)
         {
             if (model is not null && model.Project is not null)
@@ -311,7 +316,7 @@ namespace BugscapeMVC.Controllers
 
                     if (!string.IsNullOrEmpty(model.PmId))
                     {
-                        await _projectService.AddProject_ManagerAsync(model.PmId, model.Project.Id);
+                        await _projectService.AddProjectManagerAsync(model.PmId, model.Project.Id);
                     }
 
                     return RedirectToAction("MyProjects");
@@ -336,7 +341,7 @@ namespace BugscapeMVC.Controllers
 
         // GET: Projects/Archive/5
         [HttpGet]
-        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.Project_Manager)}")]
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)}")]
         public async Task<IActionResult> Archive(int? id)
         {
             int? companyId = User.Identity?.GetCompanyId();
@@ -359,7 +364,7 @@ namespace BugscapeMVC.Controllers
         // POST: Projects/Delete/5
         [HttpPost, ActionName("Archive")]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.Project_Manager)}")]
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)}")]
         public async Task<IActionResult> ArchiveConfirmed(int id)
         {
             int? companyId = User.Identity?.GetCompanyId();
@@ -383,7 +388,7 @@ namespace BugscapeMVC.Controllers
 
         // GET: Projects/Restore/5
         [HttpGet]
-        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.Project_Manager)}")]
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)}")]
         public async Task<IActionResult> Restore(int? id)
         {
             int? companyId = User.Identity?.GetCompanyId();
@@ -406,7 +411,7 @@ namespace BugscapeMVC.Controllers
         // POST: Projects/Restore/5
         [HttpPost, ActionName("Restore")]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.Project_Manager)}")]
+        [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.ProjectManager)}")]
         public async Task<IActionResult> RestoreConfirmed(int id)
         {
             int? companyId = User.Identity?.GetCompanyId();
@@ -439,6 +444,32 @@ namespace BugscapeMVC.Controllers
             {
                 throw;
             }
+        }
+
+        private static List<Project> Sort(List<Project> projects, string sortBy, bool asc)
+        {
+            if (projects is null)
+            {
+                return new List<Project>();
+            }
+
+            projects = (sortBy?.ToLower()) switch
+            {
+                "name" => asc ?
+                                        projects.OrderBy(p => p.Name).ToList() :
+                                        projects.OrderByDescending(p => p.Name).ToList(),
+                "startdate" => asc ?
+                                        projects.OrderBy(p => p.StartDate).ToList() :
+                                        projects.OrderByDescending(p => p.StartDate).ToList(),
+                "priority" => asc ?
+                                        projects.OrderBy(p => p.ProjectPriority?.Name).ToList() :
+                                        projects.OrderByDescending(p => p.ProjectPriority?.Name).ToList(),
+                _ => asc ?
+                                        projects.OrderBy(p => p.EndDate).ToList() :
+                                        projects.OrderByDescending(p => p.EndDate).ToList(),
+            };
+
+            return projects;
         }
     }
 }

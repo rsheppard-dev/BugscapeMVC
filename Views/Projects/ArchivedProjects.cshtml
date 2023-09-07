@@ -83,8 +83,8 @@
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a>
 
                 @{
-                    AppUser? Project_Manager = await ProjectService.GetProjectManagerAsync(item.Id);
-                    bool isProjectPM = Project_Manager?.Id == user?.Id;
+                    AppUser? ProjectManager = await ProjectService.GetProjectManagerAsync(item.Id);
+                    bool isProjectPM = ProjectManager?.Id == user?.Id;
 
                 }
 

@@ -57,12 +57,15 @@
 </section>
 
 <div class="grid grid-cols-12 gap-6 mb-6">
+    @if (Model.Tickets?.Count > 0)
+    {
     <section class="col-span-6 lg:col-span-4 rounded-md bg-white px-6 py-3 flex flex-col lg:order-2">
         <h2 class="font-rockwell text-dark text-xl font-bold mb-4">Tickets By Priority</h2>
         <div class="h-full flex items-center justify-center">
             <canvas data-chart="tickets by priority"></canvas>
         </div>
     </section>
+    }
 
     <section class="col-span-6 lg:col-span-4 rounded-md bg-white px-6 py-3 flex flex-col lg:order-4">
         <div class="flex justify-between items-center mb-6">
@@ -131,6 +134,8 @@
         }
     </section>
 
+    @if (Model.Tickets?.Count > 0)
+    {  
     <section class="col-span-12 lg:col-span-8 rounded-md bg-white px-6 py-3 flex flex-col lg:order-1">
         <h2 class="font-rockwell text-dark text-xl font-bold">Tickets Resolved</h2>
         <span class="block font-lato text-gray-400 mb-4">Last 30 Days</span>
@@ -138,6 +143,7 @@
             <canvas data-chart="tickets resolved"></canvas>
         </div>
     </section>
+    }
 
     <section class="col-span-12 lg:col-span-8 rounded-md bg-white px-6 py-3 flex flex-col lg:order-3">
         <div class="flex justify-between items-center mb-6">

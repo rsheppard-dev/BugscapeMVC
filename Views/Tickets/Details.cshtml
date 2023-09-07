@@ -10,7 +10,7 @@
 
 @{
     AppUser? user = await UserManager.GetUserAsync(User);
-    AppUser? Project_Manager = await ProjectService.GetProjectManagerAsync(Model.ProjectId);
+    AppUser? ProjectManager = await ProjectService.GetProjectManagerAsync(Model.ProjectId);
 
     ViewData["Title"] = "Details";
 }
@@ -90,7 +90,7 @@
                                 <form asp-action="AddTicketComment" asp-controller="Tickets" method="post" class="form-horizontal form-bordered">
                                     <input type="hidden" asp-for="Id" name="TicketId">
 
-                                    @if (Model.DeveloperUserId == user?.Id || Model.OwnerUserId == user?.Id || Project_Manager?.Id == user?.Id || User.IsInRole(nameof(Roles.Admin)))
+                                    @if (Model.DeveloperUserId == user?.Id || Model.OwnerUserId == user?.Id || ProjectManager?.Id == user?.Id || User.IsInRole(nameof(Roles.Admin)))
                                     {
                                             <div class="form-group">
                                                 <textarea asp-for="@(new TicketComment().Comment)" rows="8" class="form-control" required placeholder="Add comment..."></textarea>
