@@ -12,8 +12,19 @@
 
     AppUser? user = await UserManager.GetUserAsync(User);
 
-    string? sortBy = ViewData["sortBy"] as string;
-    bool isAsc = ViewData["asc"] as bool? ?? true;
+    Pagination pagination = new();
+
+    int pageNumber = 0;
+
+    if (ViewBag.Pagination is not null)
+    {
+        pagination = ViewBag.Pagination;
+        pageNumber = pagination.CurrentPage;
+    }
+
+    string? search = ViewBag.Search;
+    string? sortBy = ViewBag.Sort.sortBy;
+    bool isAsc = ViewBag.Sort.asc;
 }
 
 <div class="flex items-center justify-between mb-4">
@@ -28,19 +39,28 @@
     }
 </div>
 
+<form asp-action="Index" asp-controller="Projects" method="get" class="flex justify-end mb-4">
+    <div class="relative">
+        <input type="search" name="search" class="text-lato text-sm bg-white rounded-lg px-4 py-2 border-gray-200 pl-10 placeholder:text-gray-400" placeholder="Search projects...">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 absolute top-2 left-2 stroke-dark">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+        </svg>
+    </div>
+</form>
+
 <section class="grid grid-cols-12">
     @if (Model.Count() == 0)
     {
-        <p class="font-lato">There are currently no projects to show.</p>
+        <p class="font-lato col-span-12">There are currently no projects to show.</p>
     }
     else
     {        
-    <div class="relative col-span-12 overflow-x-auto rounded-t-lg scrollbar-thin scrollbar-thumb-light scrollbar-track-white">
+    <div class="relative col-span-12 overflow-x-auto rounded-t-lg scrollbar-thin scrollbar-thumb-light scrollbar-track-white mb-4">
         <table id="projectTable" class="w-full text-sm text-left text-dark font-lato">
             <thead class="text-xs bg-light uppercase">
                 <tr>
                     <th data-sort="Name" scope="col" class="px-6 py-3 whitespace-nowrap">
-                        <a asp-action="Index" asp-controller="Projects" asp-route-sortBy="name" asp-route-asc="@(!isAsc)" class="flex items-center gap-2">
+                        <a asp-action="Index" asp-controller="Projects" asp-route-sortBy="name" asp-route-asc="@(!isAsc)" asp-route-search="@search" class="flex items-center gap-2">
                             <span>Name</span>
                             @if (sortBy == "name")
                             {
@@ -51,7 +71,7 @@
                         </a>
                     </th>
                     <th data-sort="StartDate" scope="col" class="px-6 py-3 whitespace-nowrap">
-                        <a asp-action="Index" asp-controller="Projects" asp-route-sortBy="startdate" asp-route-asc="@(!isAsc)" class="flex items-center gap-2">
+                        <a asp-action="Index" asp-controller="Projects" asp-route-sortBy="startdate" asp-route-asc="@(!isAsc)" asp-route-search="@search" class="flex items-center gap-2">
                         <span>Started</span>
                             @if (sortBy == "startdate")
                             {
@@ -62,7 +82,7 @@
                         </a>
                     </th>
                     <th data-sort="EndDate" scope="col" class="px-6 py-3 whitespace-nowrap">
-                        <a asp-action="Index" asp-controller="Projects" asp-route-sortBy="enddate" asp-route-asc="@(!isAsc)" class="flex items-center gap-2">
+                        <a asp-action="Index" asp-controller="Projects" asp-route-sortBy="enddate" asp-route-asc="@(!isAsc)" asp-route-search="@search" class="flex items-center gap-2">
                         <span>Due</span>
                             @if (sortBy == "enddate")
                             {
@@ -76,7 +96,7 @@
                         PM
                     </th>
                     <th data-sort="Priority" scope="col" class="px-6 py-3 whitespace-nowrap">
-                        <a asp-action="Index" asp-controller="Projects" asp-route-sortBy="priority" asp-route-asc="@(!isAsc)" class="flex items-center gap-2">
+                        <a asp-action="Index" asp-controller="Projects" asp-route-sortBy="priority" asp-route-asc="@(!isAsc)" asp-route-search="@search" class="flex items-center gap-2">
                         <span>Priority</span>
                             @if (sortBy == "priority")
                             {
@@ -194,7 +214,42 @@
             </tbody>
         </table>
     </div>
+
+    @if (pagination.TotalPages > 0)
+    {
+        <div class="flex items-center justify-center gap-2 col-span-12">
+ 
+            <a asp-action="Index" asp-controller="Projects" asp-route-page="1" asp-route-sortBy="@sortBy" asp-route-asc="@isAsc" asp-route-search="@search" class="@(pagination.CurrentPage > 1 ? "hover:bg-info hover:bg-opacity-80" : "opacity-60 cursor-default") h-8 w-8 flex items-center justify-center text-dark rounded-md font-lato transition-colors bg-gray-200">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5" />
+                </svg>
+            </a>
+            <a asp-action="Index" asp-controller="Projects" asp-route-page="@(pagination.CurrentPage - 1)" asp-route-sortBy="@sortBy" asp-route-asc="@isAsc" asp-route-search="@search" class="@(pagination.CurrentPage > 1 ? "hover:bg-info hover:bg-opacity-80" : "opacity-60 cursor-default") h-8 w-8 flex items-center justify-center text-dark rounded-md font-lato transition-colors bg-gray-200">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                </svg>
+            </a>
+
+            @for (int p = pagination.StartPage; p <= pagination.EndPage; p++)
+            {
+                <a asp-action="Index" asp-controller="Projects" asp-route-page="@p" asp-route-sortBy="@sortBy" asp-route-asc="@isAsc" asp-route-search="@search" class="h-8 w-8 flex text-sm items-center justify-center text-dark rounded-md font-lato transition-colors @(pagination.CurrentPage == p ? "bg-info cursor-default" : "bg-gray-200 hover:bg-info hover:bg-opacity-80")">
+                    @p
+                </a>
+            }
+
+            <a asp-action="Index" asp-controller="Projects" asp-route-page="@(pagination.CurrentPage != pagination.TotalPages ? pagination.CurrentPage + 1 : pagination.TotalPages)" asp-route-sortBy="@sortBy" asp-route-asc="@isAsc" asp-route-search="@search" class="@(pagination.CurrentPage != pagination.TotalPages ? "hover:bg-info hover:bg-opacity-80" : "opacity-60 cursor-default") h-8 w-8 flex items-center justify-center text-dark rounded-md font-lato transition-colors bg-gray-200">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                </svg>
+            </a>
+            <a asp-action="Index" asp-controller="Projects" asp-route-page="@pagination.TotalPages" asp-route-sortBy="@sortBy" asp-route-asc="@isAsc" asp-route-search="@search" class="@(pagination.CurrentPage != pagination.TotalPages ? "hover:bg-info hover:bg-opacity-80" : "opacity-60 cursor-default") h-8 w-8 flex items-center justify-center text-dark rounded-md font-lato transition-colors bg-gray-200">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 4.5l7.5 7.5-7.5 7.5m-6-15l7.5 7.5-7.5 7.5" />
+                </svg>
+            </a>
+        </div>
     }
+}
 </section>
 
 @section scripts {

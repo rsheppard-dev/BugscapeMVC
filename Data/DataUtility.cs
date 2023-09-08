@@ -172,24 +172,6 @@ namespace BugscapeMVC.Data
                          StartDate = new DateTime(2021,8,20),
                          EndDate = new DateTime(2021,8,20).AddMonths(6),
                          ProjectPriorityId = priorityHigh
-                     },
-                     new Project()
-                     {
-                         CompanyId = company2Id,
-                         Name = "Build an Address Book Web Application",
-                         Description="A custom designed .Net Core application with postgres database.  This is an application to serve as a rolodex of contacts for a given user..",
-                         StartDate = new DateTime(2021,8,20),
-                         EndDate = new DateTime(2021,8,20).AddMonths(2),
-                         ProjectPriorityId = priorityLow
-                     },
-                    new Project()
-                     {
-                         CompanyId = company1Id,
-                         Name = "Build a Movie Information Web Application",
-                         Description="A custom designed .Net Core application with postgres database.  An API based application allows users to input and import movie posters and details including cast and crew information.",
-                         StartDate = new DateTime(2021,8,20),
-                         EndDate = new DateTime(2021,8,20).AddMonths(3),
-                         ProjectPriorityId = priorityHigh
                      }
                 };
 

@@ -46,9 +46,9 @@ namespace BugscapeMVC.Controllers
             return View(projects);
         }
 
-        // GET: Projects?sortBy=name&asc=true
+        // GET: Projects
         [HttpGet]
-        public async Task<IActionResult> Index(string search = "", string sortBy = "enddate", bool asc = true)
+        public async Task<IActionResult> Index(int page, string search = "", bool asc = true, string sortBy = "name")
         {
             int? companyId = User.Identity?.GetCompanyId();
 
@@ -65,12 +65,32 @@ namespace BugscapeMVC.Controllers
                 projects = await _projectService.GetAllProjectsByCompanyAsync(companyId.Value);
             }
 
+            // if search arguement
+            if (!string.IsNullOrEmpty(search))
+            {
+                projects = Search(projects, search);
+                ViewBag.Search = search;
+            }
+
             projects = Sort(projects, sortBy, asc);
 
-            ViewData["sortBy"] = sortBy;
-            ViewData["asc"] = asc;
+            // pagination
+            const int resultsPerPage = 5;
 
-            return View(projects);
+            if (page < 1) page = 1;
+
+            int totalProjects = projects.Count;
+
+            Pagination pagination = new(totalProjects, page, resultsPerPage);
+
+            int skip = (page - 1) * resultsPerPage;
+
+            List<Project> data = projects.Skip(skip).Take(pagination.ResultsPerPage).ToList();
+
+            ViewBag.Sort = new { sortBy, asc };
+            ViewBag.Pagination = pagination;
+
+            return View(data);
         }
 
         // GET: Projects/ArchivedProjects
@@ -455,21 +475,31 @@ namespace BugscapeMVC.Controllers
 
             projects = (sortBy?.ToLower()) switch
             {
-                "name" => asc ?
-                                        projects.OrderBy(p => p.Name).ToList() :
-                                        projects.OrderByDescending(p => p.Name).ToList(),
                 "startdate" => asc ?
                                         projects.OrderBy(p => p.StartDate).ToList() :
                                         projects.OrderByDescending(p => p.StartDate).ToList(),
+                "enddate" => asc ?
+                                        projects.OrderBy(p => p.EndDate).ToList() :
+                                        projects.OrderByDescending(p => p.EndDate).ToList(),
                 "priority" => asc ?
                                         projects.OrderBy(p => p.ProjectPriority?.Name).ToList() :
                                         projects.OrderByDescending(p => p.ProjectPriority?.Name).ToList(),
                 _ => asc ?
-                                        projects.OrderBy(p => p.EndDate).ToList() :
-                                        projects.OrderByDescending(p => p.EndDate).ToList(),
+                                        projects.OrderBy(p => p.Name).ToList() :
+                                        projects.OrderByDescending(p => p.Name).ToList(),
             };
 
             return projects;
+        }
+
+        private static List<Project> Search(List<Project> projects, string search)
+        {
+            if (projects is null)
+            {
+                return new List<Project>();
+            }
+            
+            return projects.Where(p => p.Name.ToLower().Contains(search.ToLower()) || (p.Description?.ToLower().Contains(search) ?? false)).ToList();
         }
     }
 }
