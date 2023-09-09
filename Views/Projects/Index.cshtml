@@ -55,12 +55,12 @@
     }
     else
     {        
-    <div class="relative col-span-12 overflow-x-auto rounded-t-lg scrollbar-thin scrollbar-thumb-light scrollbar-track-white mb-4">
+    <div class="relative col-span-12 overflow-x-auto rounded-t-lg scrollbar-thin scrollbar-thumb-light scrollbar-track-lightest mb-4">
         <table id="projectTable" class="w-full text-sm text-left text-dark font-lato">
             <thead class="text-xs bg-light uppercase">
                 <tr>
                     <th data-sort="Name" scope="col" class="px-6 py-3 whitespace-nowrap">
-                        <a asp-action="Index" asp-controller="Projects" asp-route-sortBy="name" asp-route-asc="@(!isAsc)" asp-route-search="@search" class="flex items-center gap-2">
+                        <a asp-action="Index" asp-controller="Projects" asp-route-page="@pagination.CurrentPage" asp-route-sortBy="name" asp-route-asc="@(!isAsc)" asp-route-search="@search" class="flex items-center gap-2">
                             <span>Name</span>
                             @if (sortBy == "name")
                             {
@@ -71,7 +71,7 @@
                         </a>
                     </th>
                     <th data-sort="StartDate" scope="col" class="px-6 py-3 whitespace-nowrap">
-                        <a asp-action="Index" asp-controller="Projects" asp-route-sortBy="startdate" asp-route-asc="@(!isAsc)" asp-route-search="@search" class="flex items-center gap-2">
+                        <a asp-action="Index" asp-controller="Projects" asp-route-page="@pagination.CurrentPage" asp-route-sortBy="startdate" asp-route-asc="@(!isAsc)" asp-route-search="@search" class="flex items-center gap-2">
                         <span>Started</span>
                             @if (sortBy == "startdate")
                             {
@@ -82,7 +82,7 @@
                         </a>
                     </th>
                     <th data-sort="EndDate" scope="col" class="px-6 py-3 whitespace-nowrap">
-                        <a asp-action="Index" asp-controller="Projects" asp-route-sortBy="enddate" asp-route-asc="@(!isAsc)" asp-route-search="@search" class="flex items-center gap-2">
+                        <a asp-action="Index" asp-controller="Projects" asp-route-page="@pagination.CurrentPage" asp-route-sortBy="enddate" asp-route-asc="@(!isAsc)" asp-route-search="@search" class="flex items-center gap-2">
                         <span>Due</span>
                             @if (sortBy == "enddate")
                             {
@@ -96,7 +96,7 @@
                         PM
                     </th>
                     <th data-sort="Priority" scope="col" class="px-6 py-3 whitespace-nowrap">
-                        <a asp-action="Index" asp-controller="Projects" asp-route-sortBy="priority" asp-route-asc="@(!isAsc)" asp-route-search="@search" class="flex items-center gap-2">
+                        <a asp-action="Index" asp-controller="Projects" asp-route-page="@pagination.CurrentPage" asp-route-sortBy="priority" asp-route-asc="@(!isAsc)" asp-route-search="@search" class="flex items-center gap-2">
                         <span>Priority</span>
                             @if (sortBy == "priority")
                             {

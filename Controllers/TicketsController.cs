@@ -478,6 +478,47 @@ namespace BugscapeMVC.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        public async Task<IActionResult> SortTickets(string sortBy, string order)
+        {
+            int companyId = User.Identity?.GetCompanyId() ?? throw new Exception("Unable to get company ID.");
+            
+            List<Ticket> tickets = await _ticketService.GetAllTicketsByCompanyAsync(companyId);
+
+            tickets = Sort(tickets, sortBy, order);
+
+            return PartialView("_TicketsTablePartial", tickets);
+        }
+
+        private static List<Ticket> Sort(List<Ticket> tickets, string sortBy, string order)
+        {
+            if (tickets is null)
+            {
+                return new List<Ticket>();
+            }
+
+            tickets = (sortBy?.ToLower()) switch
+            {
+                "title" => order == "asc" ?
+                                        tickets.OrderBy(t => t.Title).ToList() :
+                                        tickets.OrderByDescending(t => t.Title).ToList(),
+                "developer" => order == "asc" ?
+                                        tickets.OrderBy(t => t.DeveloperUser?.FullName).ToList() :
+                                        tickets.OrderByDescending(t => t.DeveloperUser?.FullName).ToList(),
+                                       
+                "status" => order == "asc" ?
+                                        tickets.OrderBy(t => t.TicketStatus?.Name).ToList() :
+                                        tickets.OrderByDescending(t => t.TicketStatus?.Name).ToList(),
+                "priority" => order == "asc" ?
+                                        tickets.OrderBy(t => t.TicketPriority?.Name).ToList() :
+                                        tickets.OrderByDescending(t => t.TicketPriority?.Name).ToList(),
+                _ => order == "asc" ?
+                                        tickets.OrderBy(t => t.Created).ToList() :
+                                        tickets.OrderByDescending(t => t.Created).ToList()
+            };
+
+            return tickets;
+        }
+
         private async Task<bool> TicketExistsAsync(int id)
         {
           int? companyId = User.Identity?.GetCompanyId();

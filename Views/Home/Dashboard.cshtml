@@ -180,7 +180,7 @@
                             Priority
                         </th>
                         <th scope="col" class="px-6 py-3 whitespace-nowrap">
-                            Action
+                            Details
                         </th>
                     </tr>
                 </thead>
@@ -189,7 +189,7 @@
                         int rowNumber = 0;
                     }
 
-                    @foreach (Project project in Model.Projects!.OrderBy(project => project.EndDate))
+                    @foreach (Project project in Model.Projects!.OrderBy(project => project.StartDate))
                     {
                         AppUser? projectManager = await ProjectService.GetProjectManagerAsync(project.Id);
                         string rowColor = rowNumber % 2 == 0 ? "bg-lightest" : "bg-mid"; // Define row colors based on the counter.
@@ -242,9 +242,10 @@
                             <span class="uppercase px-2 py-1 @badgeClass rounded-md text-xs font-bold">@project.ProjectPriority?.Name</span>
                         </td>
                         <td class="px-6 py-4">
-                            <a asp-action="Details" asp-controller="Projects" title="Project Details" asp-route-id="@project.Id">
-                                <svg xmlns="http://www.w3.org/2000/svg" title="Project Details" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
+                            <a asp-action="Details" asp-controller="Projects" title="Project Details" asp-route-id="@project.Id" class="block">
+                                <svg xmlns="http://www.w3.org/2000/svg" title="Project Details" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 hover:scale-110 transition-transform">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                 </svg>
                             </a>
                         </td>
@@ -290,100 +291,7 @@
         }
         else
         {        
-        <div class="grow relative overflow-x-auto rounded-t-lg scrollbar-thin scrollbar-thumb-light scrollbar-track-white">
-            <table class="w-full text-sm text-left text-dark font-lato">
-                <thead class="text-xs bg-light uppercase">
-                    <tr>
-                        <th scope="col" class="px-6 py-3 whitespace-nowrap">
-                            Title
-                        </th>
-                        <th scope="col" class="px-6 py-3 whitespace-nowrap">
-                            Developer
-                        </th>
-                        <th scope="col" class="px-6 py-3 whitespace-nowrap">
-                            Status
-                        </th>
-                        <th scope="col" class="px-6 py-3 whitespace-nowrap">
-                            Priority
-                        </th>
-                        <th scope="col" class="px-6 py-3 whitespace-nowrap">
-                            Date
-                        </th>
-                        <th scope="col" class="px-6 py-3 whitespace-nowrap">
-                            Action
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @{
-                        int rowNumber = 0;
-                    }
-
-                    @foreach (Ticket ticket in Model.Tickets!.OrderBy(ticket => ticket.Created))
-                    {
-                        string rowColor = rowNumber % 2 == 0 ? "bg-lightest" : "bg-mid"; // Define row colors based on the counter.
-                        rowNumber++;
-                    
-                    <tr class="@rowColor border-b">
-                        <th scope="row" class="px-6 py-4 whitespace-nowrap">
-                            @ticket.Title
-                        </th>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            @if (ticket.DeveloperUser is null)
-                            {
-                                <span class="bg-gray-200 text-dark uppercase px-2 py-1 rounded-md text-xs font-bold">Unassigned</span>
-                            }
-                            else
-                            {
-                                @if (ticket.DeveloperUser?.AvatarFileData is null || ticket.DeveloperUser?.AvatarContentType is null)
-                                {
-                                    <img class="h-8 w-8 object-cover rounded-full" src="~/images/default-avatar.png" alt="@ticket.DeveloperUser?.FullName">
-                                }
-                                else
-                                {
-                                    <img class="h-8 w-8 object-cover rounded-full" src="@FileService.ConvertByteArrayToFile(ticket.DeveloperUser.AvatarFileData, ticket.DeveloperUser.AvatarContentType)" alt="@ticket.DeveloperUser?.FullName">
-                                }
-                            }
-                        </td>
-                        <td class="px-6 py-4">
-                            <span class="bg-dark text-white uppercase px-2 py-1 rounded-md text-xs font-bold">@ticket.TicketStatus?.Name</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            @{
-                                string badgeClass = "bg-danger";
-
-                                switch (ticket.TicketPriority?.Name)
-                                {
-                                    case nameof(Priorities.Urgent):
-                                        badgeClass = "bg-danger";
-                                        break;
-                                    case nameof(Priorities.High):
-                                        badgeClass = "bg-warning";
-                                        break;
-                                    case nameof(Priorities.Medium):
-                                        badgeClass = "bg-info";
-                                        break;
-                                    default:
-                                        badgeClass = "bg-success";
-                                        break;
-                                }
-                            }
-                            <span class="uppercase px-2 py-1 @badgeClass rounded-md text-xs font-bold">@ticket.TicketPriority?.Name</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <span>@ticket.Created.ToString("dd.MM.yyyy")</span>
-                        </td>
-                        <td class="px-6 py-4">
-                            <a asp-action="Details" title="Ticket Details" asp-controller="Tickets" asp-route-id="@ticket.Id">
-                                <svg xmlns="http://www.w3.org/2000/svg" title="Ticket Details" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
-                                </svg>
-                            </a>
-                        </td>
-                    </tr>
-                    }
-                </tbody>
-            </table>
+        <div data-container="tickets" class="grow relative overflow-x-auto rounded-t-lg scrollbar-thin scrollbar-thumb-light scrollbar-track-white">
         </div>
         }
 
@@ -403,6 +311,8 @@
 </div>
 
 @section scripts {
+    <script src="~/js/tickets.js"></script>
+
     <!-- *** Begin Chart JS Pie/Donut *** -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js" integrity="sha512-SIMGYRUjwY8+gKg7nn9EItdD8LCADSDfJNutF9TPrvEo86sQmFMh6MyralfIyhADlajSxqc7G0gs7+MwWF/ogQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
