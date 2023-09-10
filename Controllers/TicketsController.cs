@@ -489,7 +489,7 @@ namespace BugscapeMVC.Controllers
             return PartialView("_TicketsTablePartial", tickets);
         }
 
-        private static List<Ticket> Sort(List<Ticket> tickets, string sortBy, string order)
+        private static List<Ticket> Sort(List<Ticket> tickets, string sortBy = "title", string order = "asc")
         {
             if (tickets is null)
             {

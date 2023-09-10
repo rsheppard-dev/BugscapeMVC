@@ -19,4 +19,19 @@
         @apply flex;
     }
 
+    [data-sortable="true"] .order {
+        @apply hidden;
+    }
+
+    [data-sortable="true"].active .order {
+        @apply block;
+    }
+
+    [data-sortable="true"] .order.desc {
+        @apply rotate-0;
+    }
+
+    [data-sortable="true"] .order.asc {
+        @apply rotate-180;
+    }
 }
