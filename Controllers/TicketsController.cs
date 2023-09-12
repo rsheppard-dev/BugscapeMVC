@@ -8,6 +8,7 @@ using BugscapeMVC.Models.Enums;
 using BugscapeMVC.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using BugscapeMVC.Models.ViewModels;
+using BugscapeMVC.Data;
 
 namespace BugscapeMVC.Controllers
 {
@@ -20,8 +21,9 @@ namespace BugscapeMVC.Controllers
         private readonly IFileService _fileService;
         private readonly ITicketHistoryService _historyService;
         private readonly UserManager<AppUser> _userManager;
+        private readonly ApplicationDbContext _context;
 
-        public TicketsController(UserManager<AppUser> userManager, IProjectService projectService, ILookupService lookupService, ITicketService ticketService, IFileService fileService, ITicketHistoryService historyService)
+        public TicketsController(ApplicationDbContext context, UserManager<AppUser> userManager, IProjectService projectService, ILookupService lookupService, ITicketService ticketService, IFileService fileService, ITicketHistoryService historyService)
         {
             _userManager = userManager;
             _projectService = projectService;
@@ -29,6 +31,7 @@ namespace BugscapeMVC.Controllers
             _ticketService = ticketService;
             _fileService = fileService;
             _historyService = historyService;
+            _context = context;
         }
 
         // GET: Tickets/MyTickets
@@ -478,25 +481,24 @@ namespace BugscapeMVC.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> SortTickets(string sortBy, string order)
+        public async Task<IActionResult> SortTickets(int? page, string sortBy = "title", string order = "asc")
         {
+            ViewData["SortBy"] = sortBy;
+            ViewData["SortOrder"] = order;
+
             int companyId = User.Identity?.GetCompanyId() ?? throw new Exception("Unable to get company ID.");
             
             List<Ticket> tickets = await _ticketService.GetAllTicketsByCompanyAsync(companyId);
 
             tickets = Sort(tickets, sortBy, order);
+            int pageSize = 10;
 
-            return PartialView("_TicketsTablePartial", tickets);
+            return PartialView("_TicketsTablePartial", new PaginatedList<Ticket>(tickets, page ?? 1, pageSize));
         }
 
         private static List<Ticket> Sort(List<Ticket> tickets, string sortBy = "title", string order = "asc")
         {
-            if (tickets is null)
-            {
-                return new List<Ticket>();
-            }
-
-            tickets = (sortBy?.ToLower()) switch
+            tickets = sortBy.ToLower() switch
             {
                 "title" => order == "asc" ?
                                         tickets.OrderBy(t => t.Title).ToList() :

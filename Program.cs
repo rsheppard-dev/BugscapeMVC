@@ -6,6 +6,7 @@ using BugscapeMVC.Services.Interfaces;
 using BugscapeMVC.Services;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using BugscapeMVC.Services.Factories;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 

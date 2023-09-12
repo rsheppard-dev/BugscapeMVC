@@ -4,10 +4,9 @@ namespace BugscapeMVC.Models
     {
         public Pagination() {}
 
-        public Pagination(int totalItems, int page, int resultsPerPage = 10)
+        public Pagination(int totalItems, int currentPage, int resultsPerPage = 10)
         {
             int totalPages = (int)Math.Ceiling((decimal)totalItems / (decimal)resultsPerPage);
-            int currentPage = page;
             int startPage = currentPage - 2;
             int endPage = currentPage + 2;
 
@@ -20,6 +19,16 @@ namespace BugscapeMVC.Models
             {
                 startPage = 1;
                 endPage = Math.Min(5, totalPages);
+            }
+
+            if (currentPage != 1)
+            {
+                PreviousPage = currentPage - 1;
+            }
+
+            if (currentPage != totalPages)
+            {
+                NextPage = currentPage + 1;
             }
 
             TotalItems = totalItems;
@@ -36,5 +45,7 @@ namespace BugscapeMVC.Models
         public int TotalPages { get; private set; }
         public int StartPage { get; private set; }
         public int EndPage { get; private set; }
+        public int NextPage { get; set; }
+        public int PreviousPage { get; set; }
     }
 }

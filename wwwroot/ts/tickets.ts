@@ -2,37 +2,31 @@ const container = document.querySelector(
         '[data-container="tickets"]'
     ) as HTMLElement;
 
-async function getTickets(sortBy = 'title') {
-    let header = container.querySelector(`[data-sort="${sortBy}"]`);
-    let order: string;
+let currentPage = 1;
+let currentSortBy = 'title';
+let currentOrder = 'asc';
 
-    order = header?.getAttribute('data-order') as string;
-
+async function getTickets() {
     try {
-        order = order === 'asc' ? 'desc' : 'asc';
-        
-        const response = await fetch(
-            `/Tickets/SortTickets?sortBy=${sortBy}&order=${order}`
-        );
+        const response = await fetch(`/Tickets/SortTickets?page=${currentPage}&sortBy=${currentSortBy}&order=${currentOrder}`);
 
         if (!response.ok) {
             throw new Error(
-                `Error loading partial view: ${response.statusText}`
+                `Error loading tickets table: ${response.statusText}`
             );
         }
 
         const html = await response.text();
         container.innerHTML = html;
 
-        header = container.querySelector(`[data-sort="${sortBy}"]`)!;
-        header.setAttribute('data-order', order);
+        const header = container.querySelector(`[data-sort="${currentSortBy}"]`)!;
+        header.setAttribute('data-order', currentOrder);
 
         header.classList.add('active')
     
-
         const arrow = header.querySelector('.order');
 
-        arrow?.classList.add(order);
+        arrow?.classList.add(currentOrder);
 
     } catch (error) {
         console.error(error);
@@ -48,8 +42,17 @@ container.addEventListener('click', (event) => {
             );
 
     if (header) {
-        const sortBy = header.getAttribute('data-sort') as string;
+        currentPage = parseInt(header.getAttribute('data-page') as string);
 
-        getTickets(sortBy);
+        const order = header.getAttribute('data-order');
+
+		if (order)
+        {
+            currentOrder = order  === 'asc' ? 'desc' : 'asc';
+        }
+
+        currentSortBy = header.getAttribute('data-sort') as string;
+
+        getTickets();
     }
 });

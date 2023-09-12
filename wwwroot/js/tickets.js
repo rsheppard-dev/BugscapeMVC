@@ -9,24 +9,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 const container = document.querySelector('[data-container="tickets"]');
-function getTickets(sortBy = 'title') {
+let currentPage = 1;
+let currentSortBy = 'title';
+let currentOrder = 'asc';
+function getTickets() {
     return __awaiter(this, void 0, void 0, function* () {
-        let header = container.querySelector(`[data-sort="${sortBy}"]`);
-        let order;
-        order = header === null || header === void 0 ? void 0 : header.getAttribute('data-order');
         try {
-            order = order === 'asc' ? 'desc' : 'asc';
-            const response = yield fetch(`/Tickets/SortTickets?sortBy=${sortBy}&order=${order}`);
+            const response = yield fetch(`/Tickets/SortTickets?page=${currentPage}&sortBy=${currentSortBy}&order=${currentOrder}`);
             if (!response.ok) {
-                throw new Error(`Error loading partial view: ${response.statusText}`);
+                throw new Error(`Error loading tickets table: ${response.statusText}`);
             }
             const html = yield response.text();
             container.innerHTML = html;
-            header = container.querySelector(`[data-sort="${sortBy}"]`);
-            header.setAttribute('data-order', order);
+            const header = container.querySelector(`[data-sort="${currentSortBy}"]`);
+            header.setAttribute('data-order', currentOrder);
             header.classList.add('active');
             const arrow = header.querySelector('.order');
-            arrow === null || arrow === void 0 ? void 0 : arrow.classList.add(order);
+            arrow === null || arrow === void 0 ? void 0 : arrow.classList.add(currentOrder);
         }
         catch (error) {
             console.error(error);
@@ -38,7 +37,12 @@ getTickets();
 container.addEventListener('click', (event) => {
     const header = event.target.closest('[data-sortable]');
     if (header) {
-        const sortBy = header.getAttribute('data-sort');
-        getTickets(sortBy);
+        currentPage = parseInt(header.getAttribute('data-page'));
+        const order = header.getAttribute('data-order');
+        if (order) {
+            currentOrder = order === 'asc' ? 'desc' : 'asc';
+        }
+        currentSortBy = header.getAttribute('data-sort');
+        getTickets();
     }
 });

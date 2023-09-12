@@ -39,15 +39,23 @@ public class HomeController : Controller
         
         if (companyId is null) return NoContent();
 
+        List<Ticket> tickets = new();
+
         model.Company = await _companyInfoService.GetCompanyInfoByIdAsync(companyId.Value);
         model.Projects = (await _companyInfoService.GetAllProjectsAsync(companyId.Value))
             .Where(project => !project.Archived)
             .ToList();
-        model.Tickets = model.Projects
-            .SelectMany(project => project.Tickets)
-            .Where(ticket => !ticket.Archived)
-            .OrderBy(ticket => ticket.Title)
-            .ToList();
+
+        if (model.Projects is not null)
+        {
+            tickets = model.Projects
+                .SelectMany(project => project.Tickets)
+                .Where(ticket => !ticket.Archived)
+                .OrderBy(ticket => ticket.Title)
+                .ToList();
+        }
+
+        model.Tickets = new PaginatedList<Ticket>(tickets, 1, 10);
         model.Members = model.Company?.Members.ToList();
 
         return View(model);
