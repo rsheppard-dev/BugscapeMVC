@@ -8,24 +8,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-const container = document.querySelector('[data-container="tickets"]');
-let currentPage = 1;
-let currentSortBy = 'title';
-let currentOrder = 'asc';
+const ticketsContainer = document.querySelector('[data-container="tickets"]');
+let currentTicketsPage = 1;
+let currentTicketsLimit = 5;
+let currentTicketsSortBy = 'title';
+let currentTicketsOrder = 'asc';
 function getTickets() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const response = yield fetch(`/Tickets/SortTickets?page=${currentPage}&sortBy=${currentSortBy}&order=${currentOrder}`);
+            const url = `/Tickets/SortTickets?page=${currentTicketsPage}&sortBy=${currentTicketsSortBy}&order=${currentTicketsOrder}&limit=${currentTicketsLimit}`;
+            const response = yield fetch(url);
             if (!response.ok) {
                 throw new Error(`Error loading tickets table: ${response.statusText}`);
             }
             const html = yield response.text();
-            container.innerHTML = html;
-            const header = container.querySelector(`[data-sort="${currentSortBy}"]`);
-            header.setAttribute('data-order', currentOrder);
+            ticketsContainer.innerHTML = html;
+            const header = ticketsContainer.querySelector(`[data-sort="${currentTicketsSortBy}"]`);
+            header.setAttribute('data-order', currentTicketsOrder);
             header.classList.add('active');
             const arrow = header.querySelector('.order');
-            arrow === null || arrow === void 0 ? void 0 : arrow.classList.add(currentOrder);
+            arrow === null || arrow === void 0 ? void 0 : arrow.classList.add(currentTicketsOrder);
         }
         catch (error) {
             console.error(error);
@@ -34,15 +36,15 @@ function getTickets() {
 }
 // load default table order
 getTickets();
-container.addEventListener('click', (event) => {
+ticketsContainer.addEventListener('click', (event) => {
+    var _a, _b, _c;
     const header = event.target.closest('[data-sortable]');
     if (header) {
-        currentPage = parseInt(header.getAttribute('data-page'));
-        const order = header.getAttribute('data-order');
-        if (order) {
-            currentOrder = order === 'asc' ? 'desc' : 'asc';
-        }
-        currentSortBy = header.getAttribute('data-sort');
+        if (header.getAttribute('data-order') === currentTicketsOrder)
+            currentTicketsOrder = header.getAttribute('data-order') === 'asc' ? 'desc' : 'asc';
+        currentTicketsPage = (_a = parseInt(header.getAttribute('data-page'))) !== null && _a !== void 0 ? _a : currentTicketsPage;
+        currentTicketsLimit = (_b = parseInt(header.getAttribute('data-limit'))) !== null && _b !== void 0 ? _b : currentTicketsLimit;
+        currentTicketsSortBy = (_c = header.getAttribute('data-sort')) !== null && _c !== void 0 ? _c : currentTicketsSortBy;
         getTickets();
     }
 });

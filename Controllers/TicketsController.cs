@@ -481,7 +481,7 @@ namespace BugscapeMVC.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> SortTickets(int? page, string sortBy = "title", string order = "asc")
+        public async Task<IActionResult> SortTickets(int? page, string sortBy = "title", string order = "asc", int limit = 5)
         {
             ViewData["SortBy"] = sortBy;
             ViewData["SortOrder"] = order;
@@ -491,9 +491,8 @@ namespace BugscapeMVC.Controllers
             List<Ticket> tickets = await _ticketService.GetAllTicketsByCompanyAsync(companyId);
 
             tickets = Sort(tickets, sortBy, order);
-            int pageSize = 10;
 
-            return PartialView("_TicketsTablePartial", new PaginatedList<Ticket>(tickets, page ?? 1, pageSize));
+            return PartialView("_TicketsTablePartial", new PaginatedList<Ticket>(tickets, page ?? 1, limit));
         }
 
         private static List<Ticket> Sort(List<Ticket> tickets, string sortBy = "title", string order = "asc")

@@ -6,7 +6,7 @@ namespace BugscapeMVC.Models
         public int TotalItems { get; private set; }
         public int TotalPages { get; private set; }
         public int FirstPageButton { get; private set; }
-        public int LastPageButton { get; private set;}
+        public int LastPageButton { get; private set; }
 
         public PaginatedList(List<T> items, int currentPage, int resultsPerPage)
         {

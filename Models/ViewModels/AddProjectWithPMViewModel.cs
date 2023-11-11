@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BugscapeMVC.Models.ViewModels
@@ -6,6 +7,8 @@ namespace BugscapeMVC.Models.ViewModels
     {
         public Project? Project { get; set; }
         public SelectList? PMList { get; set; }
+
+        [Display(Name = "Project Manager")]
         public string? PmId { get; set; }
         public SelectList? PriorityList { get; set; }
     }

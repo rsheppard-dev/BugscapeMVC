@@ -35,20 +35,43 @@ namespace BugscapeMVC.Controllers
 
         // GET: Projects/MyProjects
         [HttpGet]
-        public async Task<IActionResult> MyProjects()
+        public async Task<IActionResult> MyProjects(int page = 1, string search = "", string order = "asc", string sortBy = "name", int limit = 10)
         {
             string? userId = _userManager.GetUserId(User);
 
             if (userId is null) return NotFound();
-            
+
             List<Project> projects = await _projectService.GetUserProjectsAsync(userId);
 
-            return View(projects);
+            // if search arguement
+            if (!string.IsNullOrEmpty(search))
+            {
+                projects = Search(projects, search);
+                ViewBag.Search = search;
+            }
+
+            projects = Sort(projects, sortBy, order, limit);
+
+            // pagination
+            if (page < 1) page = 1;
+
+            int totalProjects = projects.Count;
+
+            Pagination pagination = new(totalProjects, page, limit);
+
+            int skip = (page - 1) * limit;
+
+            List<Project> data = projects.Skip(skip).Take(pagination.ResultsPerPage).ToList();
+
+            ViewBag.Sort = new { sortBy, order, limit };
+            ViewBag.Pagination = pagination;
+
+            return View(data);
         }
 
         // GET: Projects
         [HttpGet]
-        public async Task<IActionResult> Index(int page, string search = "", bool asc = true, string sortBy = "name")
+        public async Task<IActionResult> Index(int page = 1, string search = "", string order = "asc", string sortBy = "name", int limit = 10)
         {
             int? companyId = User.Identity?.GetCompanyId();
 
@@ -72,22 +95,20 @@ namespace BugscapeMVC.Controllers
                 ViewBag.Search = search;
             }
 
-            projects = Sort(projects, sortBy, asc);
+            projects = Sort(projects, sortBy, order, limit);
 
             // pagination
-            const int resultsPerPage = 5;
-
             if (page < 1) page = 1;
 
             int totalProjects = projects.Count;
 
-            Pagination pagination = new(totalProjects, page, resultsPerPage);
+            Pagination pagination = new(totalProjects, page, limit);
 
-            int skip = (page - 1) * resultsPerPage;
+            int skip = (page - 1) * limit;
 
             List<Project> data = projects.Skip(skip).Take(pagination.ResultsPerPage).ToList();
 
-            ViewBag.Sort = new { sortBy, asc };
+            ViewBag.Sort = new { sortBy, order, limit };
             ViewBag.Pagination = pagination;
 
             return View(data);
@@ -466,7 +487,21 @@ namespace BugscapeMVC.Controllers
             }
         }
 
-        private static List<Project> Sort(List<Project> projects, string sortBy, bool asc)
+        public async Task<IActionResult> SortProjects(string sortBy = "name", string order = "asc", int limit = 5, int? page = 1)
+        {
+            ViewData["SortBy"] = sortBy;
+            ViewData["SortOrder"] = order;
+
+            int companyId = User.Identity?.GetCompanyId() ?? throw new Exception("Unable to get company ID.");
+            
+            List<Project> projects = await _projectService.GetAllProjectsByCompanyAsync(companyId);
+
+            projects = Sort(projects, sortBy, order, limit);
+
+            return PartialView("_ProjectsTablePartial", new PaginatedList<Project>(projects, page ?? 1, limit));
+        }
+
+        private static List<Project> Sort(List<Project> projects, string sortBy, string order = "asc", int? limit = 5)
         {
             if (projects is null)
             {
@@ -475,16 +510,19 @@ namespace BugscapeMVC.Controllers
 
             projects = (sortBy?.ToLower()) switch
             {
-                "startdate" => asc ?
+                "startdate" => order == "asc" ?
                                         projects.OrderBy(p => p.StartDate).ToList() :
                                         projects.OrderByDescending(p => p.StartDate).ToList(),
-                "enddate" => asc ?
+                "enddate" => order == "asc" ?
                                         projects.OrderBy(p => p.EndDate).ToList() :
                                         projects.OrderByDescending(p => p.EndDate).ToList(),
-                "priority" => asc ?
+                "priority" => order == "asc" ?
                                         projects.OrderBy(p => p.ProjectPriority?.Name).ToList() :
                                         projects.OrderByDescending(p => p.ProjectPriority?.Name).ToList(),
-                _ => asc ?
+                "pm" => order == "asc" ?
+                                        projects.OrderBy(p => p.Members.Select(m => m.FullName).FirstOrDefault()).ToList() :
+                                        projects.OrderByDescending(p => p.Members.Select(m => m.FullName).FirstOrDefault()).ToList(),
+                _ => order == "asc" ?
                                         projects.OrderBy(p => p.Name).ToList() :
                                         projects.OrderByDescending(p => p.Name).ToList(),
             };
@@ -499,7 +537,11 @@ namespace BugscapeMVC.Controllers
                 return new List<Project>();
             }
             
-            return projects.Where(p => p.Name.ToLower().Contains(search.ToLower()) || (p.Description?.ToLower().Contains(search) ?? false)).ToList();
+            return projects
+                .Where(p => 
+                    (p.Name?.ToLower().Contains(search.ToLower()) ?? false) || 
+                    (p.Description?.ToLower().Contains(search) ?? false))
+                .ToList();
         }
     }
 }

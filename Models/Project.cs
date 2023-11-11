@@ -10,7 +10,7 @@ namespace BugscapeMVC.Models
 
         [Required]
         [Display(Name = "Project Name")]
-        public required string Name { get; set; }
+        public string? Name { get; set; }
 
         [Display(Name = "Company")]
         public int CompanyId { get; set; }
@@ -30,6 +30,8 @@ namespace BugscapeMVC.Models
 
         [NotMapped]
         [DataType(DataType.Upload)]
+
+        [Display(Name = "Project Image")]
         public IFormFile? ImageFormFile { get; set; }
 
         [Display(Name = "File Name")]

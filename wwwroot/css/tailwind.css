@@ -2,36 +2,57 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  [type='text'],
+  input:where(:not([type])),
+  [type='email'],
+  [type='url'],
+  [type='password'],
+  [type='number'],
+  [type='date'],
+  [type='datetime-local'],
+  [type='month'],
+  [type='search'],
+  [type='tel'],
+  [type='time'],
+  [type='week'],
+  [multiple],
+  textarea,
+  select {
+    @apply rounded-lg shadow-sm border-2 border-mid focus:border-light focus:ring-light;
+  }
+}
+
 @layer components {
-    .form-card {
-        @apply hidden bg-blue-200 rounded-md px-3 py-2;
-    }
+  .form-card {
+    @apply hidden bg-blue-200 rounded-md px-3 py-2;
+  }
 
-    .dropdown .trigger.active .switch {
-        @apply rotate-45;
-    }
+  .dropdown .trigger.active .switch {
+    @apply rotate-45;
+  }
 
-    .dropdown .content {
-        @apply hidden;
-    }
+  .dropdown .content {
+    @apply hidden;
+  }
 
-    .dropdown .content.active {
-        @apply flex;
-    }
+  .dropdown .content.active {
+    @apply flex;
+  }
 
-    [data-sortable="true"] .order {
-        @apply hidden;
-    }
+  [data-sortable] .order {
+    @apply hidden;
+  }
 
-    [data-sortable="true"].active .order {
-        @apply block;
-    }
+  [data-sortable].active .order {
+    @apply block;
+  }
 
-    [data-sortable="true"] .order.desc {
-        @apply rotate-0;
-    }
+  [data-sortable] .order.desc {
+    @apply rotate-0;
+  }
 
-    [data-sortable="true"] .order.asc {
-        @apply rotate-180;
-    }
+  [data-sortable] .order.asc {
+    @apply rotate-180;
+  }
 }

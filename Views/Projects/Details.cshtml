@@ -16,7 +16,21 @@
     AppUser? ProjectManager = await ProjectService.GetProjectManagerAsync(Model.Id);
 }
 
-<h1>Details</h1>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+
+    <div class="flex flex-col gap-4">
+        <h1 class="font-rockwell text-dark text-xl font-bold">@Model.Name</h1>
+
+        <p class="font-lato text-gray-700">@Model.Description</p>
+    </div>
+
+    @if(Model.ImageFileData is not null && Model.ImageContentType is not null)
+    {
+         <div class="lg:row-start-1 lg:col-start-2 lg:row-span-2 lg:justify-self-end w-full">
+            <img src="@FileService.ConvertByteArrayToFile(Model.ImageFileData, Model.ImageContentType)" alt="@Model.Name" class="object-contain object-center max-h-56">
+        </div>
+    }
+</div>
 
 <div>
     <div class="container-fluid">
@@ -107,7 +121,7 @@
                                         <h5 class="text-muted m-b-0">Not Assigned</h5>
                                         @if (User.IsInRole(nameof(Roles.Admin)))
                                         {
-                                            <span><a asp-action="AssignProjectManager" asp-controller="Home" asp-route-id="@Model.Id" class="btn btn-xs alert-primary">Assign PM</a></span>
+                                            <span><a asp-action="AssignProjectManager" asp-controller="Projects" asp-route-id="@Model.Id" class="btn btn-xs alert-primary">Assign PM</a></span>
                                         }
                                     </div>
                                 </div>

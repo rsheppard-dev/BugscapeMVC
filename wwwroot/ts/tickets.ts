@@ -1,14 +1,16 @@
-const container = document.querySelector(
+const ticketsContainer = document.querySelector(
         '[data-container="tickets"]'
     ) as HTMLElement;
 
-let currentPage = 1;
-let currentSortBy = 'title';
-let currentOrder = 'asc';
+let currentTicketsPage = 1;
+let currentTicketsLimit = 5;
+let currentTicketsSortBy = 'title';
+let currentTicketsOrder = 'asc';
 
 async function getTickets() {
     try {
-        const response = await fetch(`/Tickets/SortTickets?page=${currentPage}&sortBy=${currentSortBy}&order=${currentOrder}`);
+        const url = `/Tickets/SortTickets?page=${currentTicketsPage}&sortBy=${currentTicketsSortBy}&order=${currentTicketsOrder}&limit=${currentTicketsLimit}`;
+        const response = await fetch(url);
 
         if (!response.ok) {
             throw new Error(
@@ -17,16 +19,16 @@ async function getTickets() {
         }
 
         const html = await response.text();
-        container.innerHTML = html;
+        ticketsContainer.innerHTML = html;
 
-        const header = container.querySelector(`[data-sort="${currentSortBy}"]`)!;
-        header.setAttribute('data-order', currentOrder);
+        const header = ticketsContainer.querySelector(`[data-sort="${currentTicketsSortBy}"]`)!;
+        header.setAttribute('data-order', currentTicketsOrder);
 
         header.classList.add('active')
     
         const arrow = header.querySelector('.order');
 
-        arrow?.classList.add(currentOrder);
+        arrow?.classList.add(currentTicketsOrder);
 
     } catch (error) {
         console.error(error);
@@ -36,22 +38,18 @@ async function getTickets() {
 // load default table order
 getTickets();
 
-container.addEventListener('click', (event) => {
+ticketsContainer.addEventListener('click', (event) => {
     const header = (event.target as HTMLElement).closest(
                 '[data-sortable]'
             );
 
     if (header) {
-        currentPage = parseInt(header.getAttribute('data-page') as string);
-
-        const order = header.getAttribute('data-order');
-
-		if (order)
-        {
-            currentOrder = order  === 'asc' ? 'desc' : 'asc';
-        }
-
-        currentSortBy = header.getAttribute('data-sort') as string;
+        if (header.getAttribute('data-order') === currentTicketsOrder)
+            currentTicketsOrder = header.getAttribute('data-order') === 'asc' ? 'desc' : 'asc';
+    
+        currentTicketsPage = parseInt(header.getAttribute('data-page') as string) ?? currentTicketsPage;
+        currentTicketsLimit = parseInt(header.getAttribute('data-limit') as string) ?? currentTicketsLimit;
+        currentTicketsSortBy = header.getAttribute('data-sort') ?? currentTicketsSortBy;
 
         getTickets();
     }

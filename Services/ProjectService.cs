@@ -337,6 +337,8 @@ namespace BugscapeMVC.Services
                         .ThenInclude(projects => projects.Tickets)
                             .ThenInclude(tickets => tickets.DeveloperUser)
                     .Include(user => user.Projects)
+                        .ThenInclude(projects => projects.ProjectPriority)
+                    .Include(user => user.Projects)
                         .ThenInclude(projects => projects.Tickets)
                             .ThenInclude(tickets => tickets.TicketPriority)
                     .Include(user => user.Projects)
