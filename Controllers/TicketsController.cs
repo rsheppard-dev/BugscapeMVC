@@ -481,18 +481,18 @@ namespace BugscapeMVC.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> SortTickets(int? page, string sortBy = "title", string order = "asc", int limit = 5)
+        public async Task<IActionResult> SortTickets(int? page, int? limit, string sortBy = "title", string order = "asc")
         {
             ViewData["SortBy"] = sortBy;
             ViewData["SortOrder"] = order;
 
             int companyId = User.Identity?.GetCompanyId() ?? throw new Exception("Unable to get company ID.");
-            
+
             List<Ticket> tickets = await _ticketService.GetAllTicketsByCompanyAsync(companyId);
 
             tickets = Sort(tickets, sortBy, order);
 
-            return PartialView("_TicketsTablePartial", new PaginatedList<Ticket>(tickets, page ?? 1, limit));
+            return PartialView("_TicketsTablePartial", new PaginatedList<Ticket>(tickets, page ?? 1, limit ?? 10));
         }
 
         private static List<Ticket> Sort(List<Ticket> tickets, string sortBy = "title", string order = "asc")

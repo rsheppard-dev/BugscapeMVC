@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 const projectsContainer = document.querySelector('[data-container="projects"]');
 let currentProjectsPage = 1;
-let currentProjectsLimit = 5;
+let currentProjectsLimit = 10;
 let currentProjectsSortBy = 'enddate';
 let currentProjectsOrder = 'desc';
 function getProjects() {
@@ -36,7 +36,7 @@ function getProjects() {
 }
 // load default table order
 getProjects();
-projectsContainer.addEventListener('click', event => {
+projectsContainer.addEventListener('click', (event) => {
     var _a, _b, _c;
     const header = event.target.closest('[data-sortable]');
     if (header) {
@@ -45,8 +45,10 @@ projectsContainer.addEventListener('click', event => {
                 header.getAttribute('data-order') === 'asc' ? 'desc' : 'asc';
         currentProjectsPage =
             (_a = parseInt(header.getAttribute('data-page'))) !== null && _a !== void 0 ? _a : currentProjectsPage;
-        currentProjectsSortBy = (_b = header.getAttribute('data-sort')) !== null && _b !== void 0 ? _b : currentProjectsSortBy;
-        currentProjectsLimit = (_c = parseInt(header.getAttribute('data-limit'))) !== null && _c !== void 0 ? _c : currentProjectsLimit;
+        currentProjectsSortBy =
+            (_b = header.getAttribute('data-sort')) !== null && _b !== void 0 ? _b : currentProjectsSortBy;
+        currentProjectsLimit =
+            (_c = parseInt(header.getAttribute('data-limit'))) !== null && _c !== void 0 ? _c : currentProjectsLimit;
         getProjects();
     }
 });

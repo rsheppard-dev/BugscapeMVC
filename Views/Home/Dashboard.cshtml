@@ -15,9 +15,11 @@
 }
 
 <section class="grid grid-cols-12 justify-between gap-4 mb-6">
-    <a asp-action="Index" asp-controller="Projects" class="rounded-lg bg-info px-4 py-2 flex justify-between items-center gap-2 w-full col-span-6 xl:col-span-3">
+    <a asp-action="Index" asp-controller="Projects"
+        class="rounded-lg bg-info px-4 py-2 flex justify-between items-center gap-2 w-full col-span-6 xl:col-span-3">
         <div class="flex flex-col gap-1 font-dark">
-            <span class="font-rockwell text-4xl">@Model.Projects?.Where(p => p.StartDate < DateTime.Now && p.EndDate > DateTime.Now).Count()</span>
+            <span class="font-rockwell text-4xl">@Model.Projects?.Where(p => p.StartDate < DateTime.Now && p.EndDate >
+                DateTime.Now).Count()</span>
             <span class="font-lato text-sm">Active Projects</span>
         </div>
         <div class="w-14">
@@ -25,7 +27,8 @@
         </div>
     </a>
 
-    <a asp-action="Index" asp-controller="Tickets" class="rounded-lg bg-success px-4 py-2 flex justify-between items-center gap-2 w-full col-span-6 xl:col-span-3">
+    <a asp-action="Index" asp-controller="Tickets"
+        class="rounded-lg bg-success px-4 py-2 flex justify-between items-center gap-2 w-full col-span-6 xl:col-span-3">
         <div class="flex flex-col gap-1 font-dark">
             <span class="font-rockwell text-4xl">@Model.Tickets?.Count()</span>
             <span class="font-lato text-sm">Open Tickets</span>
@@ -35,9 +38,11 @@
         </div>
     </a>
 
-    <a asp-action="Index" asp-controller="Tickets" class="rounded-lg bg-warning px-4 py-2 flex justify-between items-center gap-2 w-full col-span-6 xl:col-span-3">
+    <a asp-action="Index" asp-controller="Tickets"
+        class="rounded-lg bg-warning px-4 py-2 flex justify-between items-center gap-2 w-full col-span-6 xl:col-span-3">
         <div class="flex flex-col gap-1 font-dark">
-            <span class="font-rockwell text-4xl">@Model.Tickets?.Where(t => string.IsNullOrEmpty(t.DeveloperUserId)).Count()</span>
+            <span class="font-rockwell text-4xl">@Model.Tickets?.Where(t =>
+                string.IsNullOrEmpty(t.DeveloperUserId)).Count()</span>
             <span class="font-lato text-sm">Unassigned Tickets</span>
         </div>
         <div class="w-14">
@@ -45,7 +50,8 @@
         </div>
     </a>
 
-    <a asp-action="Index" asp-controller="Tickets" class="rounded-lg bg-danger px-4 py-2 flex justify-between items-center gap-2 w-full col-span-6 xl:col-span-3">
+    <a asp-action="Index" asp-controller="Tickets"
+        class="rounded-lg bg-danger px-4 py-2 flex justify-between items-center gap-2 w-full col-span-6 xl:col-span-3">
         <div class="flex flex-col gap-1 font-dark">
             <span class="font-rockwell text-4xl">@Model.Company?.Members.Count()</span>
             <span class="font-lato text-sm">Team Members</span>
@@ -59,12 +65,12 @@
 <div class="grid grid-cols-12 gap-6 mb-6">
     @if (Model.Tickets?.Count > 0)
     {
-    <section class="col-span-12 lg:col-span-4 rounded-md bg-white px-6 py-3 flex flex-col lg:order-2">
-        <h2 class="font-rockwell text-dark text-xl font-bold mb-4">Tickets By Priority</h2>
-        <div class="h-full flex items-center justify-center">
-            <canvas data-chart="tickets by priority"></canvas>
-        </div>
-    </section>
+        <section class="col-span-12 lg:col-span-4 rounded-md bg-white px-6 py-3 flex flex-col lg:order-2">
+            <h2 class="font-rockwell text-dark text-xl font-bold mb-4">Tickets By Priority</h2>
+            <div class="h-full flex items-center justify-center">
+                <canvas data-chart="tickets by priority"></canvas>
+            </div>
+        </section>
     }
 
     @if (Model.Tickets?.Count > 0)
@@ -128,10 +134,12 @@
     <section class="col-span-12 rounded-md bg-white px-6 py-3 flex flex-col lg:order-5">
         <div class="flex justify-between items-center mb-6">
             <h2 class="font-rockwell text-dark text-xl font-bold">Tickets</h2>
-            
-            <a asp-action="Index" asp-controller="Tickets" title="Tickets" class="bg-mid px-4 py-2 text-dark rounded-lg flex items-center gap-2 group">
+
+            <a asp-action="Index" asp-controller="Tickets" title="Tickets"
+                class="bg-mid px-4 py-2 text-dark rounded-lg flex items-center gap-2 group">
                 <span class="font-lato text-sm">@Model.Tickets?.Count</span>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 group-hover:translate-x-1 transition-transform">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-4 h-4 group-hover:translate-x-1 transition-transform">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                 </svg>
             </a>
@@ -142,19 +150,24 @@
             <p class="font-lato flex flex-col gap-4 grow">There are currently no tickets to show.</p>
         }
         else
-        {        
-        <div data-container="tickets" class="grow relative overflow-x-auto rounded-t-lg scrollbar-thin scrollbar-thumb-light scrollbar-track-white">
-                @await Html.PartialAsync("~/Views/Tickets/_TicketsTablePartial.cshtml", new PaginatedList<Ticket>(Model.Tickets ?? new List<Ticket>(), 1, 10))
-        </div>
+        {
+            <div data-container="tickets"
+                class="grow relative overflow-x-auto rounded-t-lg scrollbar-thin scrollbar-thumb-light scrollbar-track-white">
+                @await Html.PartialAsync("~/Views/Tickets/_TicketsTablePartial.cshtml", new
+                         PaginatedList<Ticket>(Model.Tickets ?? new List<Ticket>(), 1, 10))
+            </div>
         }
 
         <div>
             <hr class="my-4">
 
             <a asp-action="Create" asp-controller="Tickets" class="flex items-center gap-2 w-fit group">
-                <div class="bg-success group-hover:bg-opacity-80 transition-opacity flex items-center justify-center rounded-full p-2">
+                <div
+                    class="bg-success group-hover:bg-opacity-80 transition-opacity flex items-center justify-center rounded-full p-2">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="fill-white h-4 w-4">
-                        <path id="Icon_awesome-plus" data-name="Icon awesome-plus" d="M18.571,10.107H12.143V3.679A1.429,1.429,0,0,0,10.714,2.25H9.286A1.429,1.429,0,0,0,7.857,3.679v6.429H1.429A1.429,1.429,0,0,0,0,11.536v1.429a1.429,1.429,0,0,0,1.429,1.429H7.857v6.429A1.429,1.429,0,0,0,9.286,22.25h1.429a1.429,1.429,0,0,0,1.429-1.429V14.393h6.429A1.429,1.429,0,0,0,20,12.964V11.536A1.429,1.429,0,0,0,18.571,10.107Z" transform="translate(0 -2.25)" />
+                        <path id="Icon_awesome-plus" data-name="Icon awesome-plus"
+                            d="M18.571,10.107H12.143V3.679A1.429,1.429,0,0,0,10.714,2.25H9.286A1.429,1.429,0,0,0,7.857,3.679v6.429H1.429A1.429,1.429,0,0,0,0,11.536v1.429a1.429,1.429,0,0,0,1.429,1.429H7.857v6.429A1.429,1.429,0,0,0,9.286,22.25h1.429a1.429,1.429,0,0,0,1.429-1.429V14.393h6.429A1.429,1.429,0,0,0,20,12.964V11.536A1.429,1.429,0,0,0,18.571,10.107Z"
+                            transform="translate(0 -2.25)" />
                     </svg>
                 </div>
                 <span class="font-lato font-bold text-sm">Submit new ticket</span>
@@ -248,7 +261,9 @@
     <script src="~/js/tickets.js"></script>
 
     <!-- *** Begin Chart JS Pie/Donut *** -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js" integrity="sha512-SIMGYRUjwY8+gKg7nn9EItdD8LCADSDfJNutF9TPrvEo86sQmFMh6MyralfIyhADlajSxqc7G0gs7+MwWF/ogQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"
+        integrity="sha512-SIMGYRUjwY8+gKg7nn9EItdD8LCADSDfJNutF9TPrvEo86sQmFMh6MyralfIyhADlajSxqc7G0gs7+MwWF/ogQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script>
         const ticketsByPriority = document.querySelector('[data-chart="tickets by priority"]');
@@ -266,10 +281,10 @@
                 datasets: [{
                     label: 'Tickets By Priority',
                     data: [
-                        @Model.Tickets?.Where(ticket => ticket.TicketPriority?.Name == nameof(Priorities.Low)).Count(),
-                        @Model.Tickets?.Where(ticket => ticket.TicketPriority?.Name == nameof(Priorities.Medium)).Count(),
-                        @Model.Tickets?.Where(ticket => ticket.TicketPriority?.Name == nameof(Priorities.High)).Count(),
-                        @Model.Tickets?.Where(ticket => ticket.TicketPriority?.Name == nameof(Priorities.Urgent)).Count(),
+        @Model.Tickets?.Where(ticket => ticket.TicketPriority?.Name == nameof(Priorities.Low)).Count(),
+        @Model.Tickets?.Where(ticket => ticket.TicketPriority?.Name == nameof(Priorities.Medium)).Count(),
+        @Model.Tickets?.Where(ticket => ticket.TicketPriority?.Name == nameof(Priorities.High)).Count(),
+        @Model.Tickets?.Where(ticket => ticket.TicketPriority?.Name == nameof(Priorities.Urgent)).Count(),
                     ],
                     backgroundColor: [
                         '#0AD69F',

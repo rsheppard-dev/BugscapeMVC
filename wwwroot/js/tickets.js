@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 const ticketsContainer = document.querySelector('[data-container="tickets"]');
 let currentTicketsPage = 1;
-let currentTicketsLimit = 5;
+let currentTicketsLimit = 10;
 let currentTicketsSortBy = 'title';
 let currentTicketsOrder = 'asc';
 function getTickets() {
@@ -41,10 +41,14 @@ ticketsContainer.addEventListener('click', (event) => {
     const header = event.target.closest('[data-sortable]');
     if (header) {
         if (header.getAttribute('data-order') === currentTicketsOrder)
-            currentTicketsOrder = header.getAttribute('data-order') === 'asc' ? 'desc' : 'asc';
-        currentTicketsPage = (_a = parseInt(header.getAttribute('data-page'))) !== null && _a !== void 0 ? _a : currentTicketsPage;
-        currentTicketsLimit = (_b = parseInt(header.getAttribute('data-limit'))) !== null && _b !== void 0 ? _b : currentTicketsLimit;
-        currentTicketsSortBy = (_c = header.getAttribute('data-sort')) !== null && _c !== void 0 ? _c : currentTicketsSortBy;
+            currentTicketsOrder =
+                header.getAttribute('data-order') === 'asc' ? 'desc' : 'asc';
+        currentTicketsPage =
+            (_a = parseInt(header.getAttribute('data-page'))) !== null && _a !== void 0 ? _a : currentTicketsPage;
+        currentTicketsLimit =
+            (_b = parseInt(header.getAttribute('data-limit'))) !== null && _b !== void 0 ? _b : currentTicketsLimit;
+        currentTicketsSortBy =
+            (_c = header.getAttribute('data-sort')) !== null && _c !== void 0 ? _c : currentTicketsSortBy;
         getTickets();
     }
 });

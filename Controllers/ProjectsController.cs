@@ -50,7 +50,7 @@ namespace BugscapeMVC.Controllers
                 ViewBag.Search = search;
             }
 
-            projects = Sort(projects, sortBy, order, limit);
+            projects = Sort(projects, sortBy, order);
 
             // pagination
             if (page < 1) page = 1;
@@ -95,7 +95,7 @@ namespace BugscapeMVC.Controllers
                 ViewBag.Search = search;
             }
 
-            projects = Sort(projects, sortBy, order, limit);
+            projects = Sort(projects, sortBy, order);
 
             // pagination
             if (page < 1) page = 1;
@@ -487,7 +487,7 @@ namespace BugscapeMVC.Controllers
             }
         }
 
-        public async Task<IActionResult> SortProjects(string sortBy = "name", string order = "asc", int limit = 5, int? page = 1)
+        public async Task<IActionResult> SortProjects(int? limit, int? page = 1, string sortBy = "name", string order = "asc")
         {
             ViewData["SortBy"] = sortBy;
             ViewData["SortOrder"] = order;
@@ -496,12 +496,12 @@ namespace BugscapeMVC.Controllers
             
             List<Project> projects = await _projectService.GetAllProjectsByCompanyAsync(companyId);
 
-            projects = Sort(projects, sortBy, order, limit);
+            projects = Sort(projects, sortBy, order);
 
-            return PartialView("_ProjectsTablePartial", new PaginatedList<Project>(projects, page ?? 1, limit));
+            return PartialView("_ProjectsTablePartial", new PaginatedList<Project>(projects, page ?? 1, limit ?? 10));
         }
 
-        private static List<Project> Sort(List<Project> projects, string sortBy, string order = "asc", int? limit = 5)
+        private static List<Project> Sort(List<Project> projects, string sortBy, string order = "asc")
         {
             if (projects is null)
             {

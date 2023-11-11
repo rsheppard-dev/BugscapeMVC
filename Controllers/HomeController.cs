@@ -73,7 +73,10 @@ public class HomeController : Controller
 
         foreach (Project prj in projects)
         {
-            chartData.Add(new object[] { prj.Name, prj.Tickets.Count });
+            if (prj.Name is not null)
+            {
+                chartData.Add(new object[] { prj.Name, prj.Tickets.Count });
+            }
         }
 
         return Json(chartData);
@@ -142,7 +145,7 @@ public class HomeController : Controller
         //Bar One
         PlotlyBar barOne = new()
         {
-            X = projects.Select(p => p.Name).ToArray(),
+            X = projects.Select(p => p.Name!).ToArray(),
             Y = projects.SelectMany(p => p.Tickets).GroupBy(t => t.ProjectId).Select(g => g.Count()).ToArray(),
             Name = "Tickets",
             Type =  "bar"
@@ -151,7 +154,7 @@ public class HomeController : Controller
         //Bar Two
         PlotlyBar barTwo = new()
         {
-            X = projects.Select(p => p.Name).ToArray(),
+            X = projects.Select(p => p.Name!).ToArray(),
             Y = projects.Select(async p=> (await _projectService.GetProjectMembersByRoleAsync(p.Id, nameof(Roles.Developer))).Count).Select(c=>c.Result).ToArray(),
             Name = "Developers",
             Type = "bar"
