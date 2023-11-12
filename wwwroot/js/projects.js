@@ -11,8 +11,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 const projectsContainer = document.querySelector('[data-container="projects"]');
 let currentProjectsPage = 1;
 let currentProjectsLimit = 10;
-let currentProjectsSortBy = 'enddate';
-let currentProjectsOrder = 'desc';
+let currentProjectsSortBy = 'name';
+let currentProjectsOrder = 'asc';
 function getProjects() {
     return __awaiter(this, void 0, void 0, function* () {
         try {

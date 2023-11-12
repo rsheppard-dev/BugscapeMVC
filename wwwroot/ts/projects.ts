@@ -4,8 +4,8 @@ const projectsContainer = document.querySelector(
 
 let currentProjectsPage = 1
 let currentProjectsLimit = 10
-let currentProjectsSortBy = 'enddate'
-let currentProjectsOrder = 'desc'
+let currentProjectsSortBy = 'name'
+let currentProjectsOrder = 'asc'
 
 async function getProjects() {
   try {

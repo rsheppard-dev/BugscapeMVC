@@ -533,7 +533,7 @@ namespace BugscapeMVC.Controllers
             }
         }
 
-        public async Task<IActionResult> SortProjects(int? limit, int? page = 1, string sortBy = "name", string order = "asc")
+        public async Task<IActionResult> SortProjects(int? limit, int? page = 1, string sortBy = "", string order = "asc")
         {
             ViewData["SortBy"] = sortBy;
             ViewData["SortOrder"] = order;
