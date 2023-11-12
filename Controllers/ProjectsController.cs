@@ -116,29 +116,75 @@ namespace BugscapeMVC.Controllers
 
         // GET: Projects/ArchivedProjects
         [HttpGet]
-        public async Task<IActionResult> ArchivedProjects()
+        public async Task<IActionResult> ArchivedProjects(int page = 1, string search = "", string order = "asc", string sortBy = "name", int limit = 10)
         {
             int? companyId = User.Identity?.GetCompanyId();
 
             if (companyId is null) return NotFound();
-            
+
             List<Project> projects = await _projectService.GetArchivedProjectsByCompanyAsync(companyId.Value);
 
-            return View(projects);
+            // if search arguement
+            if (!string.IsNullOrEmpty(search))
+            {
+                projects = Search(projects, search);
+                ViewBag.Search = search;
+            }
+
+            projects = Sort(projects, sortBy, order);
+
+            // pagination
+            if (page < 1) page = 1;
+
+            int totalProjects = projects.Count;
+
+            Pagination pagination = new(totalProjects, page, limit);
+
+            int skip = (page - 1) * limit;
+
+            List<Project> data = projects.Skip(skip).Take(pagination.ResultsPerPage).ToList();
+
+            ViewBag.Sort = new { sortBy, order, limit };
+            ViewBag.Pagination = pagination;
+
+            return View(data);
         }
 
         // GET: Projects/UnassignedProjects
         [HttpGet]
         [Authorize(Roles = nameof(Roles.Admin))]
-        public async Task<IActionResult> UnassignedProjects()
+        public async Task<IActionResult> UnassignedProjects(int page = 1, string search = "", string order = "asc", string sortBy = "name", int limit = 10)
         {
             int? companyId = User.Identity?.GetCompanyId();
 
-            if (companyId is null) return NoContent();
+            if (companyId is null) return NotFound();
 
             List<Project> projects = await _projectService.GetUnassignedProjectsAsync(companyId.Value);
 
-            return View(projects);
+            // if search arguement
+            if (!string.IsNullOrEmpty(search))
+            {
+                projects = Search(projects, search);
+                ViewBag.Search = search;
+            }
+
+            projects = Sort(projects, sortBy, order);
+
+            // pagination
+            if (page < 1) page = 1;
+
+            int totalProjects = projects.Count;
+
+            Pagination pagination = new(totalProjects, page, limit);
+
+            int skip = (page - 1) * limit;
+
+            List<Project> data = projects.Skip(skip).Take(pagination.ResultsPerPage).ToList();
+
+            ViewBag.Sort = new { sortBy, order, limit };
+            ViewBag.Pagination = pagination;
+
+            return View(data);
         }
 
         // GET: Projects/AssignPM/5
