@@ -8,6 +8,9 @@
     ViewData["Title"] = "Create";
 }
 
+<head>
+    <script src="/lib/tinymce/tinymce.min.js" referrerpolicy="origin"></script>
+</head>
 
 <h1 class="font-rockwell text-dark text-xl font-bold mb-4">Create New Project</h1>
 <hr class="mb-4 h-[2px] rounded bg-mid border-0" />
@@ -76,9 +79,9 @@
     }
 
 
-    <div class="lg:col-span-2">
+    <div class="lg:col-span-2 flex justify-end">
         <button type="submit"
-            class="bg-mid px-4 py-2 rounded-md transition-colors font-lato text-sm font-bold text-dark hover:bg-light">Create
+            class="px-4 py-2 text-sm rounded-md cursor-pointer bg-success font-lato font-bold hover:bg-opacity-80 transition-opacity">Create
             Project</button>
     </div>
 </form>

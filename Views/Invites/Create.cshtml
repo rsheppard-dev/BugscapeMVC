@@ -4,52 +4,64 @@
     ViewData["Title"] = "Create";
 }
 
+<head>
+    <script src="/lib/tinymce/tinymce.min.js" referrerpolicy="origin"></script>
+</head>
+
 <h1 class="font-rockwell text-xl mb-4 text-dark">Invite New Member</h1>
 
 <hr class="mb-4" />
 
 <form asp-action="Create" class="flex flex-col gap-4 text-dark font-lato">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    
+
     <div class="flex flex-col gap-2 text-sm">
-        <label asp-for="InviteeEmail"></label>
+        <label asp-for="InviteeEmail" class="text-sm font-bold"></label>
         <input asp-for="InviteeEmail" />
         <span asp-validation-for="InviteeEmail" class="text-danger"></span>
     </div>
-    
+
     <div class="flex flex-col gap-2 text-sm">
-        <label asp-for="InviteeFirstName"></label>
+        <label asp-for="InviteeFirstName" class="text-sm font-bold"></label>
         <input asp-for="InviteeFirstName" />
         <span asp-validation-for="InviteeFirstName" class="text-danger"></span>
     </div>
 
     <div class="flex flex-col gap-2 text-sm">
-        <label asp-for="InviteeLastName"></label>
+        <label asp-for="InviteeLastName" class="text-sm font-bold"></label>
         <input asp-for="InviteeLastName" />
         <span asp-validation-for="InviteeLastName" class="text-danger"></span>
     </div>
 
     <div class="flex flex-col gap-2 text-sm">
-        <label asp-for="Role"></label>
+        <label asp-for="Role" class="text-sm font-bold"></label>
         <select asp-for="Role" asp-items="ViewBag.Roles"></select>
         <span asp-validation-for="Role" class="text-danger"></span>
     </div>
 
     <div class="flex flex-col gap-2 text-sm">
-        <label asp-for="Message"></label>
-        <textarea rows="5" asp-for="Message">We want you to join our team!</textarea>
+        <label asp-for="Message" class="text-sm font-bold"></label>
+        <textarea id="message" rows="5" asp-for="Message">We want you to join our team!</textarea>
         <span asp-validation-for="Message" class="text-danger"></span>
     </div>
-    
+
     <div class="flex justify-end">
-        <input type="submit" value="Invite" class="px-4 py-2 rounded-md cursor-pointer bg-success font-lato hover:bg-opacity-80 transition-opacity" />
+        <input type="submit" value="Invite"
+            class="px-4 py-2 rounded-md cursor-pointer bg-success font-lato font-bold text-sm hover:bg-opacity-80 transition-opacity" />
     </div>
 </form>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        tinymce.init({
+            selector: '#message',
+            menubar: false,
+            statusbar: false,
+            toolbar: 'undo redo | bold italic underline',
+            height: 200
+        });
+    </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
