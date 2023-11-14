@@ -2,6 +2,7 @@
 @using BugscapeMVC.Services.Interfaces
 @using BugscapeMVC.Models.Enums
 @using Microsoft.AspNetCore.Identity
+@using Humanizer
 
 @inject IFileService FileService
 @inject IProjectService ProjectService
@@ -15,30 +16,23 @@
 
     AppUser? user = await UserManager.GetUserAsync(User);
     AppUser? Project_Manager = await ProjectService.GetProject_ManagerAsync(Model.Id);
+
+    var ticketHistories = await HistoryService.GetProjectTicketsHistoriesAsync(Model.Id, Model.CompanyId);
 }
 
-<h1 class="font-rockwell text-dark text-xl font-bold mb-6">@Model.Name</h1>
+<div class="grid grid-cols-12 justify-between gap-4 mb-6">
+    <section aria-label="Project Description" class="col-span-12 lg:col-span-6 xl:col-span-7 rounded-md bg-white px-6 py-3 shadow-sm">
+        <h1 class="font-rockwell text-dark text-xl font-bold mb-6">@Model.Name</h1>
 
-<hr class="mb-6 h-[2px] rounded bg-mid border-0" />
+        @if(Model.ImageFileData is not null && Model.ImageContentType is not null)
+        {
+            <img src="@FileService.ConvertByteArrayToFile(Model.ImageFileData, Model.ImageContentType)" alt="@Model.Name" class="mx-auto xl:float-right max-h-60 rounded-lg shadow-md xl:ml-4 mb-4">
+        }
 
-<div class="flex flex-col lg:flex-row gap-6 justify-between mb-6">
-    @Html.Raw(Model.Description)
-    @if(Model.ImageFileData is not null && Model.ImageContentType is not null)
-    {
-        <div class="rounded-lg overflow-hidden shadow-sm w-fit mb-4">
-            <img src="@FileService.ConvertByteArrayToFile(Model.ImageFileData, Model.ImageContentType)" alt="@Model.Name" class="object-cover object-center max-h-60">
-        </div>
-    }
-    else
-    {
-        <div class="rounded-lg overflow-hidden shadow-sm w-fit mb-4">
-            <img src="~/images/default-project.png" alt="@Model.Name" class="object-cover object-center max-h-60">
-        </div>
-    }  
-</div>
+        <div class="prose max-w-none font-lato">@Html.Raw(Model.Description)</div>
+    </section>
 
-<div class="flex flex-col lg:flex-row justify-between gap-6 mb-6">
-    <section class="rounded-md bg-white px-6 py-3 shadow-sm w-full">
+    <section aria-label="Project Details" class="rounded-md bg-white px-6 py-3 shadow-sm col-span-12 lg:col-span-6 xl:col-span-5">
         @{
             DateTime start = Model.StartDate.DateTime;
             DateTime end = Model.EndDate.DateTime;
@@ -144,7 +138,47 @@
         </div>
     </section>
 
-    <section class="w-full shadow-sm rounded-md bg-white px-6 py-3 flex flex-col">
+    <section aria-label="Project Activity" class="col-span-12 lg:col-span-6 xl:col-span-7 shadow-sm rounded-md bg-white px-6 py-3 flex flex-col">
+        <h2 class="font-rockwell text-dark text-xl font-bold mb-6">Project Activity</h2>
+
+        @if (ticketHistories.Count == 0)
+        {
+            <p class="font-lato">There is no activity to show.</p>
+        }
+        else
+        {
+            <ol class="relative border-s border-light">                  
+                @foreach (TicketHistory history in ticketHistories)
+                {
+                    <li class="mb-10 ms-6">            
+                        <span class="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -start-3 ring-8 ring-white">
+                            @if (history.User?.AvatarFileData is null || history.User?.AvatarContentType is null)
+                            {
+                                <img class="rounded-full shadow-lg" src="~/images/default-avatar.png"
+                                    alt="@history.User?.FullName">
+                            }
+                            else
+                            {
+                                <img class="rounded-full shadow-lg"
+                                    src="@FileService.ConvertByteArrayToFile(history.User.AvatarFileData, history.User.AvatarContentType)"
+                                    alt="@history.User?.FullName">
+                            }
+                        </span>
+                        <div class="justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex">
+                            <time class="mb-1 text-xs font-normal text-gray-400 sm:order-last sm:mb-0">just now</time>
+                            <div>
+                                <p class="text-sm font-lato">@history.User?.FullName edited <strong class="font-bold">@history.Property</strong>.</p>
+                                <p class="text-sm font-lato">@($"Previous {history.Property}: {history.OldValue}")</p>
+                                <p class="text-sm font-lato">@($"Current {history.Property}: {history.NewValue}")</p>
+                            </div>
+                        </div>
+                    </li>
+                }
+            </ol>
+        }
+    </section>
+
+    <section aria-label="Project Members" class="col-span-12 lg:col-span-6 xl:col-span-5 shadow-sm rounded-md bg-white px-6 py-3 flex flex-col">
         <h2 class="font-rockwell text-dark text-xl font-bold mb-6">Project Members</h2>
 
         @if ((await ProjectService.GetAllProjectMembersExceptPMAsync(Model.Id)).Count == 0)
@@ -211,40 +245,39 @@
             </div>
         }
     </section>
-</div>
 
-<section class="rounded-md bg-white px-6 py-3 flex flex-col">
-    <h2 class="font-rockwell text-dark text-xl font-bold mb-6">Tickets</h2>
+    <section aria-label="Project Tickets" class="col-span-12 rounded-md bg-white px-6 py-3 flex flex-col">
+        <h2 class="font-rockwell text-dark text-xl font-bold mb-6">Tickets</h2>
 
-    @if (Model.Tickets is null || Model.Tickets.Count == 0)
-    {
-        <p class="font-lato flex flex-col gap-4 grow">There are currently no tickets to show.</p>
-    }
-    else
-    {
-        <div data-container="tickets"
-            class="grow relative overflow-x-auto rounded-t-lg scrollbar-thin scrollbar-thumb-light scrollbar-track-white">
-            @await Html.PartialAsync("~/Views/Tickets/_TicketsTablePartial.cshtml", new PaginatedList<Ticket>(Model.Tickets.ToList(), 1, 10))
-        </div>
-    }
-
-    <div>
-        <hr class="my-4">
-
-        <a asp-action="Create" asp-controller="Tickets" class="flex items-center gap-2 w-fit group">
-            <div
-                class="bg-success group-hover:bg-opacity-80 transition-opacity flex items-center justify-center rounded-full p-2">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="fill-white h-4 w-4">
-                    <path id="Icon_awesome-plus" data-name="Icon awesome-plus"
-                        d="M18.571,10.107H12.143V3.679A1.429,1.429,0,0,0,10.714,2.25H9.286A1.429,1.429,0,0,0,7.857,3.679v6.429H1.429A1.429,1.429,0,0,0,0,11.536v1.429a1.429,1.429,0,0,0,1.429,1.429H7.857v6.429A1.429,1.429,0,0,0,9.286,22.25h1.429a1.429,1.429,0,0,0,1.429-1.429V14.393h6.429A1.429,1.429,0,0,0,20,12.964V11.536A1.429,1.429,0,0,0,18.571,10.107Z"
-                        transform="translate(0 -2.25)" />
-                </svg>
+        @if (Model.Tickets is null || Model.Tickets.Count == 0)
+        {
+            <p class="font-lato flex flex-col gap-4 grow">There are currently no tickets to show.</p>
+        }
+        else
+        {
+            <div data-container="tickets"
+                class="relative overflow-x-auto rounded-t-lg scrollbar-thin scrollbar-thumb-light scrollbar-track-white">
+                @await Html.PartialAsync("~/Views/Tickets/_TicketsTablePartial.cshtml", new PaginatedList<Ticket>(Model.Tickets.ToList(), 1, 10))
             </div>
-            <span class="font-lato font-bold text-sm">Submit new ticket</span>
-        </a>
-    </div>
-</section>
+        }
 
+        <div>
+            <hr class="my-4">
+
+            <a asp-action="Create" asp-controller="Tickets" class="flex items-center gap-2 w-fit group">
+                <div
+                    class="bg-success group-hover:bg-opacity-80 transition-opacity flex items-center justify-center rounded-full p-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="fill-white h-4 w-4">
+                        <path id="Icon_awesome-plus" data-name="Icon awesome-plus"
+                            d="M18.571,10.107H12.143V3.679A1.429,1.429,0,0,0,10.714,2.25H9.286A1.429,1.429,0,0,0,7.857,3.679v6.429H1.429A1.429,1.429,0,0,0,0,11.536v1.429a1.429,1.429,0,0,0,1.429,1.429H7.857v6.429A1.429,1.429,0,0,0,9.286,22.25h1.429a1.429,1.429,0,0,0,1.429-1.429V14.393h6.429A1.429,1.429,0,0,0,20,12.964V11.536A1.429,1.429,0,0,0,18.571,10.107Z"
+                            transform="translate(0 -2.25)" />
+                    </svg>
+                </div>
+                <span class="font-lato font-bold text-sm">Submit new ticket</span>
+            </a>
+        </div>
+    </section>
+</div>
 
 @* <div class="container">
     <div class="row gy-2">
