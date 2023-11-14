@@ -1,7 +1,7 @@
 {
-	"dotnet.defaultSolution": "BugscapeMVC.sln",
-	"editor.formatOnSave": true,
-	"dotnetAcquisitionExtension.installTimeoutValue": 180,
-	"editor.formatOnPaste": true,
-	"editor.formatOnType": false
+  "dotnet.defaultSolution": "BugscapeMVC.sln",
+  "editor.formatOnSave": false,
+  "dotnetAcquisitionExtension.installTimeoutValue": 180,
+  "editor.formatOnPaste": false,
+  "editor.formatOnType": false
 }

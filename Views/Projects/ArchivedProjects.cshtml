@@ -95,7 +95,7 @@
                             }
                         </a>
                     </th>
-                    <th data-sort="ProjectManagers" scope="col" class="px-6 py-3 whitespace-nowrap">
+                    <th data-sort="Project_Managers" scope="col" class="px-6 py-3 whitespace-nowrap">
                         <a asp-action="ArchivedProjects" asp-controller="Projects" asp-route-page="@pagination.CurrentPage" asp-route-sortBy="pm" asp-route-limit="@limit" asp-route-order="@GetNewOrder("pm")" asp-route-search="@search" class="flex items-center gap-2">
                         <span>PM</span>
                         @if (sortBy == "pm")
@@ -129,7 +129,7 @@
 
                 @foreach (Project project in Model)
                 {
-                    AppUser? projectManager = await ProjectService.GetProjectManagerAsync(project.Id);
+                    AppUser? Project_Manager = await ProjectService.GetProject_ManagerAsync(project.Id);
                     string rowColor = rowNumber % 2 == 0 ? "bg-lightest" : "bg-mid"; // Define row colors based on the counter.
                     rowNumber++;
                 
@@ -144,19 +144,19 @@
                         @project.EndDate.ToString("dd.MM.yyyy")
                     </td>
                     <td class="px-6 py-4">
-                        @if (projectManager is null)
+                        @if (Project_Manager is null)
                         {
                             <span class="bg-gray-200 text-dark uppercase px-2 py-1 rounded-md text-xs font-bold">Unassigned</span>
                         }
                         else
                         {
-                            @if (projectManager?.AvatarFileData is null || projectManager?.AvatarContentType is null)
+                            @if (Project_Manager?.AvatarFileData is null || Project_Manager?.AvatarContentType is null)
                             {
-                                <img class="h-8 w-8 object-cover rounded-full" src="~/images/default-avatar.png" alt="@projectManager?.FullName">
+                                <img class="h-8 w-8 object-cover rounded-full" src="~/images/default-avatar.png" alt="@Project_Manager?.FullName">
                             }
                             else
                             {
-                                <img class="h-8 w-8 object-cover rounded-full" src="@FileService.ConvertByteArrayToFile(projectManager.AvatarFileData, projectManager.AvatarContentType)" alt="@projectManager?.FullName">
+                                <img class="h-8 w-8 object-cover rounded-full" src="@FileService.ConvertByteArrayToFile(Project_Manager.AvatarFileData, Project_Manager.AvatarContentType)" alt="@Project_Manager?.FullName">
                             }
                         }
                     </td>
@@ -191,7 +191,7 @@
                         </a>
 
                         @{
-                            bool isProjectPM = (await ProjectService.GetProjectManagerAsync(project.Id))?.Id == user?.Id;
+                            bool isProjectPM = (await ProjectService.GetProject_ManagerAsync(project.Id))?.Id == user?.Id;
                         }
 
                         @if(User.IsInRole(nameof(Roles.Admin)) || isProjectPM)

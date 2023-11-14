@@ -5,7 +5,7 @@ namespace BugscapeMVC.Models.ViewModels
     public class AssignPMViewModel
     {
         public Project? Project { get; set; }
-        public SelectList? ProjectManagers { get; set; }
-        public string? ProjectManagerId { get; set; }
+        public SelectList? Project_Managers { get; set; }
+        public string? Project_ManagerId { get; set; }
     }
 }

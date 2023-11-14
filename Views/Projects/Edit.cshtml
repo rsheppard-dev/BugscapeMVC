@@ -21,7 +21,7 @@
             <input type="hidden" asp-for="Project.ImageFileName" />
             <input type="hidden" asp-for="Project.ImageFileData" />
             <input type="hidden" asp-for="Project.ImageContentType" />
-            
+
             <div class="form-group">
                 <label asp-for="Project.Name" class="control-label"></label>
                 <input asp-for="Project.Name" class="form-control" />
@@ -52,28 +52,30 @@
             </div>
             <div class="form-group">
                 <label class="control-label">Project Image</label>
-                <input data-image-input asp-for="Project.ImageFormFile" class="form-control" type="file" accept="image/jpg, image/jpeg, image/png, image/webp, image/gif" />
+                <input data-image-input asp-for="Project.ImageFormFile" class="form-control" type="file"
+                    accept="image/jpg, image/jpeg, image/png, image/webp, image/gif" />
                 <span asp-validation-for="Project.ImageFormFile" class="text-danger"></span>
             </div>
             <div>
                 <label>Image Preview</label>
                 @if (Model.Project?.ImageFileData is null || Model.Project?.ImageContentType is null)
                 {
-                    <img data-image-output class="img-fluid img-thumbnail" src="~/images/default_project.png">
+                    <img data-image-output class="img-fluid img-thumbnail" src="~/images/default-project.png">
                 }
                 else
                 {
-                    <img data-image-output class="img-fluid img-thumbnail" src="@fileService.ConvertByteArrayToFile(Model.Project.ImageFileData, Model.Project.ImageContentType)">
+                    <img data-image-output class="img-fluid img-thumbnail"
+                        src="@fileService.ConvertByteArrayToFile(Model.Project.ImageFileData, Model.Project.ImageContentType)">
                 }
             </div>
             @if (User.IsInRole(Roles.Admin.ToString()))
             {
-            <div class="form-group">
-                <label class="control-label">Project Manager</label>
-                <select asp-for="PmId" class="form-control" asp-items="@Model.PMList">
-                    <option disabled selected hidden>Assign Project Manager</option>
-                </select>
-            </div>
+                <div class="form-group">
+                    <label class="control-label">Project Manager</label>
+                    <select asp-for="PmId" class="form-control" asp-items="@Model.PMList">
+                        <option disabled selected hidden>Assign Project Manager</option>
+                    </select>
+                </div>
             }
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
@@ -87,7 +89,7 @@
 </div>
 
 @section Scripts {
-    <script  src="~/js/imagePreview.js"></script>
+    <script src="~/js/imagePreview.js"></script>
     <script>
         const input = document.querySelector('[data-image-input]');
         const output = document.querySelector('[data-image-output]');
@@ -95,5 +97,7 @@
 
         instance.init();
     </script>
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

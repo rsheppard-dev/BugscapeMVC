@@ -257,8 +257,16 @@
 </div>
 
 @section scripts {
-    <script src="~/js/projects.js"></script>
-    <script src="~/js/tickets.js"></script>
+    <script src="~/js/projectsTable.js"></script>
+    <script src="~/js/ticketsTable.js"></script>
+
+    <script>
+        const ticketsTable = new TicketsTable(@Html.Raw(Json.Serialize(Model.Tickets)));
+        const projectsTable = new ProjectsTable(@Html.Raw(Json.Serialize(Model.Projects)));
+
+        ticketsTable.init();
+        projectsTable.init();
+    </script>
 
     <!-- *** Begin Chart JS Pie/Donut *** -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"

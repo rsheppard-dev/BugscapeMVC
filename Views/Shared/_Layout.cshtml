@@ -162,7 +162,7 @@
                             <div class="content gap-10">
                                 <div class="flex bg-light w-1"></div>
                                 <div class="flex flex-col gap-4 font-normal text-xs">
-                                    @if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)))
+                                    @if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.Project_Manager)))
                                     {
                                         <a asp-area="" asp-controller="Projects" asp-action="Create">New Project</a>
                                     }
@@ -213,7 +213,7 @@
                                     <a asp-area="" asp-controller="Tickets" asp-action="Index">All Tickets</a>
                                     <a asp-area="" asp-controller="Tickets" asp-action="ArchivedTickets">Archived
                                         Tickets</a>
-                                    @if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.ProjectManager)))
+                                    @if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.Project_Manager)))
                                     {
                                         <a asp-area="" asp-controller="Tickets" asp-action="UnassignedTickets">Unassigned
                                             Tickets</a>

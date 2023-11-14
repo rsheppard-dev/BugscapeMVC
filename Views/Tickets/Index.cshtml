@@ -96,12 +96,12 @@
                 @if (User.IsInRole(nameof(Roles.Admin)) ||
                     item.DeveloperUserId == user?.Id ||
                     item.OwnerUserId == user?.Id ||
-                    await ProjectService.IsAssignedProjectManagerAsync(user?.Id!, item.ProjectId))
+                    await ProjectService.IsAssignedProject_ManagerAsync(user?.Id!, item.ProjectId))
                 {
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
                 }
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a>
-                @if (User.IsInRole(nameof(Roles.Admin)) || await ProjectService.IsAssignedProjectManagerAsync(user?.Id!, item.ProjectId))
+                @if (User.IsInRole(nameof(Roles.Admin)) || await ProjectService.IsAssignedProject_ManagerAsync(user?.Id!, item.ProjectId))
                 {
                     if (item.Archived)
                     {

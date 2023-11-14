@@ -485,7 +485,7 @@ namespace BugscapeMVC.Services
                     case nameof(Roles.Admin):
                         tickets = await GetAllTicketsByCompanyAsync(companyId);
                         break;
-                    case nameof(Roles.ProjectManager):
+                    case nameof(Roles.Project_Manager):
                         tickets = await GetTicketsByUserIdAsync(userId, companyId);
                         break;
                     case nameof(Roles.Developer):
@@ -545,7 +545,7 @@ namespace BugscapeMVC.Services
                         .Where(ticket => ticket.OwnerUserId == userId)
                         .ToList();
                 }
-                else if (await _roleService.HasRoleAsync(user, Roles.ProjectManager.ToString()))
+                else if (await _roleService.HasRoleAsync(user, Roles.Project_Manager.ToString()))
                 {
                     tickets = (await _projectService.GetUserProjectsAsync(userId))
                         .SelectMany(project => project.Tickets)

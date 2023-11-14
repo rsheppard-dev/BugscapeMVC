@@ -119,7 +119,7 @@
 
                 @foreach (Project project in Model)
                 {
-                    AppUser? projectManager = await ProjectService.GetProjectManagerAsync(project.Id);
+                    AppUser? Project_Manager = await ProjectService.GetProject_ManagerAsync(project.Id);
                     string rowColor = rowNumber % 2 == 0 ? "bg-lightest" : "bg-mid"; // Define row colors based on the counter.
                     rowNumber++;
                 
@@ -164,7 +164,7 @@
                         </a>
 
                         @{
-                            bool isProjectPM = (await ProjectService.GetProjectManagerAsync(project.Id))?.Id == user?.Id;
+                            bool isProjectPM = (await ProjectService.GetProject_ManagerAsync(project.Id))?.Id == user?.Id;
                         }
 
                         @if(User.IsInRole(nameof(Roles.Admin)) || isProjectPM)

@@ -73,7 +73,7 @@ namespace BugscapeMVC.Controllers
         {   
             var roles = Enum.GetValues(typeof(Roles))
                 .Cast<Roles>()
-                .Where(role => role != Roles.DemoUser)
+                .Where(role => role != Roles.Demo_User)
                 .Select(role => new
                 {
                     Value = role,
