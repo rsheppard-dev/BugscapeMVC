@@ -9,20 +9,11 @@
     }
 }
 
-<h1>Manage your account</h1>
+<h1 class="font-rockwell text-dark text-xl font-bold mb-4">Manage Your Account</h1>
 
-<div>
-    <h2>Change your account settings</h2>
-    <hr />
-    <div class="row">
-        <div class="col-md-3">
-            <partial name="_ManageNav" />
-        </div>
-        <div class="col-md-9">
-            @RenderBody()
-        </div>
-    </div>
-</div>
+<partial name="_ManageNav" />
+
+@RenderBody()
 
 @section Scripts {
     @RenderSection("Scripts", required: false)
