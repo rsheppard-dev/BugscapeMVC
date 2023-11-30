@@ -41,7 +41,7 @@
 
     <div class="flex flex-col gap-2 text-sm">
         <label asp-for="Message" class="text-sm font-bold"></label>
-        <textarea id="message" rows="5" asp-for="Message">We want you to join our team!</textarea>
+        <textarea data-tinymce rows="5" asp-for="Message">We want you to join our team!</textarea>
         <span asp-validation-for="Message" class="text-danger"></span>
     </div>
 
@@ -54,7 +54,7 @@
 @section Scripts {
     <script>
         tinymce.init({
-            selector: '#message',
+            selector: '[data-tinymce]',
             menubar: false,
             statusbar: false,
             toolbar: 'undo redo | bold italic underline',

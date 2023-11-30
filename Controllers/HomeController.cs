@@ -7,6 +7,7 @@ using BugscapeMVC.Extensions;
 using BugscapeMVC.Services.Interfaces;
 using BugscapeMVC.Models.Enums;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BugscapeMVC.Controllers;
 
@@ -57,6 +58,41 @@ public class HomeController : Controller
     public IActionResult Privacy()
     {
         return View();
+    }
+
+    [Authorize]
+    public async Task<IActionResult> SearchResults(string searchString = "")
+    {
+        try
+        {
+            SearchResultsViewModel results = new();
+
+            if (string.IsNullOrEmpty(searchString)) return View(results);
+
+            int? companyId = User.Identity?.GetCompanyId() ?? throw new Exception();
+
+            List<Project> projects = (await _companyInfoService.GetAllProjectsAsync(companyId.Value))
+                .Where(p => p.Name?.Contains(searchString, StringComparison.OrdinalIgnoreCase) == true)
+                .ToList();
+
+            List<Ticket> tickets = (await _companyInfoService.GetAllTicketsAsync(companyId.Value))
+                .Where(t => t.Title?.Contains(searchString, StringComparison.OrdinalIgnoreCase) == true)
+                .ToList();
+
+            List<AppUser> members = (await _companyInfoService.GetAllMembersAsync(companyId.Value))
+                .Where(m => m.FirstName?.Contains(searchString, StringComparison.OrdinalIgnoreCase) == true || m.LastName?.Contains(searchString, StringComparison.OrdinalIgnoreCase) == true)
+                .ToList();
+
+            results.Projects = projects;
+            results.Tickets = tickets;
+            results.Members = members;
+
+            return View(results);
+        }
+        catch (Exception)
+        {
+            throw;
+        }
     }
 
     [HttpPost]

@@ -205,12 +205,12 @@
                         <div class="flex items-center gap-2">
                             @if (member.AvatarFileData is null || member.AvatarContentType is null)
                             {
-                                <img class="h-10 w-10 object-cover rounded-full" src="~/images/default-avatar.png"
+                                <img class="h-10 w-10 object-cover rounded-full ring-4 ring-mid" src="~/images/default-avatar.png"
                                     alt="@member.FullName">
                             }
                             else
                             {
-                                <img class="h-10 w-10 object-cover rounded-full"
+                                <img class="h-10 w-10 object-cover rounded-full ring-4 ring-mid"
                                     src="@FileService.ConvertByteArrayToFile(member.AvatarFileData, member.AvatarContentType)"
                                     alt="@member.FullName">
                             }

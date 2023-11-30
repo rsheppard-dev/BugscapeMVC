@@ -28,7 +28,7 @@
 
     <div class="flex flex-col lg:col-span-2 gap-2">
         <label asp-for="Project!.Description" class="font-lato text-sm font-bold"></label>
-        <textarea asp-for="Project!.Description" id="description" class="font-lato text-sm" rows="3"></textarea>
+        <textarea asp-for="Project!.Description" data-tinymce class="font-lato text-sm" rows="3"></textarea>
         <span asp-validation-for="Project!.Description" class="text-danger text-sm font-lato font-bold"></span>
     </div>
 
@@ -89,13 +89,11 @@
 @section Scripts {
     <script src="~/js/imagePreview.js"></script>
     <script>
-        const input = document.querySelector('[data-image-input]');
-        const output = document.querySelector('[data-image-output]');
-        const instance = new ImagePreview(input, output);
+        const instance = new ImagePreview();
 
         instance.init();
         tinymce.init({
-            selector: '#description',
+            selector: '[data-tinymce]',
             menubar: false,
             statusbar: false,
             height: 200

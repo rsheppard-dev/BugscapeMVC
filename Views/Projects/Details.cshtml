@@ -91,11 +91,15 @@
                 }
             </div>
             
-            <div class="col-span-2">
-                <p class="font-bold text-sm mb-2">Project Progress:</p>
-                <div class="w-full bg-light rounded-full" aria-valuenow="@percent" aria-valuemin="0" aria-valuemax="100">
-                    <div class="bg-info text-sm font-bold text-white text-center p-0.5 leading-none rounded-full" style="width: 45%"> 45%</div>
-                </div>
+            <p class="font-bold text-sm mb-2">Project Progress:</p>
+            <p class="font-normal text-sm">@percent%</p>
+
+            <div class="col-span-2 -mt-4">
+                <progress max="100" value="@percent" class="progress">
+                    <div class="w-full bg-light rounded-full">
+                        <span class="bg-info text-sm font-bold text-white text-center p-0.5 leading-none rounded-full" style="width: 45%">45%</span>
+                    </div>
+                </progress>
             </div>
 
             <p class="font-bold text-sm">Start Date:</p>
@@ -151,7 +155,7 @@
                 @foreach (TicketHistory history in ticketHistories)
                 {
                     <li class="mb-10 ms-6">            
-                        <span class="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -start-3 ring-8 ring-white">
+                        <span class="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -start-3 ring-4 ring-mid">
                             @if (history.User?.AvatarFileData is null || history.User?.AvatarContentType is null)
                             {
                                 <img class="rounded-full shadow-lg" src="~/images/default-avatar.png"
@@ -293,147 +297,6 @@
         </div>
     </section>
 </div>
-
-@* <div class="container">
-    <div class="row gy-2">
-        <div class="col-md-4 col mt-5 ">
-            <div class="bg-secondary">
-                <div class="card m-1 p-2">
-                    <div class="header">
-                        <h2>Project Team</h2>
-                        <hr />
-                    </div>
-                    <div class="body" style="overflow-y:auto;height:300px;">
-                        <ul class="right_chat list-unstyled mb-0">
-                            @foreach (AppUser member in await ProjectService.GetAllProjectMembersExceptPMAsync(Model.Id))
-                            {
-                                <li>
-                                    <a href="">
-                                        <div class="media">
-                                            @if (member.AvatarFileData is not null && member.AvatarContentType is not null)
-                                            {
-                                                <img class="rounded-circle" src="@FileService.ConvertByteArrayToFile(member.AvatarFileData, member.AvatarContentType)" alt="@member.FullName" width="30" height="30">
-                                            }
-                                            else
-                                            {
-                                                <img class="rounded-circle" src="~/images/default-avatar.png" alt="@Project_Manager?.FullName" width="30" height="30">
-                                            }
-                                        </div>
-                                    </a>
-
-                                    <div>
-                                        <span>@member.FullName</span>
-                                        <span style="font-size:x-small;">[@((await UserManager.GetRolesAsync(member)).FirstOrDefault())]</span>
-                                    </div>
-                                </li>
-                            }
-                        </ul>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 col mt-5 ">
-            <div class="bg-dark">
-                <div class="card m-1 p-2">
-                    <div class="header">
-                        <h2>Project Activity</h2>
-                        <hr />
-                    </div>
-                    <div class="body" style="overflow-y:auto;height:300px;background-color:antiquewhite">
-                        @foreach (TicketHistory history in await HistoryService.GetProjectTicketsHistoriesAsync(Model.Id, Model.CompanyId))
-                        {
-                            <div>
-                                <span class="date">@history.Created.ToString("dd MMM yyyy")</span>
-                                <h6>@history.Description</h6>
-                                <span>By: <a href="" title="@history.User?.FullName">@history.User?.FullName</a></span>
-                                <div>
-                                    <p>The ticket <b>@history.Property</b> was edited</p>
-                                    <p>@($"Previous {history.Property}: {history.OldValue}")</p>
-                                    <p>@($"Current {history.Property}: {history.NewValue}")</p>
-                                </div>
-                            </div>
-                        }
-                    </div>
-
-                </div>
-            </div>
-        </div>
-        <div class="col-md-12 col">
-            <div class="mt-5 bg-secondary">
-                <div class="card m-1 p-2">
-                    <div class="header">
-                        <h2>Tickets</h2>
-                    </div>
-                    <div class="body">
-                        <div class="table-responsive" style="overflow-y:auto;height:600px;">
-                            <table class="table table-hover">
-                                <thead class="">
-                                    <tr>
-                                        <th>Title</th>
-                                        <th>Developer</th>
-                                        <th>Status</th>
-                                        <th>Priority</th>
-                                        <th>Date</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var ticket in Model.Tickets.OrderByDescending(d => d.Created))
-                                    {
-                                        <tr>
-                                            <td><a asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id" style="color:black"><strong>@ticket.Title</strong></a> </td>
-                                            <td>
-                                                @if (ticket.DeveloperUserId != null)
-                                                {
-                                                    @ticket.DeveloperUser?.FullName
-                                                }
-                                                else
-                                                {
-                                                    if (User.IsInRole(nameof(Roles.Admin)) || Project_Manager?.Id == user?.Id)
-                                                    {
-                                                        <a class="btn btn-xs btn-info" asp-action="AssignDeveloper" asp-controller="Tickets" asp-route-id="@ticket.Id">Assign Dev</a>
-                                                    }
-
-                                                }
-                                            </td>
-                                            @if (ticket.TicketStatus?.Name == "New")
-                                            {
-                                                <td><span class="badge-success">@ticket.TicketStatus.Name </span></td>
-
-                                            }
-                                            else
-                                            {
-                                                <td><span class="badge-primary">@ticket.TicketStatus?.Name </span></td>
-                                            }
-                                            <td><span class="badge-warning">@ticket.TicketPriority?.Name </span></td>
-                                            <td>@ticket.Created.ToString("dd-MM-yyyy")</td>
-                                            <td>
-                                                <a class="btn btn-sm btn-outline-info" asp-action="Details" asp-controller="Tickets" asp-route-id="@ticket.Id"><i class="fs-5 bi-justify"></i></a>
-                                                @if (ticket.DeveloperUserId == user?.Id || ticket.OwnerUserId == user?.Id || (Project_Manager?.Id == user?.Id) || User.IsInRole(nameof(Roles.Admin)))
-                                                {
-                                                    <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-controller="Tickets" asp-route-id="@ticket.Id"><i class="fs-5 bi-pencil"></i></a>
-                                                }
-
-                                                @if (User.IsInRole("Admin") || (Project_Manager?.Id == user?.Id))
-                                                {
-                                                    <a class="btn btn-sm btn-outline-danger"><i class="fs-5 bi-archive"></i></a>
-                                                }
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </div>
-</div>
-*@
 
 @section scripts {
     <script src="~/js/ticketsTable.js"></script>

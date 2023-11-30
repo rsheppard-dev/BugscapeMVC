@@ -1,24 +1,30 @@
 "use strict";
 var ImagePreview = /** @class */ (function () {
-    function ImagePreview(input, output) {
-        this.input = input;
-        this.output = output;
+    function ImagePreview() {
+        this.inputs = document.querySelectorAll('[data-image-input]');
+        this.outputs = document.querySelectorAll('[data-image-output]');
+        this.saveButton = document.querySelector('[data-save-button]');
     }
     ImagePreview.prototype.init = function () {
         var _this = this;
-        this.input.addEventListener('change', function () {
-            var _a;
-            var file = (_a = _this.input.files) === null || _a === void 0 ? void 0 : _a[0];
-            if (file) {
-                var reader = new FileReader();
-                reader.onload = function (event) {
-                    var _a;
-                    if (_this.output.src && ((_a = event.target) === null || _a === void 0 ? void 0 : _a.result)) {
-                        _this.output.src = event.target.result.toString();
-                    }
-                };
-                reader.readAsDataURL(file);
-            }
+        if (this.saveButton)
+            this.saveButton.disabled = true;
+        this.inputs.forEach(function (input, index) {
+            input.addEventListener('change', function (event) {
+                var _a, _b;
+                var file = (_b = (_a = event.target) === null || _a === void 0 ? void 0 : _a.files) === null || _b === void 0 ? void 0 : _b[0]; // Add null check here
+                if (file) {
+                    var reader_1 = new FileReader();
+                    reader_1.onload = function () {
+                        if (_this.outputs[index]) {
+                            _this.outputs[index].src = reader_1.result;
+                        }
+                    };
+                    reader_1.readAsDataURL(file);
+                    if (_this.saveButton)
+                        _this.saveButton.disabled = false;
+                }
+            });
         });
     };
     return ImagePreview;

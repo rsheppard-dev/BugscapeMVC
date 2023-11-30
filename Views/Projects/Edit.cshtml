@@ -91,9 +91,7 @@
 @section Scripts {
     <script src="~/js/imagePreview.js"></script>
     <script>
-        const input = document.querySelector('[data-image-input]');
-        const output = document.querySelector('[data-image-output]');
-        const instance = new ImagePreview(input, output);
+        const instance = new ImagePreview();
 
         instance.init();
     </script>

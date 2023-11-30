@@ -2,7 +2,7 @@
 const defaultTheme = require('tailwindcss/defaultTheme')
 
 module.exports = {
-  content: ['**/*.razor', '**/*.cshtml', '**/*.html'],
+  content: ['**/*.razor', '**/*.cs', '**/*.cshtml', '**/*.html'],
   theme: {
     container: {
       center: true,
@@ -21,6 +21,20 @@ module.exports = {
       fontFamily: {
         rockwell: ['rockwell', ...defaultTheme.fontFamily.sans],
         lato: ['lato', ...defaultTheme.fontFamily.sans],
+      },
+      keyframes: {
+        'fade-in': {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        'fade-out': {
+          '0%': { opacity: '1' },
+          '100%': { opacity: '0' },
+        },
+      },
+      animation: {
+        'fade-in': 'fade-in 0.5s ease-in-out',
+        'fade-out': 'fade-out 0.5s ease-in-out',
       },
     },
   },

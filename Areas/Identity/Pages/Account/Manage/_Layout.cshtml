@@ -1,4 +1,10 @@
-﻿@{
+﻿@using BugscapeMVC.Services.Interfaces
+@using BugscapeMVC.Models.ViewModels
+
+@inject UserManager<AppUser> UserManager
+@inject IFileService FileService
+
+@{
     if (ViewData.TryGetValue("ParentLayout", out var parentLayout) && parentLayout !=  null)
     {
         Layout = parentLayout.ToString();
@@ -7,14 +13,52 @@
     {
         Layout = "/Areas/Identity/Pages/_Layout.cshtml";
     }
+
+    AppUser? user = await UserManager.GetUserAsync(User);
+    bool isSignedIn = user is not null ? true : false;
 }
 
 <h1 class="font-rockwell text-dark text-xl font-bold mb-4">Manage Your Account</h1>
+
+<div class="mb-4 flex items-center flex-wrap gap-4">
+    <button type="button" data-open-modal aria-label="Update Profile Image" class="group relative w-fit">
+        @if (user?.AvatarFileData is null || user.AvatarContentType is null)
+        {
+            <img class="h-20 w-20 object-cover rounded-full ring-4 ring-mid" src="~/images/default-avatar.png"
+                alt="@user?.FullName">
+        }
+        else
+        {
+            <img class="h-20 w-20 object-cover rounded-full ring-4 ring-mid"
+                src="@FileService.ConvertByteArrayToFile(user.AvatarFileData, user.AvatarContentType)"
+                alt="@user.FullName">
+        }
+        <span class="opacity-0 group-hover:opacity-100 transition-opacity absolute bg-opacity-70 text-sm font-lato right-2 top-2 bg-mid rounded p-2" title="Edit Profile Picture">
+            <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+            </svg>
+        </span>
+    </button>
+
+    <span class="font-rockwell text-dark text-lg font-bold">@user?.FullName</span>
+</div>
+
+@await Html.PartialAsync("~/Views/Shared/_UpdateProfileImage.cshtml", new UpdateImageViewModel())
 
 <partial name="_ManageNav" />
 
 @RenderBody()
 
 @section Scripts {
+    <script src="~/js/modal.js"></script>
+    <script src="~/js/imagePreview.js"></script>
+    <script>
+        const modalInstance = new Modal();
+        const imagePreviewInstance = new ImagePreview();
+
+        modalInstance.init();
+        imagePreviewInstance.init();
+    </script>
+
     @RenderSection("Scripts", required: false)
 }

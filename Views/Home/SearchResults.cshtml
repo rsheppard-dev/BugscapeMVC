@@ -1,0 +1,61 @@
+@model BugscapeMVC.Models.ViewModels.SearchResultsViewModel
+
+@{
+    ViewData["Title"] = "Search Results";
+}
+
+<h1 class="font-rockwell text-xl mb-4 text-dark">@ViewData["Title"]</h1>
+
+<hr class="mb-4" />
+
+@if (Model.NumberOfResults == 0)
+{
+    <p class="text-gray-700">No results found.</p>
+}
+else
+{
+    if (Model.Projects.Count > 0)
+    {
+        <section aria-label="Projects" class="mb-4">
+            <h2 class="font-rockwell text-lg mb-2 text-dark">Projects</h2>
+            <ul class="prose">
+                @foreach (var project in Model.Projects)
+                {
+                    <li>
+                        <a href="@Url.Action("Details", "Projects", new { id = project.Id })" class="font-lato">@project.Name</a>
+                    </li>
+                }
+            </ul>
+        </section>
+    }
+
+    if (Model.Tickets.Count > 0)
+    {
+        <section aria-label="Tickets" class="mb-4">
+            <h2 class="font-rockwell text-lg mb-2 text-dark">Tickets</h2>
+            <ul class="prose">
+                @foreach (var ticket in Model.Tickets)
+                {
+                    <li>
+                        <a href="@Url.Action("Details", "Tickets", new { id = ticket.Id })" class="font-lato">@ticket.Title</a>
+                    </li>
+                }
+            </ul>
+        </section>
+    }
+
+    if (Model.Members.Count > 0)
+    {
+        <section aria-label="Members" class="mb-4">
+            <h2 class="font-rockwell text-lg mb-2 text-dark">Members</h2>
+            <ul class="prose">
+                @foreach (var member in Model.Members)
+                {
+                    <li>
+                        <a href="@Url.Action("Details", "Members", new { id = member.Id })" class="font-lato">@member.FullName</a>
+                    </li>
+                }
+            </ul>
+        </section>
+    }
+}
