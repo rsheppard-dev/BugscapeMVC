@@ -103,7 +103,7 @@
                         asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
                     </form>
 
-                    <button class="md:hidden">
+                    <button class="md:hidden" title="Toggle Menu" data-toggle-menu>
                         <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                             stroke="currentColor" class="w-6 h-6 stroke-dark">
                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -118,8 +118,8 @@
     <div class="flex min-h-screen">
         @if (user is not null)
         {
-            <aside
-                class="z-10 hidden md:block fixed top-24 h-[calc(100vh-theme(spacing.24))] overflow-y-auto mr-6 scrollbar-thin scrollbar-thumb-light scrollbar-track-lightest scrollbar-thumb-rounded-xl">
+            <aside data-menu
+                class="z-10 -translate-x-full md:translate-x-0 shadow-md transition-transform fixed top-24 h-[calc(100vh-theme(spacing.24))] overflow-y-auto mr-6 scrollbar-thin scrollbar-thumb-light scrollbar-track-lightest scrollbar-thumb-rounded-xl">
                 <nav
                     class="bg-mid rounded-t-xl min-w-[theme.spacing.64] min-h-[calc(100vh-theme(spacing.24))] pt-12 pb-4 px-8 flex flex-col justify-between gap-8">
                     <div class="space-y-6 font-dark font-bold text-sm font-lato uppercase">
@@ -292,10 +292,12 @@
     </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/dropdownMenu.js" asp-append-version="true"></script>
+    <script src="~/js/mobileMenu.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
+
 </body>
 
 </html>
