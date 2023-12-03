@@ -14,10 +14,17 @@
 }
 else
 {
-    if (Model.Projects.Count > 0)
-    {
-        <section aria-label="Projects" class="mb-4">
-            <h2 class="font-rockwell text-lg mb-2 text-dark">Projects</h2>
+    <div data-tabs>
+        <nav aria-label="Search Result Categories" class="flex items-center gap-4 mb-4">
+            @foreach (var tab in Model.Tabs)
+            {
+                <button aria-label="@tab.Label, @tab.Count Results" role="tab" id="@tab.Id" aria-controls="@tab.Controls" class="flex items-center gap-2 rounded-md px-4 py-2 bg-mid transition-colors @(tab.IsActive ? "active" : "")" data-tab="@tab.DataTab">
+                    @tab.Label <span class="rounded-full bg-light text-xs flex items-center justify-center h-6 w-6 transition-colors">@tab.Count</span>
+                </button>
+            }
+        </nav>
+
+        <section role="tabpanel" aria-labelledby="projects-button" id="projects" data-content="projects" class="mb-4 hidden @(Model.ActiveTab == "projects" ? "active" : "")">
             <ul class="prose">
                 @foreach (var project in Model.Projects)
                 {
@@ -27,12 +34,8 @@ else
                 }
             </ul>
         </section>
-    }
 
-    if (Model.Tickets.Count > 0)
-    {
-        <section aria-label="Tickets" class="mb-4">
-            <h2 class="font-rockwell text-lg mb-2 text-dark">Tickets</h2>
+         <section role="tabpanel" aria-labelledby="tickets-button" id="tickets" data-content="tickets" class="mb-4 hidden @(Model.ActiveTab == "tickets" ? "active" : "")">
             <ul class="prose">
                 @foreach (var ticket in Model.Tickets)
                 {
@@ -42,12 +45,8 @@ else
                 }
             </ul>
         </section>
-    }
 
-    if (Model.Members.Count > 0)
-    {
-        <section aria-label="Members" class="mb-4">
-            <h2 class="font-rockwell text-lg mb-2 text-dark">Members</h2>
+        <section role="tabpanel" aria-labelledby="members-button" id="members" data-content="members" class="mb-4 hidden @(Model.ActiveTab == "members" ? "active" : "")">
             <ul class="prose">
                 @foreach (var member in Model.Members)
                 {
@@ -57,5 +56,16 @@ else
                 }
             </ul>
         </section>
-    }
+    </div>
+}
+
+@section Scripts {
+    <script src="~/js/tabs.js"></script>
+
+    <script>
+        const container = document.querySelector('[data-tabs]');
+        const tabs = new Tabs(container);
+
+        tabs.init();
+    </script>
 }

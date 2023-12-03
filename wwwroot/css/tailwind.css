@@ -37,12 +37,6 @@
   progress[value]::-webkit-progress-value {
     @apply bg-info;
   }
-}
-
-@layer components {
-  .form-card {
-    @apply hidden bg-blue-200 rounded-md px-3 py-2;
-  }
 
   .dropdown .trigger.active .switch {
     @apply rotate-45;
@@ -70,5 +64,23 @@
 
   [data-sortable] .order.asc {
     @apply rotate-180;
+  }
+
+  [data-tabs] [data-tab].active {
+    @apply bg-warning;
+  }
+
+  [data-tabs] [data-tab].active span {
+    @apply bg-white;
+  }
+
+  [data-tabs] [data-content].active {
+    @apply block;
+  }
+}
+
+@layer components {
+  .form-card {
+    @apply hidden bg-blue-200 rounded-md px-3 py-2;
   }
 }
