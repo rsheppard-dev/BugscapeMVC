@@ -169,7 +169,7 @@
                             }
                         </span>
                         <div class="justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex">
-                            <time class="mb-1 text-xs font-normal text-gray-400 sm:order-last sm:mb-0">just now</time>
+                            <time class="mb-1 text-xs font-normal text-gray-400 sm:order-last sm:mb-0">@history.Created.Humanize()</time>
                             <div>
                                 @if (!string.IsNullOrEmpty(history.Description) && history.Description.Contains("New ticket created"))
                                 {
@@ -177,7 +177,7 @@
                                 }
                                 else if (history.Property.Equals("TicketComment"))
                                 {
-                                    <p class="text-sm font-lato">A ticket comment was added.</p>
+                                    <p class="text-sm font-lato">@history.Description</p>
                                 }
                                 else if (history.Property.Equals("TicketAttachment"))
                                 {
