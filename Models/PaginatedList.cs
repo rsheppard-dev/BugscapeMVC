@@ -8,7 +8,7 @@ namespace BugscapeMVC.Models
         public int FirstPageButton { get; private set; }
         public int LastPageButton { get; private set; }
 
-        public PaginatedList(List<T> items, int currentPage, int resultsPerPage)
+        public PaginatedList(List<T> items, int currentPage = 1, int resultsPerPage = 10)
         {
             int totalItems = items.Count;
             int totalPages = (int)Math.Ceiling(totalItems / (double)resultsPerPage);

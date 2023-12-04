@@ -61,11 +61,20 @@ public class HomeController : Controller
     }
 
     [Authorize]
-    public async Task<IActionResult> SearchResults(string searchString = "")
+    public async Task<IActionResult> SearchResults(string? tab, string searchString = "", int projectsPage = 1, int ticketsPage = 1, int membersPage = 1, int limit = 10)
     {
         try
         {
             SearchResultsViewModel results = new();
+
+            ViewBag.SearchString = searchString;
+            ViewBag.Limit = limit;
+            ViewBag.Pages = new
+            {
+                Projects = projectsPage,
+                Tickets = ticketsPage,
+                Members = membersPage
+            };
 
             if (string.IsNullOrEmpty(searchString)) return View(results);
 
@@ -83,9 +92,11 @@ public class HomeController : Controller
                 .Where(m => m.FirstName?.Contains(searchString, StringComparison.OrdinalIgnoreCase) == true || m.LastName?.Contains(searchString, StringComparison.OrdinalIgnoreCase) == true)
                 .ToList();
 
-            results.Projects = projects;
-            results.Tickets = tickets;
-            results.Members = members;
+            results.Projects = new PaginatedList<Project>(projects, projectsPage, limit);
+            results.Tickets = new PaginatedList<Ticket>(tickets, ticketsPage, limit);
+            results.Members = new PaginatedList<AppUser>(members, membersPage, limit);
+
+            ViewBag.ActiveTab = tab ?? results.ActiveTab;
 
             return View(results);
         }
