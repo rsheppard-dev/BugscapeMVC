@@ -50,20 +50,33 @@ namespace BugscapeMVC.Controllers
 
         // GET: Tickets/AllTickets
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1, string search = "", string order = "asc", string sortBy = "title", int limit = 10)
         {
             int? companyId = User.Identity?.GetCompanyId();
 
-            if (companyId is null) return NoContent();
+            if (companyId is null) return NotFound();
+
+            ViewBag.Search = search;
+            ViewBag.Limit = limit;
+            ViewBag.Order = order;
+            ViewBag.SortBy = sortBy;
 
             List<Ticket> tickets = await _ticketService.GetAllTicketsByCompanyAsync(companyId.Value);
 
-            if (User.IsInRole(nameof(Roles.Developer)) || User.IsInRole(nameof(Roles.Submitter)))
+            // if search arguement
+            if (!string.IsNullOrEmpty(search))
             {
-                return View(tickets.Where(ticket => ticket.Archived == false));
+                tickets = Search(tickets, search);
             }
 
-            return View(tickets);
+            tickets = Sort(tickets, sortBy, order);
+
+            if (User.IsInRole(nameof(Roles.Developer)) || User.IsInRole(nameof(Roles.Submitter)))
+            {
+                return View(new PaginatedList<Ticket>(tickets.Where(ticket => ticket.Archived == false).ToList(), page, limit));
+            }
+
+            return View(new PaginatedList<Ticket>(tickets, page, limit));
         }
 
         // GET: Tickets/ArchivedTickets
@@ -515,6 +528,20 @@ namespace BugscapeMVC.Controllers
             };
 
             return tickets;
+        }
+
+        private static List<Ticket> Search(List<Ticket> tickets, string search)
+        {
+            if (tickets is null)
+            {
+                return new List<Ticket>();
+            }
+            
+            return tickets
+                .Where(p => 
+                    (p.Title?.ToLower().Contains(search.ToLower()) ?? false) || 
+                    (p.Description?.ToLower().Contains(search) ?? false))
+                .ToList();
         }
 
         private async Task<bool> TicketExistsAsync(int id)
