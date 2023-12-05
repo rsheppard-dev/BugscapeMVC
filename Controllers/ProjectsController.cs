@@ -41,32 +41,22 @@ namespace BugscapeMVC.Controllers
 
             if (userId is null) return NotFound();
 
+            ViewBag.Search = search;
+            ViewBag.Limit = limit;
+            ViewBag.Order = order;
+            ViewBag.SortBy = sortBy;
+
             List<Project> projects = await _projectService.GetUserProjectsAsync(userId);
 
             // if search arguement
             if (!string.IsNullOrEmpty(search))
             {
                 projects = Search(projects, search);
-                ViewBag.Search = search;
             }
 
             projects = Sort(projects, sortBy, order);
 
-            // pagination
-            if (page < 1) page = 1;
-
-            int totalProjects = projects.Count;
-
-            Pagination pagination = new(totalProjects, page, limit);
-
-            int skip = (page - 1) * limit;
-
-            List<Project> data = projects.Skip(skip).Take(pagination.ResultsPerPage).ToList();
-
-            ViewBag.Sort = new { sortBy, order, limit };
-            ViewBag.Pagination = pagination;
-
-            return View(data);
+            return View(new PaginatedList<Project>(projects, page, limit));
         }
 
         // GET: Projects
@@ -76,6 +66,11 @@ namespace BugscapeMVC.Controllers
             int? companyId = User.Identity?.GetCompanyId();
 
             if (companyId is null) return NotFound();
+
+            ViewBag.Search = search;
+            ViewBag.Limit = limit;
+            ViewBag.Order = order;
+            ViewBag.SortBy = sortBy;
 
             List<Project> projects;
             
@@ -92,26 +87,11 @@ namespace BugscapeMVC.Controllers
             if (!string.IsNullOrEmpty(search))
             {
                 projects = Search(projects, search);
-                ViewBag.Search = search;
             }
 
             projects = Sort(projects, sortBy, order);
 
-            // pagination
-            if (page < 1) page = 1;
-
-            int totalProjects = projects.Count;
-
-            Pagination pagination = new(totalProjects, page, limit);
-
-            int skip = (page - 1) * limit;
-
-            List<Project> data = projects.Skip(skip).Take(pagination.ResultsPerPage).ToList();
-
-            ViewBag.Sort = new { sortBy, order, limit };
-            ViewBag.Pagination = pagination;
-
-            return View(data);
+            return View(new PaginatedList<Project>(projects, page, limit));
         }
 
         // GET: Projects/ArchivedProjects
@@ -122,32 +102,22 @@ namespace BugscapeMVC.Controllers
 
             if (companyId is null) return NotFound();
 
+            ViewBag.Search = search;
+            ViewBag.Limit = limit;
+            ViewBag.Order = order;
+            ViewBag.SortBy = sortBy;
+
             List<Project> projects = await _projectService.GetArchivedProjectsByCompanyAsync(companyId.Value);
 
             // if search arguement
             if (!string.IsNullOrEmpty(search))
             {
                 projects = Search(projects, search);
-                ViewBag.Search = search;
             }
 
             projects = Sort(projects, sortBy, order);
 
-            // pagination
-            if (page < 1) page = 1;
-
-            int totalProjects = projects.Count;
-
-            Pagination pagination = new(totalProjects, page, limit);
-
-            int skip = (page - 1) * limit;
-
-            List<Project> data = projects.Skip(skip).Take(pagination.ResultsPerPage).ToList();
-
-            ViewBag.Sort = new { sortBy, order, limit };
-            ViewBag.Pagination = pagination;
-
-            return View(data);
+            return View(new PaginatedList<Project>(projects, page, limit));
         }
 
         // GET: Projects/UnassignedProjects
@@ -158,6 +128,11 @@ namespace BugscapeMVC.Controllers
             int? companyId = User.Identity?.GetCompanyId();
 
             if (companyId is null) return NotFound();
+
+            ViewBag.Search = search;
+            ViewBag.Limit = limit;
+            ViewBag.Order = order;
+            ViewBag.SortBy = sortBy;
 
             List<Project> projects = await _projectService.GetUnassignedProjectsAsync(companyId.Value);
 
@@ -170,21 +145,7 @@ namespace BugscapeMVC.Controllers
 
             projects = Sort(projects, sortBy, order);
 
-            // pagination
-            if (page < 1) page = 1;
-
-            int totalProjects = projects.Count;
-
-            Pagination pagination = new(totalProjects, page, limit);
-
-            int skip = (page - 1) * limit;
-
-            List<Project> data = projects.Skip(skip).Take(pagination.ResultsPerPage).ToList();
-
-            ViewBag.Sort = new { sortBy, order, limit };
-            ViewBag.Pagination = pagination;
-
-            return View(data);
+            return View(new PaginatedList<Project>(projects, page, limit));
         }
 
         // GET: Projects/AssignPM/5

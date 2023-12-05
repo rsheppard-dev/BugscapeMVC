@@ -69,7 +69,7 @@ public class HomeController : Controller
 
             ViewBag.SearchString = searchString;
             ViewBag.Limit = limit;
-            ViewBag.Pages = new
+            ViewBag.Page = new
             {
                 Projects = projectsPage,
                 Tickets = ticketsPage,
