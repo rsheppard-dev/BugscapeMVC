@@ -15,7 +15,7 @@
     ViewData["Title"] = "Project Details";
 
     AppUser? user = await UserManager.GetUserAsync(User);
-    AppUser? Project_Manager = await ProjectService.GetProject_ManagerAsync(Model.Id);
+    AppUser? Project_Manager = await ProjectService.GetProjectManagerAsync(Model.Id);
 
     var ticketHistories = await HistoryService.GetProjectTicketsHistoriesAsync(Model.Id, Model.CompanyId);
 }

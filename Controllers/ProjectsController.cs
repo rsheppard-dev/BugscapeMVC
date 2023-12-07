@@ -174,7 +174,7 @@ namespace BugscapeMVC.Controllers
         {
             if (!string.IsNullOrEmpty(model.Project_ManagerId) && model.Project is not null)
             {
-                await _projectService.AddProject_ManagerAsync(model.Project_ManagerId, model.Project.Id);
+                await _projectService.AddProjectManagerAsync(model.Project_ManagerId, model.Project.Id);
 
                 return RedirectToAction(nameof(Details), new { id = model.Project.Id });
             }
@@ -306,7 +306,7 @@ namespace BugscapeMVC.Controllers
 
                     if (!string.IsNullOrEmpty(model.PmId))
                     {
-                        await _projectService.AddProject_ManagerAsync(model.PmId, model.Project.Id);
+                        await _projectService.AddProjectManagerAsync(model.PmId, model.Project.Id);
                     }
 
                     return RedirectToAction("MyProjects");
@@ -364,7 +364,7 @@ namespace BugscapeMVC.Controllers
 
                     if (!string.IsNullOrEmpty(model.PmId))
                     {
-                        await _projectService.AddProject_ManagerAsync(model.PmId, model.Project.Id);
+                        await _projectService.AddProjectManagerAsync(model.PmId, model.Project.Id);
                     }
 
                     return RedirectToAction("MyProjects");

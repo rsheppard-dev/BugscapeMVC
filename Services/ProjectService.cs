@@ -37,15 +37,15 @@ namespace BugscapeMVC.Services
         #endregion
 
         #region Add Project Manager
-        public async Task<bool> AddProject_ManagerAsync(string userId, int projectId)
+        public async Task<bool> AddProjectManagerAsync(string userId, int projectId)
         {
-            AppUser? currentPM = await GetProject_ManagerAsync(projectId);
+            AppUser? currentPM = await GetProjectManagerAsync(projectId);
 
             if (currentPM is not null)
             {
                 try
                 {
-                    await RemoveProject_ManagerAsync(projectId);
+                    await RemoveProjectManagerAsync(projectId);
                 }
                 catch (Exception ex)
                 {
@@ -245,7 +245,7 @@ namespace BugscapeMVC.Services
         #endregion
 
         #region Get Project Manager
-        public async Task<AppUser?> GetProject_ManagerAsync(int projectId)
+        public async Task<AppUser?> GetProjectManagerAsync(int projectId)
         {
             Project? project = await _context.Projects
                 .Include(project => project.Members)
@@ -372,11 +372,11 @@ namespace BugscapeMVC.Services
         #endregion
 
         #region Is Assigned Project Manager
-        public async Task<bool> IsAssignedProject_ManagerAsync(string userId, int projectId)
+        public async Task<bool> IsAssignedProjectManagerAsync(string userId, int projectId)
         {
             try
             {
-                string? Project_ManagerId = (await GetProject_ManagerAsync(projectId))?.Id;
+                string? Project_ManagerId = (await GetProjectManagerAsync(projectId))?.Id;
 
                 return userId == Project_ManagerId;
             }
@@ -415,7 +415,7 @@ namespace BugscapeMVC.Services
         #endregion
 
         #region Remove Project Manager
-        public async Task RemoveProject_ManagerAsync(int projectId)
+        public async Task RemoveProjectManagerAsync(int projectId)
         {
             Project? project = await _context.Projects
                 .Include(project => project.Members)

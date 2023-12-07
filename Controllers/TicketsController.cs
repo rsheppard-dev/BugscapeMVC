@@ -36,16 +36,28 @@ namespace BugscapeMVC.Controllers
 
         // GET: Tickets/MyTickets
         [HttpGet]
-        public async Task<IActionResult> MyTickets()
+        public async Task<IActionResult> MyTickets(int page = 1, string search = "", string order = "asc", string sortBy = "title", int limit = 10)
         {
             string? userId = _userManager.GetUserId(User);
             int? companyId = User.Identity?.GetCompanyId();
 
-            if (userId is null || companyId is null) return NoContent();
+            if (userId is null || companyId is null) return NotFound();
+
+            ViewBag.Search = search;
+            ViewBag.Limit = limit;
+            ViewBag.Order = order;
+            ViewBag.SortBy = sortBy;
 
             List<Ticket> tickets = await _ticketService.GetTicketsByUserIdAsync(userId, companyId.Value);
 
-            return View(tickets);
+            if (!string.IsNullOrEmpty(search))
+            {
+                tickets = Search(tickets, search);
+            }
+
+            tickets = Sort(tickets, sortBy, order);
+
+            return View(new PaginatedList<Ticket>(tickets, page, limit));
         }
 
         // GET: Tickets/AllTickets
@@ -81,46 +93,72 @@ namespace BugscapeMVC.Controllers
 
         // GET: Tickets/ArchivedTickets
         [HttpGet]
-        public async Task<IActionResult> ArchivedTickets()
+        public async Task<IActionResult> ArchivedTickets(int page = 1, string search = "", string order = "asc", string sortBy = "title", int limit = 10)
         {
             int? companyId = User.Identity?.GetCompanyId();
 
             if (companyId is null) return NoContent();
 
+            ViewBag.Search = search;
+            ViewBag.Limit = limit;
+            ViewBag.Order = order;
+            ViewBag.SortBy = sortBy;
+
             List<Ticket> tickets = await _ticketService.GetArchivedTicketsAsync(companyId.Value);
 
-            return View(tickets);
+            // if search arguement
+            if (!string.IsNullOrEmpty(search))
+            {
+                tickets = Search(tickets, search);
+            }
+
+            tickets = Sort(tickets, sortBy, order);
+
+            return View(new PaginatedList<Ticket>(tickets, page, limit));
         }
 
         // GET: Tickets/UnassignedTickets
         [HttpGet]
         [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.Project_Manager)}")]
 
-        public async Task<IActionResult> UnassignedTickets()
+        public async Task<IActionResult> UnassignedTickets(int page = 1, string search = "", string order = "asc", string sortBy = "title", int limit = 10)
         {
             int? companyId = User.Identity?.GetCompanyId();
             string? userId = _userManager.GetUserId(User);
 
-            if (companyId is null || userId is null) return NoContent();
+            if (companyId is null || userId is null) return NotFound();
+
+            ViewBag.Search = search;
+            ViewBag.Limit = limit;
+            ViewBag.Order = order;
+            ViewBag.SortBy = sortBy;
 
             List<Ticket> tickets = await _ticketService.GetUnassignedTicketsAsync(companyId.Value);
 
+            // if search arguement
+            if (!string.IsNullOrEmpty(search))
+            {
+                tickets = Search(tickets, search);
+            }
+
+            tickets = Sort(tickets, sortBy, order);
+
             if (User.IsInRole(nameof(Roles.Admin)))
             {
-                return View(tickets);
+                return View(new PaginatedList<Ticket>(tickets, page, limit));
             }
 
             List<Ticket> pmTickets = new();
 
             foreach (Ticket ticket in tickets)
             {
-                if (await _projectService.IsAssignedProject_ManagerAsync(userId, ticket.ProjectId))
+                if (await _projectService.IsAssignedProjectManagerAsync(userId, ticket.ProjectId))
                 {
                     pmTickets.Add(ticket);
                 }
             }
 
-            return View(pmTickets);
+            return View(new PaginatedList<Ticket>(pmTickets, page, limit));
         }
 
         // GET: Tickets/AssignDeveloper

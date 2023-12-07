@@ -1,102 +1,244 @@
-@model IEnumerable<BugscapeMVC.Models.Ticket>
+@model PaginatedList<BugscapeMVC.Models.Ticket>
 @using Microsoft.AspNetCore.Identity
 @using BugscapeMVC.Services.Interfaces
 @using BugscapeMVC.Models.Enums
 
-@inject UserManager<AppUser> UserManager
+@inject IFileService FileService
 @inject IProjectService ProjectService
+@inject UserManager<AppUser> UserManager
 
 @{
     AppUser? user = await UserManager.GetUserAsync(User);
 
     ViewData["Title"] = "Archived Tickets";
+
+    var routeValues = new Dictionary<string, string>
+    {
+        { "search", ViewBag.Search },
+        { "sortBy", ViewBag.SortBy },
+        { "order", ViewBag.Order },
+        { "page", Model.CurrentPage.ToString() },
+        { "limit", ViewBag.Limit.ToString() },
+    };
+
+    string GetNewOrder(string column)
+    {
+        if (ViewBag.SortBy == column)
+        {
+            return ViewBag.Order == "asc" ? "desc" : "asc";
+        }
+
+        return "asc";
+    }
 }
 
-<h1>Archived Tickets</h1>
+<div class="flex items-center justify-between mb-4">
+    <h1 class="font-rockwell text-dark text-xl font-bold">@ViewData["Title"]</h1>
+    @if (User.IsInRole(nameof(Roles.Admin)) || User.IsInRole(nameof(Roles.Project_Manager)))
+    {
+        <a asp-action="Create" asp-controller="Tickets" title="Create New Ticket" class="bg-success hover:bg-opacity-80 transition-opacity flex items-center justify-center rounded-full p-2">
+            <svg xmlns="http://www.w3.org/2000/svg" aria-hidden viewBox="0 0 20 20" class="fill-white h-4 w-4">
+                <path id="Icon_awesome-plus" data-name="Icon awesome-plus" d="M18.571,10.107H12.143V3.679A1.429,1.429,0,0,0,10.714,2.25H9.286A1.429,1.429,0,0,0,7.857,3.679v6.429H1.429A1.429,1.429,0,0,0,0,11.536v1.429a1.429,1.429,0,0,0,1.429,1.429H7.857v6.429A1.429,1.429,0,0,0,9.286,22.25h1.429a1.429,1.429,0,0,0,1.429-1.429V14.393h6.429A1.429,1.429,0,0,0,20,12.964V11.536A1.429,1.429,0,0,0,18.571,10.107Z" transform="translate(0 -2.25)" />
+            </svg>
+        </a>
+    }
+</div>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Created)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Updated)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Archived)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Project)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TicketType)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TicketPriority)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TicketStatus)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.OwnerUser)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DeveloperUser)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Created)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Updated)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Archived)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Project.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TicketType.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TicketPriority.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TicketStatus.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.OwnerUser.FullName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DeveloperUser.FullName)
-            </td>
-            <td>
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a>
-                @if (User.IsInRole(nameof(Roles.Admin)) || await ProjectService.IsAssignedProject_ManagerAsync(user?.Id!, item.ProjectId))
-                {
-                    <a asp-action="Restore" asp-route-id="@item.Id">Restore</a>
+<form asp-action="ArchivedTickets" asp-controller="Tickets" method="get" class="flex justify-end mb-4">
+    <div class="relative">
+        <input type="search" name="search" value="@ViewBag.Search" class="text-lato text-sm bg-white rounded-lg px-4 py-2 border-gray-200 pl-10 placeholder:text-gray-400" placeholder="Search tickets...">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 absolute top-2 left-2 stroke-dark">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+        </svg>
+    </div>
+</form>
+
+<section class="grid grid-cols-12">
+    @if (Model.TotalItems == 0)
+    {
+        <p class="font-lato col-span-12">There are currently no tickets to show.</p>
+    }
+    else
+    {        
+    <div class="relative col-span-12 overflow-x-auto rounded-t-lg scrollbar-thin scrollbar-thumb-light scrollbar-track-lightest mb-4">
+        <table id="projectTable" class="w-full text-sm text-left text-dark font-lato">
+            <thead class="text-xs bg-light uppercase">
+                <tr>
+                    <th scope="col" class="px-6 py-3 whitespace-nowrap">
+                        <a asp-action="ArchivedTickets" asp-controller="Tickets" asp-all-route-data="@routeValues" asp-route-sortBy="title" asp-route-order="@GetNewOrder("title")" class="flex items-center gap-2">
+                            <span>Title</span>
+                            @if (ViewBag.SortBy == "title")
+                            {
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3 @(ViewBag.Order == "asc" ? "rotate-180" : "rotate-none")">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" />
+                                </svg>
+                            }
+                        </a>
+                    </th>
+                    <th scope="col" class="px-6 py-3 whitespace-nowrap">
+                        <a asp-action="ArchivedTickets" asp-controller="Tickets" asp-all-route-data="@routeValues" asp-route-sortBy="developer"  asp-route-order="@GetNewOrder("developer")" class="flex items-center gap-2">
+                        <span>Developer</span>
+                            @if (ViewBag.SortBy == "developer")
+                            {
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3 @(ViewBag.Order == "asc" ? "rotate-180" : "rotate-none")">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" />
+                                </svg>
+                            }
+                        </a>
+                    </th>
+                    <th scope="col" class="px-6 py-3 whitespace-nowrap">
+                        <a asp-action="ArchivedTickets" asp-controller="Tickets" asp-all-route-data="@routeValues" asp-route-sortBy="status" asp-route-order="@GetNewOrder("status")" class="flex items-center gap-2">
+                        <span>Status</span>
+                            @if (ViewBag.SortBy == "status")
+                            {
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3 @(ViewBag.Order == "asc" ? "rotate-180" : "rotate-none")">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" />
+                                </svg>
+                            }
+                        </a>
+                    </th>
+                    <th scope="col" class="px-6 py-3 whitespace-nowrap">
+                        <a asp-action="ArchivedTickets" asp-controller="Tickets" asp-all-route-data="@routeValues" asp-route-sortBy="priority" asp-route-order="@GetNewOrder("priority")" class="flex items-center gap-2">
+                        <span>Priority</span>
+                        @if (ViewBag.SortBy == "priority")
+                            {
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3 @(ViewBag.Order == "asc" ? "rotate-180" : "rotate-none")">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" />
+                                </svg>
+                            }
+                        </a>
+                    </th>
+                    <th scope="col" class="px-6 py-3 whitespace-nowrap">
+                        <a asp-action="ArchivedTickets" asp-controller="Tickets" asp-all-route-data="@routeValues" asp-route-sortBy="date" asp-route-order="@GetNewOrder("date")" class="flex items-center gap-2">
+                        <span>Date</span>
+                            @if (ViewBag.SortBy == "date")
+                            {
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3 @(ViewBag.Order == "asc" ? "rotate-180" : "rotate-none")">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" />
+                                </svg>
+                            }
+                        </a>
+                    </th>
+                    <th scope="col" class="px-6 py-3 whitespace-nowrap">
+                        Actions
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int rowNumber = 0;
                 }
-            </td>
-        </tr>
+
+                @foreach (Ticket ticket in Model)
+                {
+                    string rowColor = rowNumber % 2 == 0 ? "bg-lightest" : "bg-mid"; // Define row colors based on the counter.
+                    rowNumber++;
+                
+                    <tr class="@rowColor border-b">
+                        <th scope="row" class="px-6 py-4 whitespace-nowrap">
+                            @ticket.Title
+                        </th>
+                        <td class="px-6 py-4">
+                            @if (ticket.DeveloperUser is null)
+                            {
+                                <span class="bg-gray-200 text-dark uppercase px-2 py-1 rounded-md text-xs font-bold">Unassigned</span>
+                            }
+                            else
+                            {
+                                @if (ticket.DeveloperUser?.AvatarFileData is null || ticket.DeveloperUser?.AvatarContentType is null)
+                                {
+                                    <img class="h-8 w-8 object-cover rounded-full" src="~/images/default-avatar.png" alt="@ticket.DeveloperUser?.FullName">
+                                }
+                                else
+                                {
+                                    <img class="h-8 w-8 object-cover rounded-full" src="@FileService.ConvertByteArrayToFile(ticket.DeveloperUser.AvatarFileData, ticket.DeveloperUser.AvatarContentType)" alt="@ticket.DeveloperUser?.FullName">
+                                }
+                            }
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="bg-dark text-white uppercase px-2 py-1 rounded-md text-xs font-bold">@ticket.TicketStatus?.Name</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            @{
+                                string badgeClass = "bg-danger";
+
+                                switch (ticket.TicketPriority?.Name)
+                                {
+                                    case nameof(Priorities.Urgent):
+                                        badgeClass = "bg-danger";
+                                        break;
+                                    case nameof(Priorities.High):
+                                        badgeClass = "bg-warning";
+                                        break;
+                                    case nameof(Priorities.Medium):
+                                        badgeClass = "bg-info";
+                                        break;
+                                    default:
+                                        badgeClass = "bg-success";
+                                        break;
+                                }
+                            }
+                            <span class="uppercase px-2 py-1 @badgeClass rounded-md text-xs font-bold">@ticket.TicketPriority?.Name</span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span>@ticket.Created.ToString("dd.MM.yyyy")</span>
+                        </td>
+                        <td class="px-6 py-4 flex items-center gap-2">
+                            <a asp-action="Details" asp-controller="Tickets" title="Ticket Details" asp-route-id="@ticket.Id" class="hover:scale-110 transition-transform">
+                                <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                            </a>
+
+                            @if (User.IsInRole(nameof(Roles.Admin)) || await ProjectService.IsAssignedProjectManagerAsync(user?.Id!, ticket.ProjectId))
+                            {
+                                <a title="Restore Ticket" asp-action="Restore" asp-route-id="@ticket.Id">
+                                    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                                    </svg>
+                                </a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (Model.TotalPages > 1)
+    {
+        <div class="flex items-center justify-center gap-2 col-span-12">
+ 
+            <a title="First Page" asp-action="ArchivedTickets" asp-controller="Tickets" asp-route-search="@ViewBag.Search" asp-route-sortBy="@ViewBag.SortBy" asp-route-order="@ViewBag.Order" asp-route-limit="@ViewBag.Limit" asp-route-page="1" class="@(Model.CurrentPage > 1 ? "hover:bg-info hover:bg-opacity-80" : "opacity-60 pointer-events-none") h-8 w-8 flex items-center justify-center text-dark rounded-md font-lato transition-colors bg-gray-200">
+                <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5" />
+                </svg>
+            </a>
+            <a title="Previous Page" asp-action="ArchivedTickets" asp-controller="Tickets" asp-route-search="@ViewBag.Search" asp-route-sortBy="@ViewBag.SortBy" asp-route-order="@ViewBag.Order" asp-route-limit="@ViewBag.Limit" asp-route-page="@(Model.CurrentPage - 1)" class="@(Model.CurrentPage > 1 ? "hover:bg-info hover:bg-opacity-80" : "opacity-60 pointer-events-none") h-8 w-8 flex items-center justify-center text-dark rounded-md font-lato transition-colors bg-gray-200">
+                <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                </svg>
+            </a>
+
+            @for (int p = Model.FirstPageButton; p <= Model.LastPageButton; p++)
+            {
+                <a aria-label="Page @p" asp-action="ArchivedTickets" asp-controller="Tickets" asp-route-search="@ViewBag.Search" asp-route-sortBy="@ViewBag.SortBy" asp-route-order="@ViewBag.Order" asp-route-limit="@ViewBag.Limit" asp-route-page="@p" class="h-8 w-8 flex text-sm items-center justify-center text-dark rounded-md font-lato transition-colors @(Model.CurrentPage == p ? "bg-info pointer-events-none" : "bg-gray-200 hover:bg-info hover:bg-opacity-80")">
+                    @p
+                </a>
+            }
+
+            <a title="Next Page" asp-action="ArchivedTickets" asp-controller="Tickets" asp-route-search="@ViewBag.Search" asp-route-sortBy="@ViewBag.SortBy" asp-route-order="@ViewBag.Order" asp-route-limit="@ViewBag.Limit" asp-route-page="@(Model.CurrentPage != Model.TotalPages ? Model.CurrentPage + 1 : Model.TotalPages)" class="@(Model.CurrentPage != Model.TotalPages ? "hover:bg-info hover:bg-opacity-80" : "opacity-60 pointer-events-none") h-8 w-8 flex items-center justify-center text-dark rounded-md font-lato transition-colors bg-gray-200">
+                <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                </svg>
+            </a>
+            <a title="Last Page" asp-action="ArchivedTickets" asp-controller="Tickets" asp-route-search="@ViewBag.Search" asp-route-sortBy="@ViewBag.SortBy" asp-route-order="@ViewBag.Order" asp-route-limit="@ViewBag.Limit" asp-route-page="@Model.TotalPages" class="@(Model.CurrentPage != Model.TotalPages ? "hover:bg-info hover:bg-opacity-80" : "opacity-60 pointer-events-none") h-8 w-8 flex items-center justify-center text-dark rounded-md font-lato transition-colors bg-gray-200">
+                <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 4.5l7.5 7.5-7.5 7.5m-6-15l7.5 7.5-7.5 7.5" />
+                </svg>
+            </a>
+        </div>
+    }
 }
-    </tbody>
-</table>
+</section>

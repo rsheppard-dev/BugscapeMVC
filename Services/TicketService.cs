@@ -535,7 +535,7 @@ namespace BugscapeMVC.Services
                 {
                     tickets = (await _projectService.GetAllProjectsByCompanyAsync(companyId))
                         .SelectMany(project => project.Tickets)
-                        .Where(ticket => ticket.DeveloperUserId == userId)
+                        .Where(ticket => ticket.DeveloperUserId == userId || ticket.OwnerUserId == userId)
                         .ToList();
                 }
                 else if (await _roleService.HasRoleAsync(user, Roles.Submitter.ToString()))

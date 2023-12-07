@@ -194,7 +194,7 @@
                         @if (User.IsInRole(nameof(Roles.Admin)) ||
                             ticket.DeveloperUserId == user?.Id ||
                             ticket.OwnerUserId == user?.Id ||
-                            await ProjectService.IsAssignedProject_ManagerAsync(user?.Id!, ticket.ProjectId))
+                            await ProjectService.IsAssignedProjectManagerAsync(user?.Id!, ticket.ProjectId))
                         {
                             <a asp-action="Edit" asp-controller="Tickets" asp-route-id="@ticket.Id" title="Edit Ticket" class="hover:scale-110 transition-transform">
                                 <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -203,7 +203,7 @@
                             </a>
                         }
                         
-                        @if (User.IsInRole(nameof(Roles.Admin)) || await ProjectService.IsAssignedProject_ManagerAsync(user?.Id!, ticket.ProjectId))
+                        @if (User.IsInRole(nameof(Roles.Admin)) || await ProjectService.IsAssignedProjectManagerAsync(user?.Id!, ticket.ProjectId))
                         {
                             if (ticket.Archived)
                             {
@@ -229,7 +229,7 @@
         </table>
     </div>
 
-    @if (Model.TotalPages > 0)
+    @if (Model.TotalPages > 1)
     {
         <div class="flex items-center justify-center gap-2 col-span-12">
  

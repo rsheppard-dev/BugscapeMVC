@@ -53,7 +53,7 @@
 
         @foreach (Project project in Model)
         {
-            AppUser? Project_Manager = await ProjectService.GetProject_ManagerAsync(project.Id);
+            AppUser? Project_Manager = await ProjectService.GetProjectManagerAsync(project.Id);
             string rowColor = rowNumber % 2 == 0 ? "bg-lightest" : "bg-mid"; // Define row colors based on the counter.
             rowNumber++;
         
