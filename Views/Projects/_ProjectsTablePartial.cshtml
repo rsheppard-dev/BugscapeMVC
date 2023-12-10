@@ -116,4 +116,7 @@
     </tbody>
 </table>
 
-@await Html.PartialAsync("~/Views/Projects/_ProjectsPaginationPartial.cshtml", Model)
+@if (Model.TotalPages > 1)
+{
+   @await Html.PartialAsync("~/Views/Projects/_ProjectsPaginationPartial.cshtml", Model);
+}

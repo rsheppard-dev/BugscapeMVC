@@ -4,8 +4,9 @@ namespace BugscapeMVC.Models.ViewModels
 {
     public class AssignMembersViewModel
     {
-        public Project? Project { get; set; }
-        public MultiSelectList? Users { get; set; }
-        public List<string>? SelectedUsers { get; set; }
+        public Project Project { get; set; } = new Project();
+        public MultiSelectList Users { get; set; } = new MultiSelectList(new List<AppUser>(), "Id", "FullName");
+        public MultiSelectList SelectedUsers { get; set; } = new MultiSelectList(new List<AppUser>(), "Id", "FullName");
+        public List<string>? SelectedUserIds { get; set; }
     }
 }

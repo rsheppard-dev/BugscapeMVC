@@ -44,7 +44,6 @@ namespace BugscapeMVC.Controllers
             if (userId is null || companyId is null) return NotFound();
 
             ViewBag.Search = search;
-            ViewBag.Limit = limit;
             ViewBag.Order = order;
             ViewBag.SortBy = sortBy;
 
@@ -69,7 +68,6 @@ namespace BugscapeMVC.Controllers
             if (companyId is null) return NotFound();
 
             ViewBag.Search = search;
-            ViewBag.Limit = limit;
             ViewBag.Order = order;
             ViewBag.SortBy = sortBy;
 
@@ -100,7 +98,6 @@ namespace BugscapeMVC.Controllers
             if (companyId is null) return NoContent();
 
             ViewBag.Search = search;
-            ViewBag.Limit = limit;
             ViewBag.Order = order;
             ViewBag.SortBy = sortBy;
 
@@ -129,7 +126,6 @@ namespace BugscapeMVC.Controllers
             if (companyId is null || userId is null) return NotFound();
 
             ViewBag.Search = search;
-            ViewBag.Limit = limit;
             ViewBag.Order = order;
             ViewBag.SortBy = sortBy;
 

@@ -5,8 +5,11 @@ namespace BugscapeMVC.Models
         public int CurrentPage { get; private set; }
         public int TotalItems { get; private set; }
         public int TotalPages { get; private set; }
+        public int Limit { get; private set; }
         public int FirstPageButton { get; private set; }
         public int LastPageButton { get; private set; }
+        public int FirstItemOnPage { get; private set; }
+        public int LastItemOnPage { get; private set; }
 
         public PaginatedList(List<T> items, int currentPage = 1, int resultsPerPage = 10)
         {
@@ -27,6 +30,9 @@ namespace BugscapeMVC.Models
                 endPage = Math.Min(5, totalPages);
             }
 
+            int from = (currentPage - 1) * resultsPerPage + 1;
+            int to = Math.Min(currentPage * resultsPerPage, totalItems);
+
             items = items.Skip((currentPage - 1) * resultsPerPage).Take(resultsPerPage).ToList();
 
             AddRange(items);
@@ -36,6 +42,9 @@ namespace BugscapeMVC.Models
             TotalPages = totalPages;
             FirstPageButton = startPage;
             LastPageButton = endPage;
+            FirstItemOnPage = from;
+            LastItemOnPage = to;
+            Limit = resultsPerPage;
         }
 
         public bool HasPreviousPage => CurrentPage > 1;

@@ -7,16 +7,33 @@
     {
         { "searchString", ViewBag.SearchString },
         { "tab", ViewBag.ActiveTab },
-        { "limit", ViewBag.Limit.ToString() },
+        { "limit", Model.Limit.ToString() },
         { "projectsPage", ViewBag.Page.Projects.ToString() },
         { "ticketsPage", ViewBag.Page.Tickets.ToString() },
         { "membersPage", ViewBag.Page.Members.ToString() }
     };
 }
 
-<h1 class="font-rockwell text-xl mb-4 text-dark">@ViewData["Title"]</h1>
+<div class="flex flex-wrap justify-between items-center mb-4">
+    <h1 class="font-rockwell text-xl text-dark">@ViewData["Title"]</h1>   
 
-<hr class="mb-4" />
+    <form asp-action="SearchResults" asp-controller="Home" method="get">
+        <input type="hidden" name="searchString" value="@ViewBag.SearchString">
+        <input type="hidden" name="tab" value="@ViewBag.ActiveTab">
+
+        <div class="flex gap-1 items-center">
+            <select name="limit" id="limit" class="font-lato text-sm" onchange="this.form.submit()">
+                @foreach (var option in new int[] { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50 })
+                {
+                    <option value="@option" selected="@((Model.Limit == option))">@option</option>
+                }
+            </select>
+            <label for="limit" class="font-lato text-sm">results per page</label>
+        </div>
+    </form> 
+</div>
+
+<hr class="mb-4 h-[2px] rounded bg-mid border-0" />
 
 @if (Model.NumberOfResults == 0)
 {
@@ -28,7 +45,7 @@ else
         <nav aria-label="Search Result Categories" class="flex items-center gap-4 mb-4">
             @foreach (var tab in Model.Tabs)
             {
-                <button aria-label="@tab.Label, @tab.TotalItems Results" role="tab" id="@tab.Id" aria-controls="@tab.Controls" class="flex items-center gap-2 rounded-md px-4 py-2 bg-mid transition-colors @(ViewBag.ActiveTab == tab.DataTab ? "active" : "")" data-tab="@tab.DataTab">
+                <button onclick="changeTab('@tab.DataTab')" aria-label="@tab.Label, @tab.TotalItems Results" role="tab" id="@tab.Id" aria-controls="@tab.Controls" class="flex items-center gap-2 rounded-md px-4 py-2 bg-mid transition-colors @(ViewBag.ActiveTab == tab.DataTab ? "active" : "")" data-tab="@tab.DataTab">
                     @tab.Label <span class="rounded-full bg-light text-xs flex items-center justify-center h-6 w-6 transition-colors">@tab.TotalItems</span>
                 </button>
             }
@@ -44,47 +61,45 @@ else
                 }
             </ul>
 
-            <div class="flex items-center gap-2 justify-center h-10">
-                <a title="First Page" asp-action="SearchResults" asp-controller="Home" asp-all-route-data="@routeValues" asp-route-tab="projects" asp-route-projectsPage="1"
-                    class="@(Model.Projects.CurrentPage == 1 ? "opacity-40 pointer-events-none" : "hover:bg-info") h-8 w-8 flex items-center justify-center rounded-md bg-mid text-sm text-dark font-lato transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="w-4 h-4">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5" />
-                    </svg>
-                </a>
-
-                <a title="Previous Page" asp-action="SearchResults" asp-controller="Home" asp-all-route-data="@routeValues" asp-route-tab="projects" asp-route-projectsPage="@(Model.Projects.CurrentPage - 1)"
-                    class="@(!Model.Projects.HasPreviousPage ? "opacity-40 pointer-events-none" : "hover:bg-info") h-8 w-8 flex items-center justify-center rounded-md bg-mid text-sm text-dark font-lato transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="w-4 h-4">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-                    </svg>
-                </a>
-
-                @for (int p = Model.Projects.FirstPageButton; p <= Model.Projects.LastPageButton; p++)
+            <div class="flex flex-wrap items-center justify-between gap-2 col-span-12">
+                @if (Model.Projects.TotalPages > 1)
                 {
-                    <a title="Page @p" asp-action="SearchResults" asp-controller="Home" asp-all-route-data="@routeValues" asp-route-tab="projects" asp-route-projectsPage="@p"
-                        class="@(p == Model.Projects.CurrentPage ? "scale-110 bg-light pointer-events-none" : "hover:bg-info bg-mid") h-8 w-8 flex items-center justify-center rounded-md text-sm text-dark font-lato transition-all">
-                        @p
-                    </a>
+                    <div class="flex items-center gap-2">
+            
+                        <a title="First Page" asp-action="SearchResults" asp-controller="Home" asp-route-tab="projects" asp-route-searchString="@ViewBag.SearchString" asp-route-limit="@Model.Limit" asp-route-projectsPage="1" class="@(Model.Projects.CurrentPage > 1 ? "hover:bg-info hover:bg-opacity-80" : "opacity-60 pointer-events-none") h-8 w-8 flex items-center justify-center text-dark rounded-md font-lato transition-colors bg-gray-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5" />
+                            </svg>
+                        </a>
+                        <a title="Previous Page" asp-action="SearchResults" asp-controller="Home" asp-route-tab="projects" asp-route-searchString="@ViewBag.SearchString" asp-route-limit="@Model.Limit" asp-route-projectsPage="@(Model.Projects.CurrentPage - 1)" class="@(Model.Projects.CurrentPage > 1 ? "hover:bg-info hover:bg-opacity-80" : "opacity-60 pointer-events-none") h-8 w-8 flex items-center justify-center text-dark rounded-md font-lato transition-colors bg-gray-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                            </svg>
+                        </a>
+
+                        @for (int p = Model.Projects.FirstPageButton; p <= Model.Projects.LastPageButton; p++)
+                        {
+                            <a aria-label="Page @p" asp-action="SearchResults" asp-controller="Home" asp-route-tab="projects" asp-route-searchString="@ViewBag.SearchString" asp-route-limit="@Model.Limit" asp-route-projectsPage="@p" class="h-8 w-8 flex text-sm items-center justify-center text-dark rounded-md font-lato transition-all @(Model.Projects.CurrentPage == p ? "scale-110 bg-light pointer-events-none" : "hover:bg-info bg-mid")">
+                                @p
+                            </a>
+                        }
+
+                        <a title="Next Page" asp-action="SearchResults" asp-controller="Home" asp-route-tab="projects" asp-route-searchString="@ViewBag.SearchString" asp-route-limit="@Model.Limit" asp-route-projectsPage="@(Model.Projects.CurrentPage != Model.Projects.TotalPages ? Model.Projects.CurrentPage + 1 : Model.Projects.TotalPages)" class="@(Model.Projects.CurrentPage != Model.Projects.TotalPages ? "hover:bg-info hover:bg-opacity-80" : "opacity-60 pointer-events-none") h-8 w-8 flex items-center justify-center text-dark rounded-md font-lato transition-colors bg-gray-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                            </svg>
+                        </a>
+                        <a title="Last Page" asp-action="SearchResults" asp-controller="Home" asp-route-tab="projects" asp-route-searchString="@ViewBag.SearchString" asp-route-limit="@Model.Limit" asp-route-projectsPage="@Model.Projects.TotalPages" class="@(Model.Projects.CurrentPage != Model.Projects.TotalPages ? "hover:bg-info hover:bg-opacity-80" : "opacity-60 pointer-events-none") h-8 w-8 flex items-center justify-center text-dark rounded-md font-lato transition-colors bg-gray-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 4.5l7.5 7.5-7.5 7.5m-6-15l7.5 7.5-7.5 7.5" />
+                            </svg>
+                        </a>
+                    </div>
                 }
 
-                <a title="Next Page" asp-action="SearchResults" asp-controller="Home" asp-all-route-data="@routeValues" asp-route-tab="projects" asp-route-projectsPage="@(Model.Projects.CurrentPage + 1)"
-                    class="@(Model.Projects.HasNextPage ? "hover:bg-info" : "opacity-40 pointer-events-none") h-8 w-8 flex items-center justify-center rounded-md bg-mid text-sm text-dark font-lato transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="w-4 h-4">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                    </svg>
-                </a>
-
-                <a title="Last Page" asp-action="SearchResults" asp-controller="Home" asp-all-route-data="@routeValues" asp-route-tab="projects" asp-route-projectsPage="@(Model.Projects.TotalPages)"
-                    class="@(Model.Projects.CurrentPage == Model.Projects.TotalPages || Model.Projects.TotalPages == 0 ? "opacity-40 pointer-events-none" : "hover:bg-info") h-8 w-8 flex items-center justify-center rounded-md bg-mid text-sm text-dark font-lato transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="w-4 h-4">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 4.5l7.5 7.5-7.5 7.5m-6-15l7.5 7.5-7.5 7.5" />
-                    </svg>
-                </a>
+                <span class="font-lato text-sm">
+                    Showing @Model.Projects.FirstItemOnPage to @Model.Projects.LastItemOnPage of @Model.Projects.TotalItems projects.
+                </span>
             </div>
         </section>
 
@@ -98,47 +113,45 @@ else
                 }
             </ul>
 
-            <div class="flex items-center gap-2 justify-center h-10">
-                <a title="First Page" asp-action="SearchResults" asp-controller="Home" asp-all-route-data="@routeValues" asp-route-tab="tickets" asp-route-ticketsPage="1"
-                    class="@(Model.Tickets.CurrentPage == 1 ? "opacity-40 pointer-events-none" : "hover:bg-info") h-8 w-8 flex items-center justify-center rounded-md bg-mid text-sm text-dark font-lato transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="w-4 h-4">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5" />
-                    </svg>
-                </a>
-
-                <a title="Previous Page" asp-action="SearchResults" asp-controller="Home" asp-all-route-data="@routeValues" asp-route-tab="tickets" asp-route-ticketsPage="@(Model.Tickets.CurrentPage - 1)"
-                    class="@(!Model.Tickets.HasPreviousPage ? "opacity-40 pointer-events-none" : "hover:bg-info") h-8 w-8 flex items-center justify-center rounded-md bg-mid text-sm text-dark font-lato transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="w-4 h-4">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-                    </svg>
-                </a>
-
-                @for (int p = Model.Tickets.FirstPageButton; p <= Model.Tickets.LastPageButton; p++)
+            <div class="flex flex-wrap items-center justify-between gap-2 col-span-12">
+                @if (Model.Tickets.TotalPages > 1)
                 {
-                    <a title="Page @p" asp-action="SearchResults" asp-controller="Home" asp-all-route-data="@routeValues" asp-route-tab="tickets" asp-route-ticketsPage="@p"
-                        class="@(p == Model.Tickets.CurrentPage ? "scale-110 bg-light pointer-events-none" : "hover:bg-info bg-mid") h-8 w-8 flex items-center justify-center rounded-md text-sm text-dark font-lato transition-all">
-                        @p
-                    </a>
+                    <div class="flex items-center gap-2">
+            
+                        <a title="First Page" asp-action="SearchResults" asp-controller="Home" asp-route-tab="tickets" asp-route-searchString="@ViewBag.SearchString" asp-route-limit="@Model.Limit" asp-route-ticketsPage="1" class="@(Model.Tickets.CurrentPage > 1 ? "hover:bg-info hover:bg-opacity-80" : "opacity-60 pointer-events-none") h-8 w-8 flex items-center justify-center text-dark rounded-md font-lato transition-colors bg-gray-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5" />
+                            </svg>
+                        </a>
+                        <a title="Previous Page" asp-action="SearchResults" asp-controller="Home" asp-route-tab="tickets" asp-route-searchString="@ViewBag.SearchString" asp-route-limit="@Model.Limit" asp-route-ticketsPage="@(Model.Tickets.CurrentPage - 1)" class="@(Model.Tickets.CurrentPage > 1 ? "hover:bg-info hover:bg-opacity-80" : "opacity-60 pointer-events-none") h-8 w-8 flex items-center justify-center text-dark rounded-md font-lato transition-colors bg-gray-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                            </svg>
+                        </a>
+
+                        @for (int p = Model.Tickets.FirstPageButton; p <= Model.Tickets.LastPageButton; p++)
+                        {
+                            <a aria-label="Page @p" asp-action="SearchResults" asp-controller="Home" asp-route-tab="tickets" asp-route-searchString="@ViewBag.SearchString" asp-route-limit="@Model.Limit" asp-route-ticketsPage="@p" class="h-8 w-8 flex text-sm items-center justify-center text-dark rounded-md font-lato transition-all @(Model.Tickets.CurrentPage == p ? "scale-110 bg-light pointer-events-none" : "hover:bg-info bg-mid")">
+                                @p
+                            </a>
+                        }
+
+                        <a title="Next Page" asp-action="SearchResults" asp-controller="Home" asp-route-tab="tickets" asp-route-searchString="@ViewBag.SearchString" asp-route-limit="@Model.Limit" asp-route-ticketsPage="@(Model.Tickets.CurrentPage != Model.Tickets.TotalPages ? Model.Tickets.CurrentPage + 1 : Model.Tickets.TotalPages)" class="@(Model.Tickets.CurrentPage != Model.Tickets.TotalPages ? "hover:bg-info hover:bg-opacity-80" : "opacity-60 pointer-events-none") h-8 w-8 flex items-center justify-center text-dark rounded-md font-lato transition-colors bg-gray-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                            </svg>
+                        </a>
+                        <a title="Last Page" asp-action="SearchResults" asp-controller="Home" asp-route-tab="tickets" asp-route-searchString="@ViewBag.SearchString" asp-route-limit="@Model.Limit" asp-route-ticketsPage="@Model.Tickets.TotalPages" class="@(Model.Tickets.CurrentPage != Model.Tickets.TotalPages ? "hover:bg-info hover:bg-opacity-80" : "opacity-60 pointer-events-none") h-8 w-8 flex items-center justify-center text-dark rounded-md font-lato transition-colors bg-gray-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 4.5l7.5 7.5-7.5 7.5m-6-15l7.5 7.5-7.5 7.5" />
+                            </svg>
+                        </a>
+                    </div>
                 }
 
-                <a title="Next Page" asp-action="SearchResults" asp-controller="Home" asp-all-route-data="@routeValues" asp-route-tab="tickets" asp-route-ticketsPage="@(Model.Tickets.CurrentPage + 1)"
-                    class="@(Model.Tickets.HasNextPage ? "hover:bg-info" : "opacity-40 pointer-events-none") h-8 w-8 flex items-center justify-center rounded-md bg-mid text-sm text-dark font-lato transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="w-4 h-4">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                    </svg>
-                </a>
-
-                <a title="Last Page" asp-action="SearchResults" asp-controller="Home" asp-all-route-data="@routeValues" asp-route-tab="tickets" asp-route-ticketsPage="@(Model.Tickets.TotalPages)"
-                    class="@(Model.Tickets.CurrentPage == Model.Tickets.TotalPages || Model.Tickets.TotalPages == 0 ? "opacity-40 pointer-events-none" : "hover:bg-info") h-8 w-8 flex items-center justify-center rounded-md bg-mid text-sm text-dark font-lato transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="w-4 h-4">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 4.5l7.5 7.5-7.5 7.5m-6-15l7.5 7.5-7.5 7.5" />
-                    </svg>
-                </a>
+                <span class="font-lato text-sm">
+                    Showing @Model.Tickets.FirstItemOnPage to @Model.Tickets.LastItemOnPage of @Model.Tickets.TotalItems tickets.
+                </span>
             </div>
         </section>
 
@@ -152,47 +165,45 @@ else
                 }
             </ul>
 
-            <div class="flex items-center gap-2 justify-center h-10">
-                <a title="First Page" asp-action="SearchResults" asp-controller="Home" asp-all-route-data="@routeValues" asp-route-tab="members" asp-route-membersPage="1"
-                    class="@(Model.Members.CurrentPage == 1 ? "opacity-40 pointer-events-none" : "hover:bg-info") h-8 w-8 flex items-center justify-center rounded-md bg-mid text-sm text-dark font-lato transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="w-4 h-4">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5" />
-                    </svg>
-                </a>
-
-                <a title="Previous Page" asp-action="SearchResults" asp-controller="Home" asp-all-route-data="@routeValues" asp-route-tab="members" asp-route-membersPage="@(Model.Members.CurrentPage - 1)"
-                    class="@(!Model.Members.HasPreviousPage ? "opacity-40 pointer-events-none" : "hover:bg-info") h-8 w-8 flex items-center justify-center rounded-md bg-mid text-sm text-dark font-lato transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="w-4 h-4">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-                    </svg>
-                </a>
-
-                @for (int p = Model.Members.FirstPageButton; p <= Model.Members.LastPageButton; p++)
+            <div class="flex flex-wrap items-center justify-between gap-2 col-span-12">
+                @if (Model.Members.TotalPages > 1)
                 {
-                    <a title="Page @p" asp-action="SearchResults" asp-controller="Home" asp-all-route-data="@routeValues" asp-route-tab="members" asp-route-membersPage="@p"
-                        class="@(p == Model.Members.CurrentPage ? "scale-110 bg-light pointer-events-none" : "hover:bg-info bg-mid") h-8 w-8 flex items-center justify-center rounded-md text-sm text-dark font-lato transition-all">
-                        @p
-                    </a>
+                    <div class="flex items-center gap-2">
+            
+                        <a title="First Page" asp-action="SearchResults" asp-controller="Home" asp-route-tab="members" asp-route-searchString="@ViewBag.SearchString" asp-route-limit="@Model.Limit" asp-route-membersPage="1" class="@(Model.Members.CurrentPage > 1 ? "hover:bg-info hover:bg-opacity-80" : "opacity-60 pointer-events-none") h-8 w-8 flex items-center justify-center text-dark rounded-md font-lato transition-colors bg-gray-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5" />
+                            </svg>
+                        </a>
+                        <a title="Previous Page" asp-action="SearchResults" asp-controller="Home" asp-route-tab="members" asp-route-searchString="@ViewBag.SearchString" asp-route-limit="@Model.Limit" asp-route-membersPage="@(Model.Members.CurrentPage - 1)" class="@(Model.Members.CurrentPage > 1 ? "hover:bg-info hover:bg-opacity-80" : "opacity-60 pointer-events-none") h-8 w-8 flex items-center justify-center text-dark rounded-md font-lato transition-colors bg-gray-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                            </svg>
+                        </a>
+
+                        @for (int p = Model.Members.FirstPageButton; p <= Model.Members.LastPageButton; p++)
+                        {
+                            <a aria-label="Page @p" asp-action="SearchResults" asp-controller="Home" asp-route-tab="members" asp-route-searchString="@ViewBag.SearchString" asp-route-limit="@Model.Limit" asp-route-membersPage="@p" class="h-8 w-8 flex text-sm items-center justify-center text-dark rounded-md font-lato transition-all @(Model.Members.CurrentPage == p ? "scale-110 bg-light pointer-events-none" : "hover:bg-info bg-mid")">
+                                @p
+                            </a>
+                        }
+
+                        <a title="Next Page" asp-action="SearchResults" asp-controller="Home" asp-route-tab="members" asp-route-searchString="@ViewBag.SearchString" asp-route-limit="@Model.Limit" asp-route-membersPage="@(Model.Members.CurrentPage != Model.Members.TotalPages ? Model.Members.CurrentPage + 1 : Model.Members.TotalPages)" class="@(Model.Members.CurrentPage != Model.Members.TotalPages ? "hover:bg-info hover:bg-opacity-80" : "opacity-60 pointer-events-none") h-8 w-8 flex items-center justify-center text-dark rounded-md font-lato transition-colors bg-gray-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                            </svg>
+                        </a>
+                        <a title="Last Page" asp-action="SearchResults" asp-controller="Home" asp-route-tab="members" asp-route-searchString="@ViewBag.SearchString" asp-route-limit="@Model.Limit" asp-route-membersPage="@Model.Members.TotalPages" class="@(Model.Members.CurrentPage != Model.Members.TotalPages ? "hover:bg-info hover:bg-opacity-80" : "opacity-60 pointer-events-none") h-8 w-8 flex items-center justify-center text-dark rounded-md font-lato transition-colors bg-gray-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 4.5l7.5 7.5-7.5 7.5m-6-15l7.5 7.5-7.5 7.5" />
+                            </svg>
+                        </a>
+                    </div>
                 }
 
-                <a title="Next Page" asp-action="SearchResults" asp-controller="Home" asp-all-route-data="@routeValues" asp-route-tab="members" asp-route-membersPage="@(Model.Members.CurrentPage + 1)"
-                    class="@(Model.Members.HasNextPage ? "hover:bg-info" : "opacity-40 pointer-events-none") h-8 w-8 flex items-center justify-center rounded-md bg-mid text-sm text-dark font-lato transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="w-4 h-4">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                    </svg>
-                </a>
-
-                <a title="Last Page" asp-action="SearchResults" asp-controller="Home" asp-all-route-data="@routeValues" asp-route-tab="members" asp-route-membersPage="@(Model.Members.TotalPages)"
-                    class="@(Model.Members.CurrentPage == Model.Members.TotalPages || Model.Members.TotalPages == 0 ? "opacity-40 pointer-events-none" : "hover:bg-info") h-8 w-8 flex items-center justify-center rounded-md bg-mid text-sm text-dark font-lato transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="w-4 h-4">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 4.5l7.5 7.5-7.5 7.5m-6-15l7.5 7.5-7.5 7.5" />
-                    </svg>
-                </a>
+                <span class="font-lato text-sm">
+                    Showing @Model.Members.FirstItemOnPage to @Model.Members.LastItemOnPage of @Model.Members.TotalItems members.
+                </span>
             </div>
         </section>
     </div>
@@ -202,6 +213,13 @@ else
     <script src="~/js/tabs.js"></script>
 
     <script>
+        function changeTab(tab) {
+            var url = new URL(window.location.href);
+            url.searchParams.set('tab', tab);
+            window.history.replaceState(null, null, url.toString());
+            document.querySelector('input[name="tab"]').value = tab;
+        }
+
         const container = document.querySelector('[data-tabs]');
         const tabs = new Tabs(container);
 

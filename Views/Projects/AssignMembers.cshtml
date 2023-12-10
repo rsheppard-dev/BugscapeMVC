@@ -4,37 +4,81 @@
     ViewData["Title"] = "Assign Members";
 }
 
-<div class="container">
-    <h2>Assign Members For</h2>
-    <div class="row">
-        <div class="col-md-6">
-            <h3>@Model.Project?.Name</h3>
+<h1 class="font-rockwell text-dark text-xl font-bold mb-4">@ViewData["Title"]</h1>
+<hr class="mb-4 h-[2px] rounded bg-mid border-0" />
 
-            <div class="card">
-                <div class="card-header">
-                    <label asp-for="Users" class="control-label">Assign team members to project</label>
-                </div>
-                <div class="card-body">
-                    <form asp-action="AssignMembers" asp-controller="Projects" method="post">
-                        <input type="hidden" asp-for="Project.Id">
-                        <div class="col-12 mb-3">
-                            <div class="form-group">
-                                <select required multiple aria-multiselectable="true" asp-for="SelectedUsers" asp-items="@Model.Users" class="form-control">
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="col-lg-offet-2 col-lg-10">
-                                <input type="submit" value="Assign Members" class="btn alert-primary">
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
+<h2 class="font-rockwell font-semibold text-dark mb-4">@Model.Project.Name</h2>
+<p class="font-lato mb-4">Assign team members to join this project.</p>
+
+<form asp-action="AssignMembers" id="AssignMembers" method="post">
+    <input type="hidden" asp-for="Project.Id">
+    <input type="hidden" asp-for="Project.Name">
+    <div class="flex gap-4 mb-4">
+        <div class="flex flex-col gap-2 grow">
+            <label asp-for="Users" class="font-lato text-sm font-semibold">Company Members</label>
+            <select multiple aria-multiselectable="true" asp-for="Users" asp-items="@Model.Users" class="font-lato">
+            </select>
+        </div>
+
+        <div class="flex flex-col gap-2 items-center justify-center">
+            <button title="Add Member" type="button" id="btnAdd" class="rounded-md p-2 bg-success hover:bg-opacity-80 transition-opacity">
+                <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 4.5l7.5 7.5-7.5 7.5m-6-15l7.5 7.5-7.5 7.5" />
+                </svg>
+            </button>
+            <button title="Remove Member" type="button" id="btnRemove" class="rounded-md p-2 bg-danger hover:bg-opacity-80 transition-opacity">
+                <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5" />
+                </svg>
+            </button>
+        </div>
+
+        <div class="flex flex-col gap-2 grow">
+            <label asp-for="SelectedUserIds" class="font-lato text-sm font-semibold">Project Members</label>
+            <select multiple aria-multiselectable="true" asp-for="SelectedUserIds" asp-items="@Model.SelectedUsers" class="font-lato">
+            </select>
         </div>
     </div>
 
-    <div>
-        <a asp-action="Detials" asp-controller="Projects" asp-route-id="@Model.Project?.Id">Back to Details</a>
+    <div class="flex justify-end">
+        <button type="submit"
+            class="px-4 py-2 text-sm rounded-md cursor-pointer bg-success font-lato font-bold hover:bg-opacity-80 transition-opacity">Update Team</button>
     </div>
-</div>
+</form>
+
+<script>
+    const teamMembersList = document.getElementById('Users');
+    const projectMembersList = document.getElementById('SelectedUserIds');
+    const form = document.getElementById('AssignMembers');
+
+    window.onload = function() {
+        Array.from(projectMembersList.options).forEach(option => {
+            option.selected = false;
+        });
+    };
+
+    document.getElementById('btnAdd').addEventListener('click', function () {
+        Array.from(teamMembersList.selectedOptions).forEach(option => {
+            option.selected = false;
+            projectMembersList.add(option);
+        });
+    });
+
+    document.getElementById('btnRemove').addEventListener('click', function () {
+        Array.from(projectMembersList.selectedOptions).forEach(option => {
+            option.selected = false;
+            teamMembersList.add(option);
+        });
+    });
+
+    form.addEventListener('submit', function (e) {
+        // Create a hidden input for each option in the "SelectedUsers" list
+        Array.from(projectMembersList.options).forEach(option => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'SelectedUserIds';
+            input.value = option.value;
+            form.appendChild(input);
+        });
+    });
+</script>

@@ -1,79 +1,35 @@
 @model BugscapeMVC.Models.Project
 @using BugscapeMVC.Services.Interfaces
-@inject IFileService fileService
+
+@inject IFileService FileService
 
 @{
-    ViewData["Title"] = "Archive";
+    ViewData["Title"] = "Archive Project";
 }
 
-<h1>Archive</h1>
+<h1 class="font-rockwell text-dark text-xl font-bold mb-4">@ViewData["Title"]</h1>
 
-<h3>Are you sure you want to archive this project?</h3>
-<div>
-    <h4>Project</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.StartDate)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.StartDate)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.EndDate)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.EndDate)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.ImageFileData)
-        </dt>
-        <dd class="col-sm-10">
-            @if (Model.ImageFileData is null || Model.ImageContentType is null)
-            {
-                <img id="imageFileData" class="img-fluid img-thumbnail" src="~/images/default-project.png">
-            }
-            else
-            {
-                <img id="imageFileData" class="img-fluid img-thumbnail"
-                    src="@fileService.ConvertByteArrayToFile(Model.ImageFileData, Model.ImageContentType)">
-            }
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Archived)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Archived)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Company)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Company.Name)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.ProjectPriority)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.ProjectPriority.Name)
-        </dd>
-    </dl>
+<p class="font-lato mb-4">Are you sure you want to archive the project below?</p>
 
-    <form asp-action="Archive">
-        <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Archive" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
-    </form>
+<hr class="mb-4 h-[2px] rounded bg-mid border-0" />
+
+<div class="flex flex-wrap gap-4 mb-4">
+    <div>
+        <h2 class="font-rockwell mb-4 font-semibold">@Model.Name</h2>
+
+        <div class="prose max-w-none font-lato">@Html.Raw(Model.Description)</div>
+    </div>
+
+    @if(Model.ImageFileData is not null && Model.ImageContentType is not null)
+    {
+        <figure>
+            <img src="@FileService.ConvertByteArrayToFile(Model.ImageFileData, Model.ImageContentType)" alt="@Model.Name" class="object-cover max-h-60">
+        </figure>
+    }
 </div>
+
+<form asp-action="Archive" class="flex gap-2 items-center">
+    <input type="hidden" asp-for="Id" />
+    <input type="submit" value="Archive" class="px-4 py-2 text-white text-sm rounded-md cursor-pointer bg-danger font-lato font-bold hover:bg-opacity-80 transition-opacity" />
+    <a asp-action="Index" class="px-4 py-2 text-sm rounded-md cursor-pointer bg-info font-lato font-bold hover:bg-opacity-80 transition-opacity">Back</a>
+</form>

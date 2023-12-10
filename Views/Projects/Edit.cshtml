@@ -2,100 +2,114 @@
 @using BugscapeMVC.Models.Enums
 @using BugscapeMVC.Services.Interfaces
 
-@inject IFileService fileService
+@inject IFileService FileService
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Project";
 }
 
-<h1>Edit</h1>
+<head>
+    <script src="/lib/tinymce/tinymce.min.js" referrerpolicy="origin"></script>
+</head>
 
-<h4>Project</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit" method="post" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Project.Id" />
-            <input type="hidden" asp-for="Project.CompanyId" />
-            <input type="hidden" asp-for="Project.ImageFileName" />
-            <input type="hidden" asp-for="Project.ImageFileData" />
-            <input type="hidden" asp-for="Project.ImageContentType" />
+<h1 class="font-rockwell text-dark text-xl font-bold mb-4">@ViewData["Title"]</h1>
+<hr class="mb-4 h-[2px] rounded bg-mid border-0" />
 
-            <div class="form-group">
-                <label asp-for="Project.Name" class="control-label"></label>
-                <input asp-for="Project.Name" class="form-control" />
-                <span asp-validation-for="Project.Name" class="text-danger"></span>
-            </div>
 
-            <div class="form-group">
-                <label asp-for="Project.Description" class="control-label"></label>
-                <input asp-for="Project.Description" class="form-control" />
-                <span asp-validation-for="Project.Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Project.StartDate" class="control-label"></label>
-                <input asp-for="Project.StartDate" class="form-control" />
-                <span asp-validation-for="Project.StartDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Project.EndDate" class="control-label"></label>
-                <input asp-for="Project.EndDate" class="form-control" />
-                <span asp-validation-for="Project.EndDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Project.ProjectPriorityId" class="control-label"></label>
-                <select asp-for="Project.ProjectPriorityId" class="form-control" asp-items="@Model.PriorityList">
-                    <option disabled selected hidden>Choose Priority</option>
-                </select>
-                <span asp-validation-for="Project.ProjectPriorityId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label class="control-label">Project Image</label>
-                <input data-image-input asp-for="Project.ImageFormFile" class="form-control" type="file"
-                    accept="image/jpg, image/jpeg, image/png, image/webp, image/gif" />
-                <span asp-validation-for="Project.ImageFormFile" class="text-danger"></span>
-            </div>
-            <div>
-                <label>Image Preview</label>
-                @if (Model.Project?.ImageFileData is null || Model.Project?.ImageContentType is null)
+<form asp-action="Edit" method="post" enctype="multipart/form-data"
+    class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+    <input type="hidden" asp-for="Project.Id" />
+    <input type="hidden" asp-for="Project.CompanyId" />
+    <input type="hidden" asp-for="Project.ImageFileName" />
+    <input type="hidden" asp-for="Project.ImageFileData" />
+    <input type="hidden" asp-for="Project.ImageContentType" />
+    <div asp-validation-summary="ModelOnly" class="text-danger text-sm font-lato font-bold"></div>
+
+    <div class="flex flex-col lg:col-span-2 gap-2">
+        <label asp-for="Project!.Name" class="font-lato text-sm font-bold"></label>
+        <input asp-for="Project!.Name" class="font-lato text-sm" />
+        <span asp-validation-for="Project!.Name" class="text-danger text-sm font-lato font-bold"></span>
+    </div>
+
+    <div class="flex flex-col lg:col-span-2 gap-2">
+        <label asp-for="Project.Description" class="font-lato text-sm font-bold"></label>
+        <textarea asp-for="Project.Description" data-tinymce class="font-lato text-sm" rows="3"></textarea>
+        <span asp-validation-for="Project.Description" class="text-danger text-sm font-lato font-bold"></span>
+    </div>
+
+    <div class="flex flex-col gap-2 lg:col-span-2">
+        <label asp-for="Project!.ImageFormFile" class="block font-lato text-sm font-bold"></label>
+        <div class="flex h-full border-2 border-mid rounded-lg shadow-sm px-4 py-2">
+            <div class="flex flex-col gap-2 w-full">
+                @if(Model.Project.ImageFileData is not null && Model.Project.ImageContentType is not null)
                 {
-                    <img data-image-output class="img-fluid img-thumbnail" src="~/images/default-project.png">
+                    <img data-image-output src="@FileService.ConvertByteArrayToFile(Model.Project.ImageFileData, Model.Project.ImageContentType)" alt="@Model.Project.Name" class="object-cover mx-auto max-h-60">
                 }
                 else
                 {
-                    <img data-image-output class="img-fluid img-thumbnail"
-                        src="@fileService.ConvertByteArrayToFile(Model.Project.ImageFileData, Model.Project.ImageContentType)">
+                    <img data-image-output class="object-cover mx-auto max-h-60"
+                        src="~/images/default-project.png">
                 }
+
+                <input data-image-input asp-for="Project.ImageFormFile"
+                    class="block bg-white rounded-md border-2 border-mid file:font-lato font-lato w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-mid file:text-dark file:cursor-pointer hover:file:bg-light"
+                    accept="image/jpg, image/jpeg, image/png, image/webp, image/gif" />
+
+                <span asp-validation-for="Project.ImageFormFile"
+                    class="text-danger text-sm font-lato font-bold"></span>
             </div>
-            @if (User.IsInRole(Roles.Admin.ToString()))
-            {
-                <div class="form-group">
-                    <label class="control-label">Project Manager</label>
-                    <select asp-for="PmId" class="form-control" asp-items="@Model.PMList">
-                        <option disabled selected hidden>Assign Project Manager</option>
-                    </select>
-                </div>
-            }
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+    <div class="flex flex-col gap-2">
+        <label asp-for="Project!.StartDate" class="font-lato text-sm font-bold"></label>
+        <input asp-for="Project!.StartDate" class="font-lato text-sm">
+        <span asp-validation-for="Project.StartDate" class="text-danger text-sm font-lato font-bold"></span>
+    </div>
 
-@section Scripts {
-    <script src="~/js/imagePreview.js"></script>
-    <script>
-        const instance = new ImagePreview();
+    <div class="flex flex-col gap-2">
+        <label asp-for="Project!.EndDate" class="font-lato text-sm font-bold"></label>
+        <input asp-for="Project!.EndDate" class="font-lato text-sm">
+        <span asp-validation-for="Project.EndDate" class="text-danger text-sm font-lato font-bold"></span>
+    </div>
 
-        instance.init();
-    </script>
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    <div class="flex flex-col gap-2">
+        <label asp-for="Project.ProjectPriorityId" class="font-lato text-sm font-bold"></label>
+        <select asp-for="Project.ProjectPriorityId" class="font-lato text-sm" asp-items="@Model.PriorityList">
+            <option disabled selected hidden class="font-lato text-sm">Choose Priority</option>
+        </select>
+    </div>
+
+    @if (User.IsInRole(Roles.Admin.ToString()))
+    {
+        <div class="flex flex-col gap-2">
+            <label asp-for="PmId" class="font-lato text-sm font-bold"></label>
+            <select asp-for="PmId" class="font-lato text-sm" asp-items="@Model.PMList">
+                <option disabled selected hidden class="font-lato text-sm">Choose PM</option>
+            </select>
+        </div>
     }
+
+
+    <div class="lg:col-span-2 flex justify-end">
+        <button type="submit"
+            class="px-4 py-2 text-sm rounded-md cursor-pointer bg-success font-lato font-bold hover:bg-opacity-80 transition-opacity">Update
+            Project</button>
+    </div>
+</form>
+
+<script src="~/js/imagePreview.js"></script>
+<script>
+    const instance = new ImagePreview();
+
+    instance.init();
+    tinymce.init({
+        selector: '[data-tinymce]',
+        menubar: false,
+        statusbar: false,
+        height: 200
+    });
+</script>
+@{
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
 }

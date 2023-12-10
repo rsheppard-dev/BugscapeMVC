@@ -125,4 +125,7 @@
     </tbody>
 </table>
 
-@await Html.PartialAsync("~/Views/Tickets/_TicketsPaginationPartial.cshtml", Model)
+@if (Model.TotalPages > 1)
+{
+    @await Html.PartialAsync("~/Views/Tickets/_TicketsPaginationPartial.cshtml", Model);
+}

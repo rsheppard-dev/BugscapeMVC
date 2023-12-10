@@ -5,58 +5,64 @@
     var nextDisabled = !Model.HasNextPage ? "disabled" : "";
 }
 
-<div class="flex items-center gap-2 justify-center h-10">
-    <button 
-        @(Model.CurrentPage == 1 ? "disabled" : "")
-        title="First Page"
-        data-sortable
-        data-page="1"
-        class="disabled:opacity-40 h-8 w-8 flex items-center justify-center rounded-md bg-mid text-sm text-dark font-lato enabled:hover:bg-info transition-colors">
-        <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-            stroke="currentColor" class="w-4 h-4">
-            <path stroke-linecap="round" stroke-linejoin="round"
-                d="M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5" />
-        </svg>
-    </button>
-
-    <button @prevDisabled
-        title="Previous Page"
-        data-sortable
-        data-page="@(Model.CurrentPage - 1)"
-        class="disabled:opacity-40 h-8 w-8 flex items-center justify-center rounded-md bg-mid text-sm text-dark font-lato enabled:hover:bg-info transition-colors">
-        <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-            stroke="currentColor" class="w-4 h-4">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-        </svg>
-    </button>
-
-    @for (int p = Model.FirstPageButton; p <= Model.LastPageButton; p++)
-    {
-        <button @(p == Model.CurrentPage ? "disabled" : "")
-            title="Page @p"
+<div class="flex flex-wrap items-center gap-2 justify-between">
+    <div class="flex items-center gap-2 justify-center h-10">
+        <button 
+            @(Model.CurrentPage == 1 ? "disabled" : "")
+            title="First Page"
             data-sortable
-            data-page="@p"
-            class="disabled:scale-110 disabled:bg-light h-8 w-8 flex items-center justify-center rounded-md bg-mid text-sm text-dark font-lato enabled:hover:bg-info transition-all">
-            @p
+            data-page="1"
+            class="disabled:opacity-40 h-8 w-8 flex items-center justify-center rounded-md bg-mid text-sm text-dark font-lato enabled:hover:bg-info transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5" />
+            </svg>
         </button>
-    }
 
-    <button @nextDisabled title="Next Page"
-        data-sortable
-        data-page="@(Model.CurrentPage + 1)"
-        class="disabled:opacity-40 h-8 w-8 flex items-center justify-center rounded-md bg-mid text-sm text-dark font-lato enabled:hover:bg-info transition-colors">
-        <svg xmlns="http://www.w3.org/2000/svg" title="Next Page" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-            stroke="currentColor" class="w-4 h-4">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-        </svg>
-    </button>
+        <button @prevDisabled
+            title="Previous Page"
+            data-sortable
+            data-page="@(Model.CurrentPage - 1)"
+            class="disabled:opacity-40 h-8 w-8 flex items-center justify-center rounded-md bg-mid text-sm text-dark font-lato enabled:hover:bg-info transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+            </svg>
+        </button>
 
-    <button @(Model.CurrentPage == Model.TotalPages ? "disabled" : "") title="Last Page" data-sortable
-        data-page="@Model.TotalPages"
-        class="disabled:opacity-40 h-8 w-8 flex items-center justify-center rounded-md bg-mid text-sm text-dark font-lato enabled:hover:bg-info transition-colors">
-        <svg xmlns="http://www.w3.org/2000/svg" title="Last Page" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-            stroke="currentColor" class="w-4 h-4">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 4.5l7.5 7.5-7.5 7.5m-6-15l7.5 7.5-7.5 7.5" />
-        </svg>
-    </button>
+        @for (int p = Model.FirstPageButton; p <= Model.LastPageButton; p++)
+        {
+            <button @(p == Model.CurrentPage ? "disabled" : "")
+                title="Page @p"
+                data-sortable
+                data-page="@p"
+                class="disabled:scale-110 disabled:bg-light h-8 w-8 flex items-center justify-center rounded-md bg-mid text-sm text-dark font-lato enabled:hover:bg-info transition-all">
+                @p
+            </button>
+        }
+
+        <button @nextDisabled title="Next Page"
+            data-sortable
+            data-page="@(Model.CurrentPage + 1)"
+            class="disabled:opacity-40 h-8 w-8 flex items-center justify-center rounded-md bg-mid text-sm text-dark font-lato enabled:hover:bg-info transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" title="Next Page" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+            </svg>
+        </button>
+
+        <button @(Model.CurrentPage == Model.TotalPages ? "disabled" : "") title="Last Page" data-sortable
+            data-page="@Model.TotalPages"
+            class="disabled:opacity-40 h-8 w-8 flex items-center justify-center rounded-md bg-mid text-sm text-dark font-lato enabled:hover:bg-info transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" title="Last Page" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" class="w-4 h-4">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 4.5l7.5 7.5-7.5 7.5m-6-15l7.5 7.5-7.5 7.5" />
+            </svg>
+        </button>
+    </div>
+
+    <span class="font-lato text-sm">
+        Showing @Model.FirstItemOnPage to @Model.LastItemOnPage of @Model.TotalItems tickets.
+    </span>
 </div>

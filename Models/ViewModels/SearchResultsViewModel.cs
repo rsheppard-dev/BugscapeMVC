@@ -8,6 +8,7 @@ namespace BugscapeMVC.Models.ViewModels
         public PaginatedList<Project> Projects { get; set; } = new PaginatedList<Project>(new List<Project>(), 1, 10);
         public PaginatedList<AppUser> Members { get; set; } = new PaginatedList<AppUser>(new List<AppUser>(), 1, 10);
         public int NumberOfResults => Tickets.TotalItems + Projects.TotalItems + Members.TotalItems;
+        public int Limit => Projects.Limit;
 
        public List<dynamic> Tabs
         {

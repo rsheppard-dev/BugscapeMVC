@@ -5,7 +5,7 @@ namespace BugscapeMVC.Models.ViewModels
 {
     public class AddProjectWithPMViewModel
     {
-        public Project? Project { get; set; }
+        public Project Project { get; set; } = new Project();
         public SelectList? PMList { get; set; }
 
         [Display(Name = "Project Manager")]

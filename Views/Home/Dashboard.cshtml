@@ -38,7 +38,7 @@
         </div>
     </a>
 
-    <a asp-action="Index" asp-controller="Tickets"
+    <a asp-action="@(User.IsInRole(nameof(Roles.Admin)) ? "UnassignedTickets" : "Index")" asp-controller="Tickets"
         class="rounded-lg bg-warning px-4 py-2 flex justify-between items-center gap-2 w-full col-span-6 xl:col-span-3">
         <div class="flex flex-col gap-1 font-dark">
             <span class="font-rockwell text-4xl">@Model.Tickets?.Where(t =>
@@ -114,7 +114,7 @@
         @if (User.IsInRole(nameof(Roles.Admin)))
         {
             <div>
-                <hr class="my-4">
+                <hr class="my-4 h-[2px] rounded bg-mid border-0" />
 
                 <a asp-action="Create" asp-controller="Projects" class="flex items-center gap-2 w-fit group">
                     <div
@@ -159,7 +159,7 @@
         }
 
         <div>
-            <hr class="my-4">
+            <hr class="my-4 h-[2px] rounded bg-mid border-0" />
 
             <a asp-action="Create" asp-controller="Tickets" class="flex items-center gap-2 w-fit group">
                 <div
@@ -238,7 +238,7 @@
         @if (User.IsInRole(nameof(Roles.Admin)))
         {
             <div>
-                <hr class="my-4">
+                <hr class="my-4 h-[2px] rounded bg-mid border-0" />
 
                 <a asp-action="Create" asp-controller="Invites" class="flex items-center gap-2 w-fit group">
                     <div

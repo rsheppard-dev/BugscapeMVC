@@ -42,7 +42,6 @@ namespace BugscapeMVC.Controllers
             if (userId is null) return NotFound();
 
             ViewBag.Search = search;
-            ViewBag.Limit = limit;
             ViewBag.Order = order;
             ViewBag.SortBy = sortBy;
 
@@ -68,7 +67,6 @@ namespace BugscapeMVC.Controllers
             if (companyId is null) return NotFound();
 
             ViewBag.Search = search;
-            ViewBag.Limit = limit;
             ViewBag.Order = order;
             ViewBag.SortBy = sortBy;
 
@@ -103,7 +101,6 @@ namespace BugscapeMVC.Controllers
             if (companyId is null) return NotFound();
 
             ViewBag.Search = search;
-            ViewBag.Limit = limit;
             ViewBag.Order = order;
             ViewBag.SortBy = sortBy;
 
@@ -130,7 +127,6 @@ namespace BugscapeMVC.Controllers
             if (companyId is null) return NotFound();
 
             ViewBag.Search = search;
-            ViewBag.Limit = limit;
             ViewBag.Order = order;
             ViewBag.SortBy = sortBy;
 
@@ -203,12 +199,15 @@ namespace BugscapeMVC.Controllers
                 .ThenBy(member => member.FirstName)
                 .ToList();
 
-            List<string> projectMembers = project.Members.Select(member => member.Id).ToList();
+            List<AppUser> projectMembers = await _projectService.GetAllProjectMembersExceptPMAsync(project.Id);
+            companyMembers = companyMembers.Except(projectMembers).ToList();
 
             AssignMembersViewModel model = new()
             {
                 Project = project,
-                Users = new MultiSelectList(companyMembers, "Id", "FullName", projectMembers)
+                Users = new MultiSelectList(companyMembers, "Id", "FullName"),
+                SelectedUsers = new MultiSelectList(projectMembers, "Id", "FullName"),
+                SelectedUserIds = projectMembers.Select(member => member.Id).ToList()
             }; 
 
             return View(model);
@@ -220,7 +219,7 @@ namespace BugscapeMVC.Controllers
         [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.Project_Manager)}")]
         public async Task<IActionResult> AssignMembers(AssignMembersViewModel model)
         {
-            if (model.SelectedUsers is not null && model.Project is not null)
+            if (ModelState.IsValid)
             {
                 List<string> memberIds = (await _projectService.GetAllProjectMembersExceptPMAsync(model.Project.Id))
                     .Select(member => member.Id)
@@ -230,15 +229,19 @@ namespace BugscapeMVC.Controllers
                 foreach (string member in memberIds)
                     await _projectService.RemoveUserFromProjectAsync(member, model.Project.Id);
 
-                // add updated members to project
-                foreach (string member in model.SelectedUsers)
-                    await _projectService.AddUserToProjectAsync(member, model.Project.Id);
+                // Add the selected members to the project
+                foreach (string memberId in model.SelectedUserIds ?? new List<string>())
+                {
+                    await _projectService.AddUserToProjectAsync(memberId, model.Project.Id);
+                }
 
-                // return user to project details
                 return RedirectToAction("Details", new { id = model.Project.Id });
             }
-
-            return RedirectToAction("AssignMembers", new { id = model.Project?.Id });
+            else
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors);
+                return RedirectToAction("AssignMembers", new { id = model.Project?.Id });
+            }
         }
 
         // GET: Projects/Details/5
@@ -331,8 +334,8 @@ namespace BugscapeMVC.Controllers
 
             AddProjectWithPMViewModel model = new()
             {
-                Project = await _projectService.GetProjectByIdAsync(id.Value, companyId.Value),
-                PMList = new SelectList(await _roleService.GetUsersInRoleAsync(Roles.Project_Manager.ToString(), companyId.Value), "Id", "FullName"),
+                Project = await _projectService.GetProjectByIdAsync(id.Value, companyId.Value) ?? throw new ArgumentNullException(nameof(Project)),
+                PMList = new SelectList(await _roleService.GetUsersInRoleAsync(Roles.Project_Manager.ToString(), companyId.Value), "Id", "FullName", (await _projectService.GetProjectManagerAsync(id.Value))?.Id),
                 PriorityList = new SelectList(await _lookupService.GetProjectPrioritiesAsync(), "Id", "Name")
             };
 
@@ -367,6 +370,11 @@ namespace BugscapeMVC.Controllers
                         await _projectService.AddProjectManagerAsync(model.PmId, model.Project.Id);
                     }
 
+                    if (User.IsInRole(nameof(Roles.Admin)))
+                    {
+                        return RedirectToAction("Index");
+                    }
+                    
                     return RedirectToAction("MyProjects");
                 }
                 catch (DbUpdateConcurrencyException)
