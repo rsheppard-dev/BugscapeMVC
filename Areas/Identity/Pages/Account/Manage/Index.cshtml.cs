@@ -56,6 +56,15 @@ namespace BugscapeMVC.Areas.Identity.Pages.Account.Manage
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
+            /// 
+            [Display(Name = "First Name")]
+            [StringLength(30, ErrorMessage = "The {0} must be at least {2} and a maximum of {1} characters long.", MinimumLength = 2)]
+            public string FirstName { get; set; }
+
+            [Display(Name = "Last Name")]
+            [StringLength(30, ErrorMessage = "The {0} must be at least {2} and a maximum of {1} characters long.", MinimumLength = 2)]
+            public string LastName { get; set; }
+
             [Phone]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
@@ -65,11 +74,15 @@ namespace BugscapeMVC.Areas.Identity.Pages.Account.Manage
         {
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
+            var firstName = user.FirstName;
+            var lastName = user.LastName;
 
             Username = userName;
 
             Input = new InputModel
             {
+                FirstName = firstName,
+                LastName = lastName,
                 PhoneNumber = phoneNumber
             };
         }
@@ -101,9 +114,15 @@ namespace BugscapeMVC.Areas.Identity.Pages.Account.Manage
             }
 
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-            if (Input.PhoneNumber != phoneNumber)
+            var firstName = user.FirstName;
+            var lastName = user.LastName;
+
+            if (Input.PhoneNumber != phoneNumber || Input.FirstName != firstName || Input.LastName != lastName)
             {
+                user.FirstName = Input.FirstName;
+                user.LastName = Input.LastName;
                 var setPhoneResult = await _userManager.SetPhoneNumberAsync(user, Input.PhoneNumber);
+                
                 if (!setPhoneResult.Succeeded)
                 {
                     StatusMessage = "Unexpected error when trying to set phone number.";
