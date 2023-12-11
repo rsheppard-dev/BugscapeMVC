@@ -1,14 +1,14 @@
 @model BugscapeMVC.Models.ViewModels.AssignMembersViewModel
 
 @{
-    ViewData["Title"] = "Assign Members";
+    ViewData["Title"] = "Manage Team";
 }
 
-<h1 class="font-rockwell text-dark text-xl font-bold mb-4">@ViewData["Title"]</h1>
+<h1 class="font-rockwell text-dark text-xl font-bold mb-2">@ViewData["Title"]</h1>
+<h2 class="font-rockwell font-semibold text-lg text-zinc-600 mb-4">@Model.Project.Name</h2>
 <hr class="mb-4 h-[2px] rounded bg-mid border-0" />
 
-<h2 class="font-rockwell font-semibold text-lg text-dark mb-4">@Model.Project.Name</h2>
-<p class="font-lato mb-4">Assign team members to join this project.</p>
+<p class="font-lato mb-4 text-zinc-600">Assign team members to join this project.</p>
 
 <form asp-action="AssignMembers" method="post">
     <input type="hidden" asp-for="Project.Id">
@@ -16,7 +16,7 @@
     <h3 class="font-rockwell font-semibold mb-4 text-lg text-dark">Assign Developers</h3>
     <div class="flex gap-4 mb-4" data-container="developers">
         <div class="flex flex-col gap-2 grow">
-            <label asp-for="AvailableDevelopers" class="font-lato text-sm font-semibold">Available Developers</label>
+            <label asp-for="AvailableDevelopers" class="font-lato text-sm font-semibold text-zinc-600">Available Developers</label>
             <select data-selection multiple aria-multiselectable="true" asp-for="AvailableDevelopers" asp-items="@Model.AvailableDevelopers" class="font-lato">
             </select>
         </div>
@@ -35,7 +35,7 @@
         </div>
 
         <div class="flex flex-col gap-2 grow">
-            <label asp-for="SelectedDevelopers" class="font-lato text-sm font-semibold">Assigned Developers</label>
+            <label asp-for="SelectedDevelopers" class="font-lato text-sm font-semibold text-zinc-600">Assigned Developers</label>
             <select data-selected multiple aria-multiselectable="true" asp-for="SelectedDevelopers" asp-items="@Model.SelectedDevelopers" class="font-lato">
             </select>
         </div>
@@ -44,7 +44,7 @@
     <h3 class="font-rockwell font-semibold mb-4 text-lg text-dark">Assign Submitters</h3>
     <div class="flex gap-4 mb-4" data-container="submitters">
         <div class="flex flex-col gap-2 grow">
-            <label asp-for="AvailableSubmitters" class="font-lato text-sm font-semibold">Available Submitters</label>
+            <label asp-for="AvailableSubmitters" class="font-lato text-sm font-semibold text-zinc-600">Available Submitters</label>
             <select data-selection multiple aria-multiselectable="true" asp-for="AvailableSubmitters" asp-items="@Model.AvailableSubmitters" class="font-lato">
             </select>
         </div>
@@ -63,7 +63,7 @@
         </div>
 
         <div class="flex flex-col gap-2 grow">
-            <label asp-for="SelectedSubmitters" class="font-lato text-sm font-semibold">Assigned Submitters</label>
+            <label asp-for="SelectedSubmitters" class="font-lato text-sm font-semibold text-zinc-600">Assigned Submitters</label>
             <select data-selected multiple aria-multiselectable="true" asp-for="SelectedSubmitters" asp-items="@Model.SelectedSubmitters" class="font-lato">
             </select>
         </div>

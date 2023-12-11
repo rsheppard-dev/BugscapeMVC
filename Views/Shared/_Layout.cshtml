@@ -36,7 +36,9 @@
 
                     @if (isSignedIn)
                     {
-                        <partial name="_SearchBar" />
+                        <div class="hidden md:block">
+                            <partial name="_SearchBar" />    
+                        </div> 
                     }
                 </div>
 
@@ -123,6 +125,10 @@
                 <nav
                     class="bg-mid rounded-t-xl min-w-[theme.spacing.64] min-h-[calc(100vh-theme(spacing.24))] pt-12 pb-4 px-8 flex flex-col justify-between gap-8">
                     <div class="space-y-6 font-dark font-bold text-sm font-lato uppercase">
+                        <div class="md:hidden">
+                            <partial name="_SearchBar" />    
+                        </div>
+
                         <a class="flex gap-4 items-center group" asp-action="Dashboard" asp-controller="Home">
                             <svg xmlns="http://www.w3.org/2000/svg" aria-hidden width="24" viewBox="0 0 30 30" class="fill-light">
                                 <path id="Icon_material-dashboard" data-name="Icon material-dashboard"
