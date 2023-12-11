@@ -3,6 +3,7 @@
 
 @inject UserManager<AppUser> UserManager
 @inject IFileService FileService
+@inject IRoleService RoleService
 
 @{
     if (ViewData.TryGetValue("ParentLayout", out var parentLayout) && parentLayout !=  null)
@@ -40,7 +41,13 @@
         </span>
     </button>
 
-    <span class="font-rockwell text-dark text-lg font-bold">@user?.FullName</span>
+    @if (user is not null)
+    {
+        <div class="flex flex-col gap-1">
+            <span class="font-rockwell text-dark text-lg font-semibold">@user.FullName</span>
+            <span class="text-lato text-sm text-zinc-600 block">@((RoleService.GetUserRolesAsync(user)).Result.FirstOrDefault()?.Replace("_", " "))</span>
+        </div>
+    }
 </div>
 
 @await Html.PartialAsync("~/Views/Shared/_UpdateProfileImage.cshtml", new UpdateImageViewModel())

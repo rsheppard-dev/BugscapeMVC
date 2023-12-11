@@ -38,7 +38,7 @@ public class HomeController : Controller
 
         int? companyId = User.Identity?.GetCompanyId();
         
-        if (companyId is null) return NoContent();
+        if (companyId is null) return NotFound();
 
         model.Company = await _companyInfoService.GetCompanyInfoByIdAsync(companyId.Value) ?? throw new Exception("Company details not found.");
         

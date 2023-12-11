@@ -271,10 +271,10 @@
                                     src="@FileService.ConvertByteArrayToFile(user.AvatarFileData, user.AvatarContentType)"
                                     alt="@user.FullName">
                             }
-                            <div class="font-lato">
-                                <span class="font-bold block">@user.FullName</span>
+                            <div class="font-lato w-full">
+                                <span class="font-semibold text-sm block truncate w-24">@user.FullName</span>
                                 <span
-                                    class="text-sm block">@((RoleService.GetUserRolesAsync(user)).Result.FirstOrDefault()?.Replace("_",
+                                    class="text-xs block">@((RoleService.GetUserRolesAsync(user)).Result.FirstOrDefault()?.Replace("_",
                                 " "))</span>
                             </div>
                         </div>

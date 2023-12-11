@@ -19,11 +19,11 @@
   [multiple],
   textarea,
   select {
-    @apply rounded-lg shadow-sm border-2 border-mid focus:border-light focus:ring-light;
+    @apply rounded-lg text-zinc-600 shadow-sm border-2 border-mid focus:border-light focus:ring-light;
   }
 
   p {
-    @apply prose max-w-none w-full font-lato;
+    @apply prose max-w-none w-full font-lato text-zinc-600;
   }
 
   progress[value] {
@@ -80,7 +80,7 @@
 }
 
 @layer components {
-  .form-card {
-    @apply hidden bg-blue-200 rounded-md px-3 py-2;
+  .error {
+    @apply text-danger text-xs font-lato font-bold uppercase;
   }
 }

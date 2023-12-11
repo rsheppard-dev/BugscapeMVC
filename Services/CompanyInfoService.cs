@@ -27,31 +27,38 @@ namespace BugscapeMVC.Services
 
         public async Task<List<Project>> GetAllProjectsAsync(int companyId)
         {
-            List<Project> result = await _context.Projects
-                .Where(project => project.CompanyId == companyId)
-                .Include(project => project.Members)
-                .Include(project => project.ProjectPriority)
-                .Include(project => project.Tickets)
-                    .ThenInclude(ticket => ticket.Comments)
-                .Include(project => project.Tickets)
-                    .ThenInclude(ticket => ticket.Attachments)
-                .Include(project => project.Tickets)
-                    .ThenInclude(ticket => ticket.History)
-                .Include(project => project.Tickets)
-                    .ThenInclude(ticket => ticket.Notifications)
-                .Include(project => project.Tickets)
-                    .ThenInclude(ticket => ticket.DeveloperUser)
-                .Include(project => project.Tickets)
-                    .ThenInclude(ticket => ticket.OwnerUser)
-                .Include(project => project.Tickets)
-                    .ThenInclude(ticket => ticket.TicketStatus)
-                .Include(project => project.Tickets)
-                    .ThenInclude(ticket => ticket.TicketPriority)
-                .Include(project => project.Tickets)
-                    .ThenInclude(ticket => ticket.TicketType)
-                .ToListAsync();
+            try
+            {
+                List<Project> result = await _context.Projects
+                    .Where(project => project.CompanyId == companyId)
+                    .Include(project => project.ProjectPriority)
+                    .Include(project => project.Tickets)
+                        .ThenInclude(ticket => ticket.Comments)
+                    .Include(project => project.Tickets)
+                        .ThenInclude(ticket => ticket.Attachments)
+                    .Include(project => project.Tickets)
+                        .ThenInclude(ticket => ticket.History)
+                    .Include(project => project.Tickets)
+                        .ThenInclude(ticket => ticket.Notifications)
+                    .Include(project => project.Tickets)
+                        .ThenInclude(ticket => ticket.DeveloperUser)
+                    .Include(project => project.Tickets)
+                        .ThenInclude(ticket => ticket.OwnerUser)
+                    .Include(project => project.Tickets)
+                        .ThenInclude(ticket => ticket.TicketStatus)
+                    .Include(project => project.Tickets)
+                        .ThenInclude(ticket => ticket.TicketPriority)
+                    .Include(project => project.Tickets)
+                        .ThenInclude(ticket => ticket.TicketType)
+                    .ToListAsync();
 
-            return result;
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error retrieving projects. {ex.Message}");
+                throw;
+            }
         }
 
         public async Task<List<Ticket>> GetAllTicketsAsync(int companyId)

@@ -10,9 +10,13 @@ var ImagePreview = /** @class */ (function () {
         if (this.saveButton)
             this.saveButton.disabled = true;
         this.inputs.forEach(function (input, index) {
+            input.addEventListener('click', function (e) {
+                if (_this.saveButton)
+                    _this.saveButton.disabled = true;
+            });
             input.addEventListener('change', function (event) {
                 var _a, _b;
-                var file = (_b = (_a = event.target) === null || _a === void 0 ? void 0 : _a.files) === null || _b === void 0 ? void 0 : _b[0]; // Add null check here
+                var file = (_b = (_a = event.target) === null || _a === void 0 ? void 0 : _a.files) === null || _b === void 0 ? void 0 : _b[0];
                 if (file) {
                     var reader_1 = new FileReader();
                     reader_1.onload = function () {

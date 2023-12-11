@@ -151,12 +151,18 @@ namespace BugscapeMVC.Controllers
         {
             int? companyId = User.Identity?.GetCompanyId();
 
-            if (companyId is null) return NoContent();
+            if (companyId is null) return NotFound();
+
+            Project? project = await _projectService.GetProjectByIdAsync(id, companyId.Value);
+
+            if (project is null) return NotFound();
+
+            string? currentPmId = (await _projectService.GetProjectManagerAsync(id))?.Id;
 
             AssignPMViewModel model = new()
             {
-                Project = await _projectService.GetProjectByIdAsync(id, companyId.Value),
-                Project_Managers = new SelectList(await _roleService.GetUsersInRoleAsync(nameof(Roles.Project_Manager), companyId.Value), "Id", "FullName")
+                Project = project,
+                ProjectManagers = new SelectList(await _roleService.GetUsersInRoleAsync(nameof(Roles.Project_Manager), companyId.Value), "Id", "FullName", currentPmId)
             };
 
             return View(model);
@@ -168,9 +174,9 @@ namespace BugscapeMVC.Controllers
         [Authorize(Roles = nameof(Roles.Admin))]
         public async Task<IActionResult> AssignPM(AssignPMViewModel model)
         {
-            if (!string.IsNullOrEmpty(model.Project_ManagerId) && model.Project is not null)
+            if (!string.IsNullOrEmpty(model.ProjectManagerId) && model.Project is not null)
             {
-                await _projectService.AddProjectManagerAsync(model.Project_ManagerId, model.Project.Id);
+                await _projectService.AddProjectManagerAsync(model.ProjectManagerId, model.Project.Id);
 
                 return RedirectToAction(nameof(Details), new { id = model.Project.Id });
             }

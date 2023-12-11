@@ -9,15 +9,15 @@
 
 <h1 class="font-rockwell text-dark text-xl font-bold mb-4">@ViewData["Title"]</h1>
 
-<p class="font-lato mb-4">Are you sure you want to archive the project below?</p>
-
 <hr class="mb-4 h-[2px] rounded bg-mid border-0" />
 
-<div class="flex flex-wrap gap-4 mb-4">
-    <div>
-        <h2 class="font-rockwell mb-4 font-semibold">@Model.Name</h2>
+<p class="font-lato mb-4 text-zinc-600">Are you sure you want to archive the project below?</p>
 
-        <div class="prose max-w-none font-lato">@Html.Raw(Model.Description)</div>
+<div class="flex flex-wrap gap-4 mb-4">
+    <div class="grow">
+        <h2 class="font-rockwell mb-4 font-semibold text-lg text-zinc-600">@Model.Name</h2>
+
+        <div class="prose max-w-none font-lato text-zinc-600">@Html.Raw(Model.Description)</div>
     </div>
 
     @if(Model.ImageFileData is not null && Model.ImageContentType is not null)

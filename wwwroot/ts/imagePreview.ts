@@ -13,8 +13,12 @@ class ImagePreview {
 		if (this.saveButton) this.saveButton.disabled = true;
 
 		this.inputs.forEach((input, index) => {
+			input.addEventListener('click', (e) => {
+				if (this.saveButton) this.saveButton.disabled = true;
+			});
+			
 			input.addEventListener('change', (event) => {
-				const file = (event.target as HTMLInputElement)?.files?.[0]; // Add null check here
+				const file = (event.target as HTMLInputElement)?.files?.[0];
 				if (file) {
 					const reader = new FileReader();
 					reader.onload = () => {

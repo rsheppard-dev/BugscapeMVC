@@ -119,7 +119,7 @@
 
                 @foreach (Ticket ticket in Model)
                 {
-                    string rowColor = rowNumber % 2 == 0 ? "bg-lightest" : "bg-mid"; // Define row colors based on the counter.
+                    string rowColor = ticket.Archived ? "bg-danger bg-opacity-60" : rowNumber % 2 == 0 ? "bg-lightest" : "bg-mid";
                     rowNumber++;
                 
                 <tr class="@rowColor border-b">
