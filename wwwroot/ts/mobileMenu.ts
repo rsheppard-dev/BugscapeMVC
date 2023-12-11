@@ -54,7 +54,3 @@ class MobileMenu {
         this.toggleButton.title = 'Open Menu';
     }
 }
-
-const instance = new MobileMenu();
-
-instance.init();

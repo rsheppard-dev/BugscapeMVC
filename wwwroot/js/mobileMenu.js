@@ -38,5 +38,3 @@ var MobileMenu = /** @class */ (function () {
     };
     return MobileMenu;
 }());
-var instance = new MobileMenu();
-instance.init();

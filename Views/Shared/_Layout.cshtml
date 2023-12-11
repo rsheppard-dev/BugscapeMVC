@@ -26,9 +26,9 @@
 </head>
 
 <body class="bg-lightest container scrollbar scrollbar-thumb-light scrollbar-track-lightest scrollbar-thumb-rounded-xl">
-    <header class="px-4 md:px-0 fixed bottom-[calc(100vh-theme(spacing.24))] left-0 right-0 top-0 z-50 bg-lightest">
+    <header class="h-24 p-4 md:px-0 fixed bottom-[calc(100vh-theme(spacing.24))] left-0 right-0 top-0 z-50 bg-lightest">
         <div class="container">
-            <div class="flex items-center justify-between h-24 gap-10">
+            <div class="flex items-center justify-between gap-10">
                 <div class="flex items-center gap-4 md:gap-[90px]">
                     <a asp-action="Index" asp-controller="Home" class="w-48">
                         <img src="~/images/logo.png" alt="Bugscape Logo" class="object-contain">
@@ -295,8 +295,14 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/dropdownMenu.js" asp-append-version="true"></script>
     <script src="~/js/mobileMenu.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
 
+    <script>
+        const mobileMenu = new MobileMenu();
+
+        mobileMenu.init();
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
 
 </body>
 

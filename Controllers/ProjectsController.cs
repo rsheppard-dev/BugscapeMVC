@@ -191,23 +191,39 @@ namespace BugscapeMVC.Controllers
 
             if (project is null) return NotFound();
 
-            List<AppUser> developers = await _roleService.GetUsersInRoleAsync(nameof(Roles.Developer), companyId.Value);
-            List<AppUser> submitters = await _roleService.GetUsersInRoleAsync(nameof(Roles.Submitter), companyId.Value);
+            List<AppUser> availableDevelopers = await _roleService.GetUsersInRoleAsync(nameof(Roles.Developer), companyId.Value);
+            List<AppUser> availableSubmitters = await _roleService.GetUsersInRoleAsync(nameof(Roles.Submitter), companyId.Value);
 
-            List<AppUser> companyMembers = developers.Concat(submitters)
+            availableDevelopers = availableDevelopers
                 .OrderBy(member => member.LastName)
-                .ThenBy(member => member.FirstName)
                 .ToList();
 
-            List<AppUser> projectMembers = await _projectService.GetAllProjectMembersExceptPMAsync(project.Id);
-            companyMembers = companyMembers.Except(projectMembers).ToList();
+            availableSubmitters = availableSubmitters
+                .OrderBy(member => member.FullName)
+                .ToList();
+
+            List<AppUser> selectedDevelopers = await _projectService.GetProjectMembersByRoleAsync(project.Id, nameof(Roles.Developer));
+            List<AppUser> selectedSubmitters = await _projectService.GetProjectMembersByRoleAsync(project.Id, nameof(Roles.Submitter));
+
+            availableDevelopers = availableDevelopers.Except(selectedDevelopers).ToList();
+            availableSubmitters = availableSubmitters.Except(selectedSubmitters).ToList();
+
+            selectedDevelopers = selectedDevelopers.OrderBy(member => member.FullName).ToList();
+            selectedSubmitters = selectedSubmitters.OrderBy(member => member.FullName).ToList();
+
+            List<string> projectMemberIds = selectedDevelopers
+                .Concat(selectedSubmitters)
+                .Select(member => member.Id)
+                .ToList();
 
             AssignMembersViewModel model = new()
             {
                 Project = project,
-                Users = new MultiSelectList(companyMembers, "Id", "FullName"),
-                SelectedUsers = new MultiSelectList(projectMembers, "Id", "FullName"),
-                SelectedUserIds = projectMembers.Select(member => member.Id).ToList()
+                AvailableDevelopers = new MultiSelectList(availableDevelopers, "Id", "FullName"),
+                SelectedDevelopers = new MultiSelectList(selectedDevelopers, "Id", "FullName"),
+                AvailableSubmitters = new MultiSelectList(availableSubmitters, "Id", "FullName"),
+                SelectedSubmitters = new MultiSelectList(selectedSubmitters, "Id", "FullName"),
+                SelectedUsers = projectMemberIds
             }; 
 
             return View(model);
@@ -230,7 +246,7 @@ namespace BugscapeMVC.Controllers
                     await _projectService.RemoveUserFromProjectAsync(member, model.Project.Id);
 
                 // Add the selected members to the project
-                foreach (string memberId in model.SelectedUserIds ?? new List<string>())
+                foreach (string memberId in model.SelectedUsers ?? new List<string>())
                 {
                     await _projectService.AddUserToProjectAsync(memberId, model.Project.Id);
                 }
