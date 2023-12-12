@@ -53,6 +53,16 @@ namespace BugscapeMVC.Areas.Identity.Pages.Account.Manage
                 personalData.Add(p.Name, p.GetValue(user)?.ToString() ?? "null");
             }
 
+            // Add FirstName and LastName to personalData
+            if (user.FirstName != null)
+            {
+                personalData.Add("FirstName", user.FirstName);
+            }
+            if (user.LastName != null)
+            {
+                personalData.Add("LastName", user.LastName);
+            }
+
             var logins = await _userManager.GetLoginsAsync(user);
             foreach (var l in logins)
             {

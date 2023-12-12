@@ -5,22 +5,22 @@
 }
 
 <h1 class="font-rockwell text-dark text-xl font-bold mb-2">@ViewData["Title"]</h1>
-<h2 class="font-rockwell font-semibold text-lg text-zinc-600 mb-4">@Model.Project.Name</h2>
+<h2 class="font-rockwell font-semibold text-lg text-zinc-700 mb-4">@Model.Project.Name</h2>
 <hr class="mb-4 h-[2px] rounded bg-mid border-0" />
 
-<p class="font-lato mb-4 text-zinc-600">Select a project manager to manage this project.</p>
+<p class="font-lato mb-4 text-zinc-700">Select a project manager to manage this project.</p>
 
 <form method="post" asp-action="AssignPM" asp-controller="Projects" class="flex flex-col gap-4 prose">
     <input type="hidden" asp-for="Project.Id">
 
     <div class="flex flex-col gap-2">
-        <label class="font-lato text-zinc-600 text-sm font-semibold" asp-for="ProjectManagerId">Project Managers</label>
-        <select asp-for="ProjectManagerId" asp-items="@Model.ProjectManagers" class="font-lato text-zinc-600">
+        <label class="font-lato text-zinc-700 text-sm font-semibold" asp-for="ProjectManagerId">Project Managers</label>
+        <select asp-for="ProjectManagerId" asp-items="@Model.ProjectManagers" class="font-lato text-zinc-700">
             <option hidden disabled selected>Select a project manager</option>
         </select>
     </div>
 
     <div class="flex justify-end">
-        <input type="submit" value="Assign" class="px-4 py-2 text-sm rounded-md cursor-pointer bg-success font-lato font-bold hover:bg-opacity-80 transition-opacity">
+        <input type="submit" value="Assign" class="px-4 py-2 text-sm rounded-md cursor-pointer bg-success font-lato hover:bg-opacity-80 transition-opacity">
     </div>
 </form>

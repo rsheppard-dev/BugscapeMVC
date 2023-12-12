@@ -14,7 +14,7 @@
     @if (Model.IsEmailConfirmed)
     {
         <div class="flex flex-col gap-2">
-            <label asp-for="Email" class="font-lato text-zinc-600 font-bold text-sm"></label>
+            <label asp-for="Email" class="font-lato text-zinc-700 font-bold text-sm"></label>
             <div class="flex items-center gap-2 relative w-full">
                 <input disabled asp-for="Email" class="font-lato text-sm w-full pr-10 disabled:bg-green-50" placeholder="Please enter your email."/>
                 <span class="absolute top-2 right-2 pointer-events-none" title="Verified">
@@ -29,7 +29,7 @@
     else
     {
         <div class="flex flex-col gap-2">
-            <label asp-for="Email" class="font-lato text-zinc-600 font-bold text-sm"></label>
+            <label asp-for="Email" class="font-lato text-zinc-700 font-bold text-sm"></label>
             <input disabled asp-for="Email" class="font-lato text-sm w-full pr-10 disabled:bg-yellow-50" placeholder="Please enter your email."/>
             <button id="email-verification" type="submit" asp-page-handler="SendVerificationEmail" class="block w-fit bg-info text-white uppercase px-2 py-1 rounded-md text-xs font-bold hover:bg-opacity-80 transition-opacity">Send verification email</button>
             <span asp-validation-for="Email" class="error"></span>
@@ -37,13 +37,13 @@
     }
 
     <div class="flex flex-col gap-2">
-        <label asp-for="Input.NewEmail" class="font-lato text-zinc-600 font-bold text-sm"></label>
+        <label asp-for="Input.NewEmail" class="font-lato text-zinc-700 font-bold text-sm"></label>
         <input asp-for="Input.NewEmail" class="font-lato text-sm w-full pr-10" placeholder="Please enter new email."/>
         <span asp-validation-for="Input.NewEmail" class="error"></span>
     </div>
 
     <div class="flex justify-end">
-        <button id="change-email-button" type="submit" asp-page-handler="ChangeEmail" class="px-4 py-2 text-sm rounded-md cursor-pointer bg-success font-lato font-bold hover:bg-opacity-80 transition-opacity">Change Email</button>
+        <button id="change-email-button" type="submit" asp-page-handler="ChangeEmail" class="px-4 py-2 text-sm rounded-md cursor-pointer bg-success font-lato hover:bg-opacity-80 transition-opacity">Change Email</button>
     </div>
 </form>
 

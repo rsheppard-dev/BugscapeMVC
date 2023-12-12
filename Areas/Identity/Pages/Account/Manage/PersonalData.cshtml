@@ -5,21 +5,18 @@
     ViewData["ActivePage"] = ManageNavPages.PersonalData;
 }
 
-<h3>@ViewData["Title"]</h3>
+<h2 class="font-rockwell text-dark text-xl font-bold mb-4">@ViewData["Title"]</h2>
 
-<div class="row">
-    <div class="col-md-6">
-        <p>Your account contains personal data that you have given us. This page allows you to download or delete that data.</p>
-        <p>
-            <strong>Deleting this data will permanently remove your account, and this cannot be recovered.</strong>
-        </p>
-        <form id="download-data" asp-page="DownloadPersonalData" method="post">
-            <button class="btn btn-primary" type="submit">Download</button>
-        </form>
-        <p>
-            <a id="delete" asp-page="DeletePersonalData" class="btn btn-danger">Delete</a>
-        </p>
-    </div>
+
+<div class="space-y-4 font-lato">
+    <p class="text-zinc-700">Your account contains personal data that you have given us. This page allows you to download or delete that data.</p>
+    <p>
+        <strong class="font-lato font-bold text-dark">Deleting this data will permanently remove your account, and this cannot be recovered.</strong>
+    </p>
+    <form id="download-data" asp-page="DownloadPersonalData" method="post" class="flex items-center gap-2">
+        <button class="px-4 py-2 text-sm rounded-md cursor-pointer bg-warning font-lato hover:bg-opacity-80 transition-opacity" type="submit">Download</button>
+        <a id="delete" asp-page="DeletePersonalData" class="px-4 py-2 text-sm rounded-md cursor-pointer bg-danger text-white font-lato hover:bg-opacity-80 transition-opacity">Delete</a>
+    </form>
 </div>
 
 @section Scripts {

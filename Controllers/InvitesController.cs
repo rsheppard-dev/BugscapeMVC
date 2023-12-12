@@ -126,8 +126,8 @@ namespace BugscapeMVC.Controllers
         // GET: Invites/Join/{token, email, id}
         public async Task<IActionResult> Join(Guid token, string email, int id)
         {
-            Invite invite = await _inviteService.GetInviteAsync(token, email, id) ?? throw new Exception("Failed to find invite details.");
-            Company company = await _context.Companies.FindAsync(id) ?? throw new Exception("Failed to find company details.");
+            Invite? invite = await _inviteService.GetInviteAsync(token, email, id);
+            Company? company = await _context.Companies.FindAsync(id);
 
             if (invite is null || company is null) return NotFound();
 

@@ -7,7 +7,7 @@
 <h1 class="font-rockwell text-xl font-bold mb-4">@ViewData["Title"]</h1>
 
 
-<form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="flex flex-col">
+<form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="space-y-4">
     <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
     <div class="flex flex-col gap-2 text-sm">
         <label asp-for="Input.FirstName"></label>
@@ -48,7 +48,7 @@
     </div>
 
     <div class="flex justify-end">
-        <button id="registerSubmit" type="submit" class="font-lato px-4 py-2 rounded-md bg-success hover:bg-opacity-80 transition-opacity">Register</button>
+        <button id="registerSubmit" type="submit" class="font-lato px-4 py-2 rounded-md text-sm bg-success hover:bg-opacity-80 transition-opacity">Register</button>
     </div>
 </form>
 
