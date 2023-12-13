@@ -307,7 +307,7 @@ namespace BugscapeMVC.Controllers
 
         // GET: Tickets/Create
         [HttpGet]
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> Create(int? projectId)
         {
             string? userId = _userManager.GetUserId(User);
             int? companyId = User.Identity?.GetCompanyId();
@@ -316,11 +316,11 @@ namespace BugscapeMVC.Controllers
 
             if (User.IsInRole(nameof(Roles.Admin)))
             {
-                ViewData["ProjectId"] = new SelectList(await _projectService.GetAllProjectsByCompanyAsync(companyId.Value), "Id", "Name");
+                ViewData["ProjectId"] = new SelectList(await _projectService.GetAllProjectsByCompanyAsync(companyId.Value), "Id", "Name", projectId);
             }
             else
             {
-                ViewData["ProjectId"] = new SelectList(await _projectService.GetUserProjectsAsync(userId), "Id", "Name");
+                ViewData["ProjectId"] = new SelectList(await _projectService.GetUserProjectsAsync(userId), "Id", "Name", projectId);
             }
 
             ViewData["TicketPriorityId"] = new SelectList(await _lookupService.GetTicketPrioritiesAsync(), "Id", "Name");

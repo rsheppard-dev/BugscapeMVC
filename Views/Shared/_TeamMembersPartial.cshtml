@@ -1,0 +1,76 @@
+@model List<BugscapeMVC.Models.AppUser>
+
+@using BugscapeMVC.Services.Interfaces
+@using BugscapeMVC.Models.Enums
+
+@inject IFileService FileService
+@inject IRoleService RoleService
+
+@{
+    var projectId = ViewBag.ProjectId ?? null;
+}
+
+<h2 class="font-rockwell text-dark text-xl font-bold mb-6">@ViewBag.Title</h2>
+
+@if (Model.Count == 0)
+{
+    <div class="flex flex-col gap-4 grow">
+        <p class="font-lato">There are currently no team members to show.</p>
+    </div>
+}
+else
+{
+    <div class="flex flex-col gap-4 grow">
+        @foreach (AppUser member in Model.OrderBy(member => member.FirstName).ThenBy(member => member.LastName))
+        {
+            var avatarSource = member.AvatarFileData is null || member.AvatarContentType is null
+                ? "/images/default-avatar.png"
+                : FileService.ConvertByteArrayToFile(member.AvatarFileData, member.AvatarContentType);
+
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                        <img class="h-10 w-10 object-cover rounded-full" src="@avatarSource" alt="@member.FullName">
+                    <div class="flex flex-col">
+                        <strong class="font-bold font-lato text-sm">@member.FullName</strong>
+                        <span
+                            class="font-lato text-gray-400 text-xs">@((RoleService.GetUserRolesAsync(member)).Result.FirstOrDefault()?.Replace("_", " "))</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <a asp-action="Details" asp-controller="Members" asp-route-id="@member.Id" title="Member Profile" class="p-2 bg-mid rounded-full hover:scale-110 transition-transform">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 stroke-dark" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                    </a>
+                    <a href="mailto:@member.Email" class="p-2 bg-mid rounded-full hover:scale-110 transition-transform" title="Email @member.FullName">
+                        <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="w-5 h-5 stroke-dark">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@if (User.IsInRole(nameof(Roles.Admin)))
+{
+    <div>
+        <hr class="my-4">
+
+        <a asp-action="Create" asp-controller="Invites" asp-route-projectId="@projectId" class="flex items-center gap-2 w-fit group">
+            <div
+                class="bg-success group-hover:bg-opacity-80 transition-opacity flex items-center justify-center rounded-full p-2">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" class="fill-white h-4 w-4">
+                    <path id="Icon_awesome-plus" data-name="Icon awesome-plus"
+                        d="M18.571,10.107H12.143V3.679A1.429,1.429,0,0,0,10.714,2.25H9.286A1.429,1.429,0,0,0,7.857,3.679v6.429H1.429A1.429,1.429,0,0,0,0,11.536v1.429a1.429,1.429,0,0,0,1.429,1.429H7.857v6.429A1.429,1.429,0,0,0,9.286,22.25h1.429a1.429,1.429,0,0,0,1.429-1.429V14.393h6.429A1.429,1.429,0,0,0,20,12.964V11.536A1.429,1.429,0,0,0,18.571,10.107Z"
+                        transform="translate(0 -2.25)" />
+                </svg>
+            </div>
+            <span class="font-lato font-bold text-sm">Invite new team member</span>
+        </a>
+    </div>
+}

@@ -10,39 +10,47 @@
 
 <h1 class="font-rockwell text-xl mb-4 text-dark">Invite New Member</h1>
 
-<hr class="mb-4" />
+<hr class="mb-4 h-[2px] rounded bg-mid border-0" />
 
 <form asp-action="Create" class="flex flex-col gap-4 text-dark font-lato">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div asp-validation-summary="ModelOnly" class="error"></div>
 
     <div class="flex flex-col gap-2 text-sm">
         <label asp-for="InviteeEmail" class="text-sm font-bold"></label>
         <input asp-for="InviteeEmail" />
-        <span asp-validation-for="InviteeEmail" class="text-danger"></span>
+        <span asp-validation-for="InviteeEmail" class="error"></span>
     </div>
 
     <div class="flex flex-col gap-2 text-sm">
         <label asp-for="InviteeFirstName" class="text-sm font-bold"></label>
         <input asp-for="InviteeFirstName" />
-        <span asp-validation-for="InviteeFirstName" class="text-danger"></span>
+        <span asp-validation-for="InviteeFirstName" class="error"></span>
     </div>
 
     <div class="flex flex-col gap-2 text-sm">
         <label asp-for="InviteeLastName" class="text-sm font-bold"></label>
         <input asp-for="InviteeLastName" />
-        <span asp-validation-for="InviteeLastName" class="text-danger"></span>
+        <span asp-validation-for="InviteeLastName" class="error"></span>
     </div>
 
     <div class="flex flex-col gap-2 text-sm">
         <label asp-for="Role" class="text-sm font-bold"></label>
         <select asp-for="Role" asp-items="ViewBag.Roles"></select>
-        <span asp-validation-for="Role" class="text-danger"></span>
+        <span asp-validation-for="Role" class="error"></span>
+    </div>
+
+    <div class="flex flex-col gap-2 text-sm">
+        <label asp-for="ProjectId" class="text-sm font-bold"></label>
+        <select asp-for="ProjectId" asp-items="ViewBag.Projects">
+            <option selected disabled hidden>Select Project</option>
+        </select>
+        <span asp-validation-for="ProjectId" class="error"></span>
     </div>
 
     <div class="flex flex-col gap-2 text-sm">
         <label asp-for="Message" class="text-sm font-bold"></label>
         <textarea data-tinymce rows="5" asp-for="Message">We want you to join our team!</textarea>
-        <span asp-validation-for="Message" class="text-danger"></span>
+        <span asp-validation-for="Message" class="error"></span>
     </div>
 
     <div class="flex justify-end">
