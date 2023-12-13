@@ -25,18 +25,21 @@ namespace BugscapeMVC.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly IInviteService _inviteService;
         private readonly IEmailSender _emailService;
+        private readonly IProjectService _projectService;
 
         public InvitesController(
             ApplicationDbContext context,
             UserManager<AppUser> userManager,
             IInviteService inviteService,
-            IEmailSender emailService
+            IEmailSender emailService,
+            IProjectService projectService
         ) 
         {
             _context = context;
             _userManager = userManager;
             _inviteService = inviteService;
             _emailService = emailService;
+            _projectService = projectService;
         }
 
         // GET: Invites
@@ -69,8 +72,13 @@ namespace BugscapeMVC.Controllers
 
         [Authorize(Roles = nameof(Roles.Admin))]
         // GET: Invites/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create(int? projectId)
         {   
+            string? userId = _userManager.GetUserId(User);
+            int? companyId = User.Identity?.GetCompanyId();
+
+            if (userId is null || companyId is null) return NotFound();
+
             var roles = Enum.GetValues(typeof(Roles))
                 .Cast<Roles>()
                 .Where(role => role != Roles.Demo_User)
@@ -80,7 +88,13 @@ namespace BugscapeMVC.Controllers
                     Text = role.ToString().Replace("_", " ")
                 });
 
+            var projects = (await _projectService.GetAllProjectsByCompanyAsync(companyId.Value))
+                .OrderBy(project => project.Name)
+                .ToList();
+            
+            ViewData["Projects"] = new SelectList(projects, "Id", "Name", projectId);
             ViewData["Roles"] = new SelectList(roles, "Value", "Text", nameof(Roles.Submitter));
+            
             return View();
         }
 
@@ -168,7 +182,16 @@ namespace BugscapeMVC.Controllers
                     };
 
                     var result = await _userManager.CreateAsync(member, model.Password);
-                    await _userManager.AddToRoleAsync(member, invite!.Role.ToString());
+
+                    if (invite?.Role != null)
+                    {
+                        await _userManager.AddToRoleAsync(member, invite.Role.ToString());
+                    }
+
+                    if (invite?.ProjectId is not null)
+                    {
+                        await _projectService.AddUserToProjectAsync(member.Id, invite.ProjectId.Value);
+                    }
 
                     if (result.Succeeded)
                     {

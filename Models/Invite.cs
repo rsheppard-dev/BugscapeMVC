@@ -26,6 +26,9 @@ namespace BugscapeMVC.Models
         [Display(Name = "Role")]
         public Roles Role { get; set; } = Roles.Submitter;
 
+        [Display(Name = "Project")]
+        public int? ProjectId { get; set; }
+
         [Display(Name = "Invitor")]
         public string? InvitorId { get; set; }
 
@@ -54,5 +57,6 @@ namespace BugscapeMVC.Models
         public virtual Company? Company { get; set; }
         public virtual AppUser? Invitor { get; set; }
         public virtual AppUser? Invitee { get; set; }
+        public virtual Project? Project { get; set; }
     }
 }
