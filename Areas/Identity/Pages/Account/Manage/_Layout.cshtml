@@ -57,15 +57,5 @@
 @RenderBody()
 
 @section Scripts {
-    <script src="~/js/modal.js"></script>
-    <script src="~/js/imagePreview.js"></script>
-    <script>
-        const modalInstance = new Modal();
-        const imagePreviewInstance = new ImagePreview();
-
-        modalInstance.init();
-        imagePreviewInstance.init();
-    </script>
-
     @RenderSection("Scripts", required: false)
 }

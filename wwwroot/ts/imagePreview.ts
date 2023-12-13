@@ -2,18 +2,21 @@ class ImagePreview {
 	inputs: NodeListOf<HTMLInputElement>;
 	outputs: NodeListOf<HTMLImageElement>;
 	saveButton: HTMLButtonElement;
+	imageSource?: string;
 
-	constructor() {
+	constructor(imageSource?: string) {
 		this.inputs = document.querySelectorAll('[data-image-input]');
 		this.outputs = document.querySelectorAll('[data-image-output]');
 		this.saveButton = document.querySelector('[data-save-button]') as HTMLButtonElement;
+		this.imageSource = this.decodeHtml(imageSource);
 	}
 
 	init() {
 		if (this.saveButton) this.saveButton.disabled = true;
 
 		this.inputs.forEach((input, index) => {
-			input.addEventListener('click', (e) => {
+			input.addEventListener('click', () => {
+				if (this.imageSource) this.outputs[index].src = this.imageSource;
 				if (this.saveButton) this.saveButton.disabled = true;
 			});
 			
@@ -32,5 +35,11 @@ class ImagePreview {
 				}
 			});
 		});
+	}
+
+	decodeHtml(html: string = '') {
+		var txt = document.createElement("textarea");
+		txt.innerHTML = html;
+		return txt.value;
 	}
 }

@@ -45,8 +45,6 @@ namespace BugscapeMVC.Controllers
             }
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteUserImage()
         {
             try

@@ -12,6 +12,10 @@
     bool isSignedIn = user is not null ? true : false;
     Company? company = user is not null ?
     (CompanyInfoService.GetCompanyInfoByIdAsync(user.CompanyId)).Result : null;
+
+    var avatarSource = user?.AvatarFileData is null || user.AvatarContentType is null
+        ? "/images/default-avatar.png"
+        : FileService.ConvertByteArrayToFile(user.AvatarFileData, user.AvatarContentType);
 }
 
 <!DOCTYPE html>
@@ -260,18 +264,8 @@
 
                     <a asp-area="Identity" asp-page="/Account/Manage/Index" title="Account">
                         <div class="bg-light rounded-2xl px-4 py-3 flex gap-4 whitespace-nowrap items-center">
-                            @if (user.AvatarFileData is null || user.AvatarContentType is null)
-                            {
-                                <img class="h-14 w-14 object-cover rounded-full ring-8 ring-mid" src="~/images/default-avatar.png"
-                                    alt="@user.FullName">
-                            }
-                            else
-                            {
-                                <img class="h-14 w-14 object-cover rounded-full ring-4 ring-mid"
-                                    src="@FileService.ConvertByteArrayToFile(user.AvatarFileData, user.AvatarContentType)"
-                                    alt="@user.FullName">
-                            }
-                            <div class="font-lato w-full">
+                            <img class="h-14 w-14 object-cover rounded-full ring-4 ring-mid" src="@avatarSource" alt="@user.FullName">
+                            <div class="font-lato">
                                 <span class="font-semibold text-sm block truncate w-24">@user.FullName</span>
                                 <span
                                     class="text-xs block">@((RoleService.GetUserRolesAsync(user)).Result.FirstOrDefault()?.Replace("_",

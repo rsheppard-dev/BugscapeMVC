@@ -1,16 +1,19 @@
 "use strict";
 var ImagePreview = /** @class */ (function () {
-    function ImagePreview() {
+    function ImagePreview(imageSource) {
         this.inputs = document.querySelectorAll('[data-image-input]');
         this.outputs = document.querySelectorAll('[data-image-output]');
         this.saveButton = document.querySelector('[data-save-button]');
+        this.imageSource = this.decodeHtml(imageSource);
     }
     ImagePreview.prototype.init = function () {
         var _this = this;
         if (this.saveButton)
             this.saveButton.disabled = true;
         this.inputs.forEach(function (input, index) {
-            input.addEventListener('click', function (e) {
+            input.addEventListener('click', function () {
+                if (_this.imageSource)
+                    _this.outputs[index].src = _this.imageSource;
                 if (_this.saveButton)
                     _this.saveButton.disabled = true;
             });
@@ -30,6 +33,12 @@ var ImagePreview = /** @class */ (function () {
                 }
             });
         });
+    };
+    ImagePreview.prototype.decodeHtml = function (html) {
+        if (html === void 0) { html = ''; }
+        var txt = document.createElement("textarea");
+        txt.innerHTML = html;
+        return txt.value;
     };
     return ImagePreview;
 }());
