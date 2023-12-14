@@ -64,7 +64,7 @@ namespace BugscapeMVC.Data
             await SeedDefaultTicketStatusAsync(dbContextSvc);
             await SeedDefaultTicketPriorityAsync(dbContextSvc);
             await SeedDefaultProjectPriorityAsync(dbContextSvc);
-            await SeedDefautProjectsAsync(dbContextSvc);
+            await SeedDefaultProjectsAsync(dbContextSvc);
             await SeedDefautTicketsAsync(dbContextSvc);
         }
 
@@ -135,7 +135,7 @@ namespace BugscapeMVC.Data
             }
         }
 
-        public static async Task SeedDefautProjectsAsync(ApplicationDbContext context)
+        public static async Task SeedDefaultProjectsAsync(ApplicationDbContext context)
         {
             try
             {
@@ -172,7 +172,16 @@ namespace BugscapeMVC.Data
                          StartDate = new DateTime(2021,8,20),
                          EndDate = new DateTime(2021,8,20).AddMonths(6),
                          ProjectPriorityId = priorityHigh
-                     }
+                     },
+                     new Project()
+                     {
+                         CompanyId = company1Id,
+                         Name = "Build a Movie Information Web Application",
+                         Description="An internet movie database using web api.",
+                         StartDate = new DateTime(2021,8,20),
+                         EndDate = new DateTime(2021,8,20).AddMonths(6),
+                         ProjectPriorityId = priorityHigh
+                     },
                 };
 
                 var dbProjects = context.Projects.Select(c => c.Name).ToList();
@@ -248,11 +257,11 @@ namespace BugscapeMVC.Data
             }
 
 
-            //Seed Default Project_Manager1 User
+            //Seed Default ProjectManager1 User
             defaultUser = new AppUser
             {
-                UserName = "Project_Manager1@bugtracker.com",
-                Email = "Project_Manager1@bugtracker.com",
+                UserName = "ProjectManager1@bugtracker.com",
+                Email = "ProjectManager1@bugtracker.com",
                 FirstName = "John",
                 LastName = "Appuser",
                 EmailConfirmed = true,
@@ -280,8 +289,8 @@ namespace BugscapeMVC.Data
             //Seed Default Project_Manager2 User
             defaultUser = new AppUser
             {
-                UserName = "Project_Manager2@bugtracker.com",
-                Email = "Project_Manager2@bugtracker.com",
+                UserName = "ProjectManager2@bugtracker.com",
+                Email = "ProjectManager2@bugtracker.com",
                 FirstName = "Jane",
                 LastName = "Appuser",
                 EmailConfirmed = true,

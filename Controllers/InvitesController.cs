@@ -188,9 +188,16 @@ namespace BugscapeMVC.Controllers
                         await _userManager.AddToRoleAsync(member, invite.Role.ToString());
                     }
 
-                    if (invite?.ProjectId is not null)
+                    if (invite?.ProjectId is not null && invite.Role != Roles.Admin)
                     {
-                        await _projectService.AddUserToProjectAsync(member.Id, invite.ProjectId.Value);
+                        if (invite.Role == Roles.Project_Manager)
+                        {
+                            await _projectService.AddProjectManagerAsync(member.Id, invite.ProjectId.Value);
+                        }
+                        else
+                        {
+                            await _projectService.AddUserToProjectAsync(member.Id, invite.ProjectId.Value);
+                        }
                     }
 
                     if (result.Succeeded)

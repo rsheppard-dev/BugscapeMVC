@@ -362,7 +362,14 @@ namespace BugscapeMVC.Controllers
                     throw;
                 }
 
-                return RedirectToAction(nameof(Index));
+                if (User.IsInRole(nameof(Roles.Admin)))
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    return RedirectToAction(nameof(MyTickets));
+                }
             }
 
             if (User.IsInRole(nameof(Roles.Admin)))

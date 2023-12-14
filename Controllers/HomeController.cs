@@ -26,10 +26,10 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
-        if (string.IsNullOrEmpty(_userManager.GetUserId(User)))
-            return View();
-        else
+        if (User?.Identity?.IsAuthenticated == true)
             return RedirectToAction(nameof(Dashboard));
+        else
+            return View();
     }
 
     public async Task<IActionResult> Dashboard()

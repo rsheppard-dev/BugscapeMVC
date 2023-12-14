@@ -263,12 +263,12 @@
                     </div>
 
                     <a asp-area="Identity" asp-page="/Account/Manage/Index" title="Account">
-                        <div class="bg-light rounded-2xl px-4 py-3 flex gap-4 whitespace-nowrap items-center">
+                        <div class="bg-light rounded-2xl px-4 py-3 flex gap-4 items-center">
                             <img class="h-14 w-14 object-cover rounded-full ring-4 ring-mid" src="@avatarSource" alt="@user.FullName">
-                            <div class="font-lato">
-                                <span class="font-semibold text-sm block truncate w-24">@user.FullName</span>
+                            <div class="font-lato w-24">
+                                <span class="font-semibold text-sm block whitespace-nowrap truncate">@user.FullName</span>
                                 <span
-                                    class="text-xs block">@((RoleService.GetUserRolesAsync(user)).Result.FirstOrDefault()?.Replace("_",
+                                    class="text-xs block whitespace-nowrap">@((RoleService.GetUserRolesAsync(user)).Result.FirstOrDefault()?.Replace("_",
                                 " "))</span>
                             </div>
                         </div>
