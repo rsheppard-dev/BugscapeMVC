@@ -18,6 +18,7 @@ class ImagePreview {
 			input.addEventListener('click', () => {
 				if (this.imageSource) this.outputs[index].src = this.imageSource;
 				if (this.saveButton) this.saveButton.disabled = true;
+				input.value = '';
 			});
 			
 			input.addEventListener('change', (event) => {
@@ -27,11 +28,10 @@ class ImagePreview {
 					reader.onload = () => {
 						if (this.outputs[index]) {
 							this.outputs[index].src = reader.result as string;
+							if (this.saveButton) this.saveButton.disabled = false;
 						}
 					};
 					reader.readAsDataURL(file);
-					
-					if (this.saveButton) this.saveButton.disabled = false;
 				}
 			});
 		});

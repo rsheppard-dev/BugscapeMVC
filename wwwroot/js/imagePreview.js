@@ -16,6 +16,7 @@ var ImagePreview = /** @class */ (function () {
                     _this.outputs[index].src = _this.imageSource;
                 if (_this.saveButton)
                     _this.saveButton.disabled = true;
+                input.value = '';
             });
             input.addEventListener('change', function (event) {
                 var _a, _b;
@@ -25,11 +26,11 @@ var ImagePreview = /** @class */ (function () {
                     reader_1.onload = function () {
                         if (_this.outputs[index]) {
                             _this.outputs[index].src = reader_1.result;
+                            if (_this.saveButton)
+                                _this.saveButton.disabled = false;
                         }
                     };
                     reader_1.readAsDataURL(file);
-                    if (_this.saveButton)
-                        _this.saveButton.disabled = false;
                 }
             });
         });
