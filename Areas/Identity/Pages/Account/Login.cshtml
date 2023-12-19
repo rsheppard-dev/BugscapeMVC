@@ -3,9 +3,13 @@
 
 @{
     ViewData["Title"] = "Sign In";
+    string? message = Request.Query["message"].ToString();
 }
 
 <section class="rounded-md bg-white px-6 py-3 mx-auto shadow-md max-w-screen-sm space-y-4">
+
+    <partial name="_StatusMessage"  model="Model?.StatusMessage" />
+    
     <h1 class="font-rockwell text-dark text-xl font-bold">@ViewData["Title"]</h1>
 
     <hr class="h-[2px] rounded bg-mid border-0" />
@@ -14,7 +18,7 @@
         <div asp-validation-summary="ModelOnly" class="error" role="alert"></div>
         <div class="flex flex-col gap-2">
             <label asp-for="Input.Email" class="font-lato text-zinc-700 text-sm font-bold">Email</label>
-            <input asp-for="Input.Email" autocomplete="username" aria-required="true" />
+            <input asp-for="Input.Email" autocomplete="username" value="@Model?.Email" aria-required="true" />
             <span asp-validation-for="Input.Email" class="error"></span>
         </div>
 
