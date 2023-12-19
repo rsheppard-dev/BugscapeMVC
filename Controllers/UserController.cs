@@ -21,12 +21,12 @@ namespace BugscapeMVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateUserImage(UpdateImageViewModel model)
+        public async Task<IActionResult> UpdateUserImage([Bind("AvatarFormFile")] AppUser model)
         {
             try
             {
                 AppUser user = await _userManager.GetUserAsync(User) ?? throw new Exception("Unable to find user.");
-                IFormFile imageFormFile = model.ImageFormFile ?? throw new Exception("Unable to find image.");
+                IFormFile imageFormFile = model.AvatarFormFile ?? throw new Exception("Unable to find image.");
 
                 bool result = await _userService.UpdateUserImageAsync(user, imageFormFile);
 
