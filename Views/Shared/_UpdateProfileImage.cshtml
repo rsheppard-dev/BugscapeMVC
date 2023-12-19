@@ -1,4 +1,5 @@
-@model BugscapeMVC.Models.ViewModels.UpdateImageViewModel
+@model BugscapeMVC.Models.AppUser
+
 @using BugscapeMVC.Services.Interfaces
 @using Microsoft.AspNetCore.Identity
 
@@ -31,13 +32,13 @@
                 </div>
 
                 <div class="flex items-center flex-wrap justify-center gap-2">
-                    <label asp-for="ImageFormFile" class="flex gap-1 items-center px-4 py-2 rounded-md cursor-pointer bg-info hover:bg-opacity-80 transition-opacity">
+                    <label asp-for="AvatarFormFile" class="flex gap-1 items-center px-4 py-2 rounded-md cursor-pointer bg-info hover:bg-opacity-80 transition-opacity">
                         <svg xmlns="http://www.w3.org/2000/svg" aria-hidden class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                         </svg>
                         <span class="font-lato">Upload</span>
                     </label>
-                    <input data-image-input asp-for="ImageFormFile" class="hidden" accept="image/jpg, image/jpeg, image/png, image/webp, image/gif" />
+                    <input data-image-input asp-for="AvatarFormFile" class="hidden" accept="image/jpg, image/jpeg, image/png, image/webp, image/gif" />
 
                     <button data-save-button class="flex items-center gap-1 px-4 py-2 rounded-md bg-success enabled:hover:bg-opacity-80 transition-opacity disabled:opacity-30">
                         <svg aria-hidden xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
