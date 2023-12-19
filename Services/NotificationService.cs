@@ -72,7 +72,7 @@ namespace BugscapeMVC.Services
             }
         }
 
-        public async Task<bool> SendEmailNotificationAync(Notification notification, string emailSubject)
+        public async Task<bool> SendEmailNotificationAsync(Notification notification, string emailSubject)
         {
             AppUser? recipient = await _context.Users.FindAsync(notification.RecipientId);
 
@@ -101,7 +101,7 @@ namespace BugscapeMVC.Services
                 foreach(AppUser member in members)
                 {
                     notification.RecipientId = member.Id;
-                    await SendEmailNotificationAync(notification, notification.Title);
+                    await SendEmailNotificationAsync(notification, notification.Title);
                 }
             }
             catch (Exception)
@@ -117,7 +117,7 @@ namespace BugscapeMVC.Services
                 foreach (AppUser member in members)
                 {
                     notification.RecipientId = member.Id;
-                    await SendEmailNotificationAync(notification, notification.Title);
+                    await SendEmailNotificationAsync(notification, notification.Title);
                 }
             }
             catch (Exception)
