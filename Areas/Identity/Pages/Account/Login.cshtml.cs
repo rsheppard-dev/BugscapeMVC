@@ -48,6 +48,12 @@ namespace BugscapeMVC.Areas.Identity.Pages.Account
         /// </summary>
         public string ReturnUrl { get; set; }
 
+        [TempData]
+        public string StatusMessage { get; set; }
+
+        [TempData]
+        public string Email { get; set; }
+
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
@@ -100,6 +106,8 @@ namespace BugscapeMVC.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
             ReturnUrl = returnUrl;
+            StatusMessage = TempData["StatusMessage"] as string;
+            Email = TempData["Email"] as string;
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
