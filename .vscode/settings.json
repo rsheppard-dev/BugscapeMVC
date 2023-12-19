@@ -3,5 +3,9 @@
   "editor.formatOnSave": false,
   "dotnetAcquisitionExtension.installTimeoutValue": 180,
   "editor.formatOnPaste": false,
-  "editor.formatOnType": false
+  "editor.formatOnType": false,
+  "cSpell.words": [
+    "Bugscape",
+    "Npgsql"
+  ]
 }
