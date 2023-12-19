@@ -71,6 +71,8 @@ namespace BugscapeMVC.Services
                     .Where(invite => invite.CompanyId == companyId)
                     .Include(invite => invite.Company)
                     .Include(invite => invite.Invitor)
+                    .Include(invite => invite.Invitee)
+                    .Include(invite => invite.Project)
                     .FirstOrDefaultAsync(invite => invite.Id == inviteId);
 
                 return invite;
