@@ -16,6 +16,7 @@ using BugscapeMVC.Models.Enums;
 using BugscapeMVC.Models.ViewModels;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BugscapeMVC.Controllers
 {
@@ -26,13 +27,15 @@ namespace BugscapeMVC.Controllers
         private readonly IInviteService _inviteService;
         private readonly IEmailSender _emailService;
         private readonly IProjectService _projectService;
+        private readonly SignInManager<AppUser> _signInManager;
 
         public InvitesController(
             ApplicationDbContext context,
             UserManager<AppUser> userManager,
             IInviteService inviteService,
             IEmailSender emailService,
-            IProjectService projectService
+            IProjectService projectService,
+            SignInManager<AppUser> signInManager
         ) 
         {
             _context = context;
@@ -40,9 +43,11 @@ namespace BugscapeMVC.Controllers
             _inviteService = inviteService;
             _emailService = emailService;
             _projectService = projectService;
+            _signInManager = signInManager;
         }
 
         // GET: Invites
+        [Authorize(Roles = nameof(Roles.Admin))]
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Invites.Include(i => i.Company).Include(i => i.Invitee).Include(i => i.Invitor);
@@ -50,22 +55,18 @@ namespace BugscapeMVC.Controllers
         }
 
         // GET: Invites/Details/5
+        [Authorize(Roles = nameof(Roles.Admin))]
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Invites == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var invite = await _context.Invites
-                .Include(i => i.Company)
-                .Include(i => i.Invitee)
-                .Include(i => i.Invitor)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (invite == null)
-            {
-                return NotFound();
-            }
+            var companyId = User.Identity?.GetCompanyId();
+
+            if (companyId is null) return NotFound();
+
+            var invite = await _inviteService.GetInviteAsync(id.Value, companyId.Value);
+
+            if (invite == null) return NotFound();
 
             return View(invite);
         }
@@ -99,17 +100,20 @@ namespace BugscapeMVC.Controllers
         }
 
         // POST: Invites/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // To protect from over-posting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,InvitorId,CompanyId,InviteeEmail,InviteeFirstName,InviteeLastName,CompanyToken,InviteDate,IsValid,Message,Role")] Invite invite)
+        public async Task<IActionResult> Create([Bind("Id,InvitorId,CompanyId,InviteeEmail,InviteeFirstName,InviteeLastName,ProjectId,CompanyToken,InviteDate,IsValid,Message,Role")] Invite invite)
         {
             AppUser invitor =  await _userManager.GetUserAsync(User) ?? throw new Exception("Invitor not found.");
             Company company = await _context.Companies.FindAsync(invitor.CompanyId) ?? throw new Exception("Company not found.");
+            Project? project = await _context.Projects.FindAsync(invite.ProjectId);
 
             invite.InvitorId = invitor.Id;
             invite.CompanyId = company.Id;
+            
+            if (project is not null) invite.ProjectId = project.Id;
 
             if (ModelState.IsValid)
             {
@@ -128,7 +132,7 @@ namespace BugscapeMVC.Controllers
 
                 if (callbackUrl is not null)
                 {
-                    await _emailService.SendEmailAsync(invite.InviteeEmail!, "Join our team.", invite.Message + $"<p>Click this unique link within 7 days to accept the invite to join {company.Name}'s team.</p><p><a href='{System.Text.Encodings.Web.HtmlEncoder.Default.Encode(callbackUrl)}'>Accept invite</a>.</p>");
+                    await _emailService.SendEmailAsync(invite.InviteeEmail!, "Join our team", invite.Message + $"<p>Click this unique link within 7 days to accept the invite to join {company.Name}'s team.</p><p><a href='{System.Text.Encodings.Web.HtmlEncoder.Default.Encode(callbackUrl)}'>Accept invite</a>.</p>");
                 }
 
                 return RedirectToAction(nameof(Index));
@@ -144,6 +148,9 @@ namespace BugscapeMVC.Controllers
             Company? company = await _context.Companies.FindAsync(id);
 
             if (invite is null || company is null) return NotFound();
+
+            // Ensure any existing user is logged out
+            await _signInManager.SignOutAsync();
 
             bool isValid = invite.IsValid;
 
@@ -183,6 +190,15 @@ namespace BugscapeMVC.Controllers
 
                     var result = await _userManager.CreateAsync(member, model.Password);
 
+                    if (!result.Succeeded)
+                    {
+                        foreach (var error in result.Errors)
+                        {
+                            ModelState.AddModelError(string.Empty, error.Description);
+                        }
+                        return View(model);
+                    }
+
                     if (invite?.Role != null)
                     {
                         await _userManager.AddToRoleAsync(member, invite.Role.ToString());
@@ -200,12 +216,12 @@ namespace BugscapeMVC.Controllers
                         }
                     }
 
-                    if (result.Succeeded)
-                    {
-                        bool joined = await _inviteService.AcceptInviteAsync(invite?.CompanyToken, member.Id, member.CompanyId);
+                    bool joined = await _inviteService.AcceptInviteAsync(invite?.CompanyToken, member.Id, member.CompanyId);
 
-                        return RedirectToPage("/Identity/Account/Login", new { email = member.Email, message = $"You have successfully joined the team." });
-                    }
+                    TempData["StatusMessage"] = "You have successfully joined the team.";
+                    TempData["Email"] = member.Email;
+
+                    return RedirectToPage("/Account/Login", new { area = "Identity" });
                 }
                 catch (Exception)
                 {
@@ -217,6 +233,7 @@ namespace BugscapeMVC.Controllers
         }
 
         // GET: Invites/Edit/5
+        [Authorize(Roles = nameof(Roles.Admin))]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Invites == null)
@@ -274,6 +291,7 @@ namespace BugscapeMVC.Controllers
         }
 
         // GET: Invites/Delete/5
+        [Authorize(Roles = nameof(Roles.Admin))]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Invites == null)
