@@ -50,7 +50,7 @@
     }
 </div>
 
-@await Html.PartialAsync("~/Views/Shared/_UpdateProfileImage.cshtml", new UpdateImageViewModel())
+<partial name="~/Views/Shared/_UpdateProfileImage.cshtml" model="@user" />
 
 <partial name="_ManageNav" />
 
