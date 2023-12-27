@@ -1,49 +1,73 @@
-@model BugscapeMVC.Models.Ticket
+@model BugscapeMVC.Models.ViewModels.AddTicketViewModel
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create New Ticket";
 }
 
-<h1>Create</h1>
+<head>
+    <script src="/lib/tinymce/tinymce.min.js" referrerpolicy="origin"></script>
+</head>
 
-<h4>Ticket</h4>
-<hr />
+<h1 class="font-rockwell text-dark text-xl font-bold mb-4">@ViewData["Title"]</h1>
+<hr class="mb-4" />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Title" class="control-label"></label>
-                <input asp-for="Title" class="form-control" />
-                <span asp-validation-for="Title" class="text-danger"></span>
+        <form asp-action="Create" method="post" class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+            <div asp-validation-summary="ModelOnly" class="text-danger text-sm font-lato font-bold"></div>
+            
+            <div class="flex flex-col lg:col-span-2 gap-2">
+                <label asp-for="Ticket.Title" class="font-lato text-sm font-bold"></label>
+                <input asp-for="Ticket.Title" class="font-lato text-sm" />
+                <span asp-validation-for="Ticket.Title" class="text-danger text-sm font-lato font-bold"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
+
+            <div class="flex flex-col lg:col-span-2 gap-2">
+                <label asp-for="Ticket.Description" class="font-lato text-sm font-bold"></label>
+                <textarea asp-for="Ticket.Description" data-tinymce class="font-lato text-sm" rows="3"></textarea>
+                <span asp-validation-for="Ticket.Description" class="text-danger text-sm font-lato font-bold"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="ProjectId" class="control-label"></label>
-                <select asp-for="ProjectId" class ="form-control" asp-items="ViewBag.ProjectId"></select>
+
+            <div class="flex flex-col lg:col-span-2 gap-2">
+                <label asp-for="Ticket.ProjectId" class="font-lato text-sm font-bold"></label>
+                <select asp-for="Ticket.ProjectId" class="font-lato text-sm" asp-items="@Model.ProjectList">
+                    <option disabled selected hidden class="font-lato text-sm">Choose Project</option>
+                </select>
+                <span asp-validation-for="Ticket.ProjectId" class="text-danger text-sm font-lato font-bold"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="TicketTypeId" class="control-label"></label>
-                <select asp-for="TicketTypeId" class ="form-control" asp-items="ViewBag.TicketTypeId"></select>
+
+            <div class="flex flex-col gap-2">
+                <label asp-for="Ticket.TicketTypeId" class="font-lato text-sm font-bold"></label>
+                <select asp-for="Ticket.TicketTypeId" class="font-lato text-sm" asp-items="@Model.TicketTypes">
+                    <option disabled selected hidden class="font-lato text-sm">Choose Type</option>
+                </select>
+                <span asp-validation-for="Ticket.TicketTypeId" class="text-danger text-sm font-lato font-bold"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="TicketPriorityId" class="control-label"></label>
-                <select asp-for="TicketPriorityId" class ="form-control" asp-items="ViewBag.TicketPriorityId"></select>
+
+            <div class="flex flex-col gap-2">
+                <label asp-for="Ticket.TicketPriorityId" class="font-lato text-sm font-bold"></label>
+                <select asp-for="Ticket.TicketPriorityId" class="font-lato text-sm" asp-items="@Model.PriorityList">
+                    <option disabled selected hidden class="font-lato text-sm">Choose Priority</option>
+                </select>
+                <span asp-validation-for="Ticket.TicketPriorityId" class="text-danger text-sm font-lato font-bold"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+
+            <div class="lg:col-span-2 flex justify-end">
+                <button type="submit" class="px-4 py-2 text-sm rounded-md cursor-pointer bg-success font-lato hover:bg-opacity-80 transition-opacity">Create
+                    Ticket
+                </button>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+<script>
+    tinymce.init({
+        selector: '[data-tinymce]',
+        menubar: false,
+        statusbar: false,
+        height: 200
+    });
+</script>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

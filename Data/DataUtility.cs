@@ -704,12 +704,12 @@ namespace BugscapeMVC.Data
             try
             {
                 IList<TicketType> ticketTypes = new List<TicketType>() {
-                     new TicketType() { Name = TicketTypes.NewDevelopment.ToString() },      // Ticket involves development of a new, uncoded solution 
-                     new TicketType() { Name = TicketTypes.WorkTask.ToString() },            // Ticket involves development of the specific ticket description 
+                     new TicketType() { Name = TicketTypes.New_Development.ToString() },      // Ticket involves development of a new, uncoded solution 
+                     new TicketType() { Name = TicketTypes.Work_Task.ToString() },            // Ticket involves development of the specific ticket description 
                      new TicketType() { Name = TicketTypes.Defect.ToString()},               // Ticket involves unexpected development/maintenance on a previously designed feature/functionality
-                     new TicketType() { Name = TicketTypes.ChangeRequest.ToString() },       // Ticket involves modification development of a previously designed feature/functionality
+                     new TicketType() { Name = TicketTypes.Change_Request.ToString() },       // Ticket involves modification development of a previously designed feature/functionality
                      new TicketType() { Name = TicketTypes.Enhancement.ToString() },         // Ticket involves additional development on a previously designed feature or new functionality
-                     new TicketType() { Name = TicketTypes.GeneralTask.ToString() }          // Ticket involves no software development but may involve tasks such as configuations, or hardware setup
+                     new TicketType() { Name = TicketTypes.General_Task.ToString() }          // Ticket involves no software development but may involve tasks such as configuations, or hardware setup
                 };
 
                 var dbTicketTypes = context.TicketTypes.Select(c => c.Name).ToList();
@@ -788,11 +788,11 @@ namespace BugscapeMVC.Data
             int movieId = context.Projects.FirstOrDefault(p => p.Name == "Build a Movie Information Web Application")?.Id ?? throw new Exception("Failed to get projectId.");
 
             //Get ticket type Ids
-            int typeNewDev = context.TicketTypes.FirstOrDefault(p => p.Name == TicketTypes.NewDevelopment.ToString())?.Id ?? throw new Exception("Failed to get ticketTypeId.");
-            int typeWorkTask = context.TicketTypes.FirstOrDefault(p => p.Name == TicketTypes.WorkTask.ToString())?.Id ?? throw new Exception("Failed to get ticketTypeId.");
+            int typeNewDev = context.TicketTypes.FirstOrDefault(p => p.Name == TicketTypes.New_Development.ToString())?.Id ?? throw new Exception("Failed to get ticketTypeId.");
+            int typeWorkTask = context.TicketTypes.FirstOrDefault(p => p.Name == TicketTypes.Work_Task.ToString())?.Id ?? throw new Exception("Failed to get ticketTypeId.");
             int typeDefect = context.TicketTypes.FirstOrDefault(p => p.Name == TicketTypes.Defect.ToString())?.Id ?? throw new Exception("Failed to get ticketTypeId.");
             int typeEnhancement = context.TicketTypes.FirstOrDefault(p => p.Name == TicketTypes.Enhancement.ToString())?.Id ?? throw new Exception("Failed to get ticketTypeId.");
-            int typeChangeRequest = context.TicketTypes.FirstOrDefault(p => p.Name == TicketTypes.ChangeRequest.ToString())?.Id ?? throw new Exception("Failed to get ticketTypeId.");
+            int typeChangeRequest = context.TicketTypes.FirstOrDefault(p => p.Name == TicketTypes.Change_Request.ToString())?.Id ?? throw new Exception("Failed to get ticketTypeId.");
 
             //Get ticket priority Ids
             int priorityLow = context.TicketPriorities.FirstOrDefault(p => p.Name == Priorities.Low.ToString())?.Id ?? throw new Exception("Failed to get ticketPriorityId.");;

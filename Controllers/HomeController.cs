@@ -32,6 +32,7 @@ public class HomeController : Controller
             return View();
     }
 
+    [Authorize]
     public async Task<IActionResult> Dashboard()
     {
         DashboardViewModel model = new();

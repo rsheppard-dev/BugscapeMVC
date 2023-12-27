@@ -2,11 +2,11 @@ namespace BugscapeMVC.Models.Enums
 {
     public enum TicketTypes
     {
-        NewDevelopment,
-        WorkTask,
+        New_Development,
+        Work_Task,
         Defect,
-        ChangeRequest,
+        Change_Request,
         Enhancement,
-        GeneralTask
+        General_Task
     }
 }

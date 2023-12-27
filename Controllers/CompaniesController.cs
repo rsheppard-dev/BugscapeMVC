@@ -10,6 +10,7 @@ using BugscapeMVC.Models;
 using BugscapeMVC.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using BugscapeMVC.Models.Enums;
+using BugscapeMVC.Services.Interfaces;
 
 namespace BugscapeMVC.Controllers
 {
@@ -17,11 +18,13 @@ namespace BugscapeMVC.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<AppUser> _userManager;
+        private readonly ICompanyInfoService _companyInfoService;
 
-        public CompaniesController(ApplicationDbContext context, UserManager<AppUser> userManager)
+        public CompaniesController(ApplicationDbContext context, UserManager<AppUser> userManager, ICompanyInfoService companyInfoService)
         {
             _context = context;
             _userManager = userManager;
+            _companyInfoService = companyInfoService;
         }
 
         // GET: Companies
@@ -35,54 +38,35 @@ namespace BugscapeMVC.Controllers
         // GET: Companies/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Companies == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var company = await _context.Companies
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (company == null)
-            {
-                return NotFound();
-            }
+            var company = await _companyInfoService.GetCompanyInfoByIdAsync(id);
+
+            if (company is null) return NotFound();
 
             return View(company);
-        }
-
-        // GET: Companies/Create
-        public IActionResult Create()
-        {
-            return View();
         }
 
         // GET: Companies/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Companies == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var company = await _context.Companies.FindAsync(id);
-            if (company == null)
-            {
-                return NotFound();
-            }
+            var company = await _companyInfoService.GetCompanyInfoByIdAsync(id);
+
+            if (company is null) return NotFound();
+
             return View(company);
         }
 
         // POST: Companies/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // To protect from over-posting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description")] Company company)
         {
-            if (id != company.Id)
-            {
-                return NotFound();
-            }
+            if (id != company.Id) return NotFound();
 
             if (ModelState.IsValid)
             {
@@ -102,8 +86,10 @@ namespace BugscapeMVC.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+
+                return RedirectToAction(nameof(Details), new {id = company.Id});
             }
+
             return View(company);
         }
 

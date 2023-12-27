@@ -27,6 +27,7 @@ namespace BugscapeMVC.Models
         [Display(Name = "Archived By Project")]
         public bool ArchivedByProject { get; set; }
 
+        [Display(Name = "Project")]
         public int ProjectId { get; set; }
 
         [Display(Name = "Ticket Type")]

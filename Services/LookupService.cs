@@ -54,7 +54,13 @@ namespace BugscapeMVC.Services
         {
             try
             {
-                return await _context.TicketTypes.ToListAsync();
+                var ticketTypes = await _context.TicketTypes.ToListAsync();
+
+                return ticketTypes.Select(tt => new TicketType
+                {
+                    Id = tt.Id,
+                    Name = tt.Name.Replace("_", " "),
+                }).ToList();
             }
             catch (Exception)
             {

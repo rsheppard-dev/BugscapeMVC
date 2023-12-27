@@ -47,7 +47,7 @@ namespace BugscapeMVC.Controllers
 
             List<Project> projects = await _projectService.GetUserProjectsAsync(userId);
 
-            // if search arguement
+            // if search argument
             if (!string.IsNullOrEmpty(search))
             {
                 projects = Search(projects, search);
@@ -81,7 +81,7 @@ namespace BugscapeMVC.Controllers
                 projects = await _projectService.GetAllProjectsByCompanyAsync(companyId.Value);
             }
 
-            // if search arguement
+            // if search argument
             if (!string.IsNullOrEmpty(search))
             {
                 projects = Search(projects, search);
@@ -106,7 +106,7 @@ namespace BugscapeMVC.Controllers
 
             List<Project> projects = await _projectService.GetArchivedProjectsByCompanyAsync(companyId.Value);
 
-            // if search arguement
+            // if search argument
             if (!string.IsNullOrEmpty(search))
             {
                 projects = Search(projects, search);
@@ -132,7 +132,7 @@ namespace BugscapeMVC.Controllers
 
             List<Project> projects = await _projectService.GetUnassignedProjectsAsync(companyId.Value);
 
-            // if search arguement
+            // if search argument
             if (!string.IsNullOrEmpty(search))
             {
                 projects = Search(projects, search);
@@ -301,7 +301,7 @@ namespace BugscapeMVC.Controllers
         }
 
         // POST: Projects/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // To protect from over-posting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -354,9 +354,13 @@ namespace BugscapeMVC.Controllers
 
             if (companyId is null || id is null) return NotFound();
 
+            Project? project = await _projectService.GetProjectByIdAsync(id.Value, companyId.Value);
+
+            if (project is null) return NotFound();
+
             AddProjectWithPMViewModel model = new()
             {
-                Project = await _projectService.GetProjectByIdAsync(id.Value, companyId.Value) ?? throw new ArgumentNullException(nameof(Project)),
+                Project = project,
                 PMList = new SelectList(await _roleService.GetUsersInRoleAsync(Roles.Project_Manager.ToString(), companyId.Value), "Id", "FullName", (await _projectService.GetProjectManagerAsync(id.Value))?.Id),
                 PriorityList = new SelectList(await _lookupService.GetProjectPrioritiesAsync(), "Id", "Name")
             };
@@ -365,7 +369,7 @@ namespace BugscapeMVC.Controllers
         }
 
         // POST: Projects/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // To protect from over-posting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
