@@ -2,6 +2,7 @@
 @using BugscapeMVC.Services.Interfaces
 @using BugscapeMVC.Models.Enums
 @using Microsoft.AspNetCore.Identity
+@using System.Text.RegularExpressions
 @using Humanizer
 
 @inject IFileService FileService
@@ -184,7 +185,7 @@
         else
         {
             <ol class="relative border-s border-light">                  
-                @foreach (TicketHistory history in ticketHistories)
+                @foreach (TicketHistory history in ticketHistories.OrderByDescending(h => h.Created))
                 {
                     <li class="mb-10 ms-6">            
                         <span class="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -start-3 ring-4 ring-mid">
@@ -205,7 +206,7 @@
                             <div>
                                 @if (!string.IsNullOrEmpty(history.Description) && history.Description.Contains("New ticket created"))
                                 {
-                                    <p class="text-sm font-lato">A new ticket was added.</p>
+                                    <p class="text-sm font-lato">A new ticket was added: <a asp-action="Details" asp-controller="Tickets" asp-route-id="@history.TicketId" class="underline">@history.Ticket?.Title</a>.</p>
                                 }
                                 else if (history.Property.Equals("TicketComment"))
                                 {
@@ -213,13 +214,16 @@
                                 }
                                 else if (history.Property.Equals("TicketAttachment"))
                                 {
-                                    <p class="text-sm font-lato">A ticket attachment was added.</p>
+                                    <p class="text-sm font-lato">A ticket attachment was added to <a asp-action="Details" asp-controller="Tickets" asp-route-id="@history.TicketId" class="underline">@history.Ticket?.Title</a>.</p>
                                 }
                                 else
                                 {
-                                    <p class="text-sm font-lato">The ticket <b>@history.Property</b> was edited</p>
-                                    <p class="text-sm font-lato">Previous @history.Property: <span class="text-danger">@history.OldValue</span></p>
-                                    <p class="text-sm font-lato">Current @history.Property: <span class="text-success">@history.NewValue</span></p>
+                                    <p class="text-sm font-lato"><a asp-action="Details" asp-controller="Tickets" asp-route-id="@history.TicketId" class="underline">@history.Ticket?.Title</a>&#39;s <b>@history.Property</b> was edited</p>
+                                    @if (history.OldValue != null)
+                                    {
+                                        <p class="text-sm font-lato">Previous @history.Property: <span class="text-zinc-500">@Regex.Replace(history.OldValue, "<.*?>", string.Empty).Replace("_", " ")</span></p>
+                                    }
+                                    <p class="text-sm font-lato">Current @history.Property: @Regex.Replace(history.NewValue, "<.*?>", string.Empty).Replace("_", " ")</p>
                                 }
                             </div>
                         </div>

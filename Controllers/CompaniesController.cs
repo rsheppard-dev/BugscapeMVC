@@ -11,9 +11,11 @@ using BugscapeMVC.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using BugscapeMVC.Models.Enums;
 using BugscapeMVC.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BugscapeMVC.Controllers
 {
+    [Authorize]
     public class CompaniesController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -48,6 +50,7 @@ namespace BugscapeMVC.Controllers
         }
 
         // GET: Companies/Edit/5
+        [Authorize(Roles = nameof(Roles.Admin))]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -62,6 +65,7 @@ namespace BugscapeMVC.Controllers
         // POST: Companies/Edit/5
         // To protect from over-posting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = nameof(Roles.Admin))]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description")] Company company)
@@ -94,6 +98,7 @@ namespace BugscapeMVC.Controllers
         }
 
         // GET: Companies/Delete/5
+        [Authorize(Roles = nameof(Roles.Admin))]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Companies == null)
@@ -112,6 +117,7 @@ namespace BugscapeMVC.Controllers
         }
 
         // POST: Companies/Delete/5
+        [Authorize(Roles = nameof(Roles.Admin))]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

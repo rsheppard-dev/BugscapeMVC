@@ -314,21 +314,19 @@ namespace BugscapeMVC.Controllers
 
             if (userId is null || companyId is null) return NotFound();
 
-            var model = new AddTicketViewModel();
-
             if (User.IsInRole(nameof(Roles.Admin)))
             {
-                model.ProjectList = new SelectList(await _projectService.GetAllProjectsByCompanyAsync(companyId.Value), "Id", "Name", projectId);
+                ViewData["Projects"] = new SelectList(await _projectService.GetAllProjectsByCompanyAsync(companyId.Value), "Id", "Name", projectId);
             }
             else
             {
-                model.ProjectList = new SelectList(await _projectService.GetUserProjectsAsync(userId), "Id", "Name", projectId);
+                ViewData["Projects"] = new SelectList(await _projectService.GetUserProjectsAsync(userId), "Id", "Name", projectId);
             }
 
-            model.PriorityList = new SelectList(await _lookupService.GetTicketPrioritiesAsync(), "Id", "Name");
-            model.TicketTypes = new SelectList(await _lookupService.GetTicketTypesAsync(), "Id", "Name");
+            ViewData["Priorities"] = new SelectList(await _lookupService.GetTicketPrioritiesAsync(), "Id", "Name");
+            ViewData["TicketTypes"] = new SelectList(await _lookupService.GetTicketTypesAsync(), "Id", "Name");
             
-            return View(model);
+            return View();
         }
 
         // POST: Tickets/Create
@@ -336,7 +334,7 @@ namespace BugscapeMVC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(AddTicketViewModel model)
+        public async Task<IActionResult> Create([Bind("Id,Title,Description,ProjectId,TicketTypeId,TicketPriorityId")] Ticket ticket)
         {
             string? userId = _userManager.GetUserId(User);
             int? companyId = User.Identity?.GetCompanyId();
@@ -347,14 +345,14 @@ namespace BugscapeMVC.Controllers
             {
                 try
                 {
-                    model.Ticket.Created = DateTime.Now;
-                    model.Ticket.OwnerUserId = userId;
-                    model.Ticket.TicketStatusId = (await _ticketService.LookupTicketStatusIdAsync(nameof(TicketStatuses.New))).Value;   
+                    ticket.Created = DateTime.Now;
+                    ticket.OwnerUserId = userId;
+                    ticket.TicketStatusId = (await _ticketService.LookupTicketStatusIdAsync(nameof(TicketStatuses.New))).Value;   
 
-                    await _ticketService.AddNewTicketAsync(model.Ticket);
+                    await _ticketService.AddNewTicketAsync(ticket);
 
                     // add ticket history
-                    var newTicket = await _ticketService.GetTicketAsNoTrackingAsync(model.Ticket.Id);
+                    var newTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
                     await _historyService.AddHistoryAsync(null, newTicket, userId);
 
                     // todo: add notification
@@ -376,17 +374,17 @@ namespace BugscapeMVC.Controllers
 
             if (User.IsInRole(nameof(Roles.Admin)))
             {
-                model.ProjectList = new SelectList(await _projectService.GetAllProjectsByCompanyAsync(companyId.Value), "Id", "Name");
+                ViewData["Projects"] = new SelectList(await _projectService.GetAllProjectsByCompanyAsync(companyId.Value), "Id", "Name", ticket.ProjectId);
             }
             else
             {
-                model.PriorityList = new SelectList(await _projectService.GetUserProjectsAsync(userId), "Id", "Name");
+                ViewData["Projects"] = new SelectList(await _projectService.GetUserProjectsAsync(userId), "Id", "Name", ticket.ProjectId);
             }
 
-            model.PriorityList = new SelectList(await _lookupService.GetTicketPrioritiesAsync(), "Id", "Name");
-            model.TicketTypes = new SelectList(await _lookupService.GetTicketTypesAsync(), "Id", "Name");
+            ViewData["Priorities"] = new SelectList(await _lookupService.GetTicketPrioritiesAsync(), "Id", "Name");
+            ViewData["TicketTypes"] = new SelectList(await _lookupService.GetTicketTypesAsync(), "Id", "Name");
             
-            return View(model);
+            return View(ticket);
         }
 
         // GET: Tickets/Edit/5
@@ -399,20 +397,13 @@ namespace BugscapeMVC.Controllers
 
             Ticket? ticket = await _ticketService.GetTicketByIdAsync(id.Value);
 
-            if (ticket == null)
-            {
-                return NotFound();
-            }
+            if (ticket is null) return NotFound();
 
-            var model = new AddTicketViewModel()
-            {
-                Ticket = ticket, 
-                StatusList = new SelectList(await _lookupService.GetTicketStatusesAsync(), "Id", "Name", ticket.TicketStatusId),
-                TicketTypes = new SelectList(await _lookupService.GetTicketTypesAsync(), "Id", "Name", ticket.TicketTypeId),
-                PriorityList = new SelectList(await _lookupService.GetTicketPrioritiesAsync(), "Id", "Name", ticket.TicketPriorityId),
-            };
+            ViewData["Statuses"] = new SelectList(await _lookupService.GetTicketStatusesAsync(), "Id", "Name", ticket.TicketStatusId);
+            ViewData["Priorities"] = new SelectList(await _lookupService.GetTicketPrioritiesAsync(), "Id", "Name", ticket.TicketPriorityId);
+            ViewData["TicketTypes"] = new SelectList(await _lookupService.GetTicketTypesAsync(), "Id", "Name", ticket.TicketTypeId);
             
-            return View(model);
+            return View(ticket);
         }
 
         // POST: Tickets/Edit/5
@@ -420,23 +411,24 @@ namespace BugscapeMVC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(AddTicketViewModel model)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description,Created,Updated,Archived,ProjectId,TicketTypeId,TicketPriorityId,TicketStatusId,OwnerUserId,DeveloperUserId")] Ticket ticket)
         {
             string? userId = _userManager.GetUserId(User);
-            if (string.IsNullOrEmpty(userId) || model.Ticket is null) return NotFound();   
+
+            if (string.IsNullOrEmpty(userId) || id != ticket.Id) return NotFound();   
 
             if (ModelState.IsValid)
             {
-                Ticket oldTicket = await _ticketService.GetTicketAsNoTrackingAsync(model.Ticket.Id);
+                Ticket oldTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
 
                 try
                 {
-                    model.Ticket.Updated = DateTimeOffset.Now;
-                    await _ticketService.UpdateTicketAsync(model.Ticket);
+                    ticket.Updated = DateTimeOffset.Now;
+                    await _ticketService.UpdateTicketAsync(ticket);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    bool ticketExists = await TicketExistsAsync(model.Ticket.Id);
+                    bool ticketExists = await TicketExistsAsync(ticket.Id);
 
                     if (!ticketExists)
                     {
@@ -448,18 +440,18 @@ namespace BugscapeMVC.Controllers
                     }
                 }
                  
-                Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(model.Ticket.Id);
+                Ticket newTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
 
                 await _historyService.AddHistoryAsync(oldTicket, newTicket, userId);
 
                 return RedirectToAction(nameof(Index));
             }
 
-            model.StatusList = new SelectList(await _lookupService.GetTicketStatusesAsync(), "Id", "Name", model.Ticket.TicketStatusId);
-            model.TicketTypes = new SelectList(await _lookupService.GetTicketTypesAsync(), "Id", "Name", model.Ticket.TicketTypeId);
-            model.PriorityList = new SelectList(await _lookupService.GetTicketPrioritiesAsync(), "Id", "Name", model.Ticket.TicketPriorityId);
+            ViewData["Statuses"] = new SelectList(await _lookupService.GetTicketStatusesAsync(), "Id", "Name", ticket.TicketStatusId);
+            ViewData["Priorities"] = new SelectList(await _lookupService.GetTicketPrioritiesAsync(), "Id", "Name", ticket.TicketPriorityId);
+            ViewData["TicketTypes"] = new SelectList(await _lookupService.GetTicketTypesAsync(), "Id", "Name", ticket.TicketTypeId);
 
-            return View(model);
+            return View(ticket);
         }
 
         // GET: Tickets/Archive/5

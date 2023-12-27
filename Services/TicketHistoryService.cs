@@ -130,7 +130,7 @@ namespace BugscapeMVC.Services
                         NewValue = newTicket.TicketType.Name,
                         Created = DateTimeOffset.Now,
                         UserId = userId,
-                        Description = $"New ticket type: {newTicket.TicketType.Name}"
+                        Description = $"New ticket type: {newTicket.TicketType.Name.Replace("_", " ")}"
                     };
 
                     await _context.TicketHistories.AddAsync(history);
