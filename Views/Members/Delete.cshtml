@@ -1,0 +1,23 @@
+@model BugscapeMVC.Models.AppUser
+
+@{
+    ViewData["Title"] = "Remove Member";
+}
+
+<h1 class="font-rockwell text-dark text-xl font-bold mb-4">@ViewData["Title"]</h1>
+
+<hr class="mb-4 h-[2px] rounded bg-mid border-0" />
+
+<p class="font-lato mb-4 text-zinc-700">Are you sure you want to remove this member from your team?</p>
+
+<div class="flex flex-wrap gap-4 mb-4">
+    <div class="grow">
+        <h2 class="font-rockwell mb-4 font-semibold text-lg text-zinc-700">@Model.FullName</h2>
+    </div>
+</div>
+
+<form asp-action="Delete" class="flex gap-2 items-center">
+    <input type="hidden" asp-for="Id" />
+    <input type="submit" value="Remove" class="px-4 py-2 text-white text-sm rounded-md cursor-pointer bg-danger font-lato hover:bg-opacity-80 transition-opacity" />
+    <a asp-action="Index" class="px-4 py-2 text-sm rounded-md cursor-pointer bg-info font-lato hover:bg-opacity-80 transition-opacity">Back</a>
+</form>
