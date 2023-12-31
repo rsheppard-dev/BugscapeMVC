@@ -1,6 +1,7 @@
 using BugscapeMVC.Extensions;
 using BugscapeMVC.Models;
 using BugscapeMVC.Models.Enums;
+using BugscapeMVC.Models.ViewModels;
 using BugscapeMVC.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -15,13 +16,17 @@ namespace BugscapeMVC.Controllers
         private readonly IMemberService _memberService;
         private readonly ICompanyInfoService _companyService;
         private readonly UserManager<AppUser> _userManager;
+        private readonly IProjectService _projectService;
+        private readonly ITicketService _ticketService;
 
-        public MembersController(ILogger<MembersController> logger, IMemberService memberService, ICompanyInfoService companyService, UserManager<AppUser> userManager, IRoleService roleService)
+        public MembersController(ILogger<MembersController> logger, IMemberService memberService, ICompanyInfoService companyService, UserManager<AppUser> userManager, IRoleService roleService, IProjectService projectService, ITicketService ticketService)
         {
             _logger = logger;
             _memberService = memberService;
             _companyService = companyService;
             _userManager = userManager;
+            _projectService = projectService;
+            _ticketService = ticketService;
         }
 
         public async Task<IActionResult> Index(int page = 1, string search = "", string order = "asc", string sortBy = "name", int limit = 10)
@@ -45,6 +50,27 @@ namespace BugscapeMVC.Controllers
             members = await Sort(_userManager, members, sortBy, order);
 
             return View(new PaginatedList<AppUser>(members, page, limit));
+        }
+
+        // GET: Members/Details/5
+        public async Task<IActionResult> Details(string? id)
+        {
+            var companyId = User.Identity?.GetCompanyId();
+
+            if (companyId is null || id is null) return NotFound();
+
+            AppUser? member = await _memberService.GetMemberByIdAsync(companyId.Value, id);
+
+            if (member is null) return NotFound();
+
+            var model = new MemberProfileViewModel
+            {
+                Member = member,
+                Projects = await _projectService.GetUserProjectsAsync(member.Id),
+                Tickets = await _ticketService.GetTicketsByUserIdAsync(member.Id, companyId.Value)
+            };
+
+            return View(model);
         }
 
         // GET: Members/Delete/5

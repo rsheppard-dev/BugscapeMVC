@@ -1,0 +1,89 @@
+@model BugscapeMVC.Models.ViewModels.MemberProfileViewModel
+
+@using BugscapeMVC.Services.Interfaces
+
+@inject IFileService FileService
+@inject IRoleService RoleService
+
+@{
+    ViewBag.Title = "Member Profile";
+}
+
+<h1 class="font-rockwell text-dark text-xl font-bold mb-4">@ViewData["Title"]</h1>
+
+<hr class="mb-4" />
+
+<div class="grid grid-cols-12 gap-4">
+    <section class="col-span-12 @(Model.Projects.Count < 1 ? "" : "lg:col-span-6") space-y-4">
+        <div class="flex gap-4 items-center">
+            @if (Model.Member.AvatarFileData is null || Model.Member.AvatarContentType is null)
+        {
+            <img class="h-20 w-20 object-cover rounded-full ring-4 ring-mid" src="~/images/default-avatar.png"
+                alt="@Model.Member.FullName">
+        }
+        else
+        {
+            <img class="h-20 w-20 object-cover rounded-full ring-4 ring-mid"
+                src="@FileService.ConvertByteArrayToFile(Model.Member.AvatarFileData, Model.Member.AvatarContentType)"
+                alt="@Model.Member.FullName">
+        }
+
+            <div>
+                <h2 class="font-rockwell text-dark text-lg font-bold block">@Model.Member.FullName</h2>
+                <span class="font-lato text-zinc-700 text-sm block">@((await RoleService.GetUserRolesAsync(Model.Member)).FirstOrDefault()?.Replace("_", " "))</span>
+                <a href="mailto:@Model.Member.Email" class="font-lato text-zinc-700 underline text-sm block">@Model.Member.Email</a>
+            </div>
+        </div>
+    </section>
+
+    @if (Model.Projects.Count > 0)
+    {
+        <section class="col-span-12 lg:col-span-6 space-y-4 rounded-md bg-white px-6 py-3">
+            <h3 class="font-rockwell text-dark text-xl font-bold mb-6">@(Model.Member.FirstName)&apos;s Projects</h3>
+
+            @foreach (var project in Model.Projects.OrderBy(p => p.Name))
+            {
+                <div class="flex items-center gap-2">
+                    @if(project.ImageFileData is not null && project.ImageContentType is not null)
+                    {
+                        <img src="@FileService.ConvertByteArrayToFile(project.ImageFileData, project.ImageContentType)" alt="@project.Name" class="h-8 w-8 object-cover rounded-full ring-4 ring-mid">
+                    }
+                    else
+                    {
+                        <img class="h-8 w-8 object-cover rounded-full ring-4 ring-mid" src="~/images/default-project.png">
+                    }
+                    <a href="@Url.Action("Details", "Projects", new { id = project.Id })"
+                        class="font-lato text-sm text-zinc-700 hover:underline">@project.Name</a>
+                </div>
+            }
+        </section>
+    }
+
+    <section aria-label="Project Tickets" class="col-span-12 rounded-md bg-white px-6 py-3 flex flex-col">
+        <h2 class="font-rockwell text-dark text-xl font-bold mb-6">@(Model.Member.FirstName)&apos;s Tickets</h2>
+
+        @if (Model.Tickets is null || Model.Tickets.Count == 0)
+        {
+            <p class="font-lato flex flex-col gap-4 grow">This member has no tickets to show.</p>
+        }
+        else
+        {
+            <div data-container="tickets"
+                class="relative overflow-x-auto rounded-t-lg scrollbar-thin scrollbar-thumb-light scrollbar-track-white">
+                @await Html.PartialAsync("~/Views/Tickets/_TicketsTablePartial.cshtml", new PaginatedList<Ticket>(Model.Tickets.ToList(), 1, 10))
+            </div>
+        }
+
+    </section>
+</div>
+
+@section scripts {
+    <script src="~/js/ticketsTable.js"></script>
+
+    <script>
+        const container = document.querySelector('[data-container="tickets"]');
+        const ticketsTable = new TicketsTable(@Html.Raw(Json.Serialize(Model.Tickets)), container, 1, 10, 'title', 'asc');
+
+        ticketsTable.init();
+    </script>
+}
