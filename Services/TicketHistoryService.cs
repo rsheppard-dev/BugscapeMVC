@@ -173,7 +173,20 @@ namespace BugscapeMVC.Services
                 Ticket? ticket = await _context.Tickets.FindAsync(ticketId) ?? throw new Exception("Ticket not found.");
 
                 string description = model.ToLower().Replace("ticket", "");
-                description = $"New {description} added to ticket: {ticket.Title}";
+
+                if (model == nameof(TicketComment))
+                {
+                    var latestComment = ticket.Comments
+                        .OrderByDescending(comment => comment.Created)
+                        .Select(comment => comment.Comment)
+                        .FirstOrDefault();
+
+                    description = latestComment ?? string.Empty;
+                }
+                else
+                {
+                    description = $"New {description} added to ticket.";
+                }       
 
                 TicketHistory history = new()
                 {

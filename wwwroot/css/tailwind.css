@@ -17,6 +17,7 @@
   [type='time'],
   [type='week'],
   [type='checkbox'],
+  [type='file'],
   [multiple],
   textarea,
   select {

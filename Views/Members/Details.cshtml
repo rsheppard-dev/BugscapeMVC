@@ -52,7 +52,7 @@
                     {
                         <img class="h-8 w-8 object-cover rounded-full ring-4 ring-mid" src="~/images/default-project.png">
                     }
-                    <a href="@Url.Action("Details", "Projects", new { id = project.Id })"
+                    <a asp-action="Details" asp-controller="Projects" asp-route-id="@project.Id
                         class="font-lato text-sm text-zinc-700 hover:underline">@project.Name</a>
                 </div>
             }
@@ -70,7 +70,7 @@
         {
             <div data-container="tickets"
                 class="relative overflow-x-auto rounded-t-lg scrollbar-thin scrollbar-thumb-light scrollbar-track-white">
-                @await Html.PartialAsync("~/Views/Tickets/_TicketsTablePartial.cshtml", new PaginatedList<Ticket>(Model.Tickets.ToList(), 1, 10))
+                <partial name="~/Views/Tickets/_TicketsTablePartial.cshtml" model="@(new PaginatedList<Ticket>(Model.Tickets.ToList(), 1, 10))" />
             </div>
         }
 

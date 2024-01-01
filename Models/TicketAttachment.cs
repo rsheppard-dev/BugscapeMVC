@@ -9,6 +9,7 @@ namespace BugscapeMVC.Models
         public int Id { get; set; }
 
         [Display(Name = "Ticket")]
+        [Required]
         public int TicketId { get; set; }
 
         [Display(Name = "File Date")]
