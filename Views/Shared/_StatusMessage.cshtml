@@ -1,0 +1,25 @@
+@model string
+
+@if (!String.IsNullOrEmpty(Model))
+{
+    var statusMessageClass = Model.StartsWith("Error") ? "bg-danger" : "bg-success";
+    <div class="relative max-w-xl @statusMessageClass bg-opacity-30 px-6 py-3 mb-4 rounded-lg flex justify-between items-start" role="alert">
+        <span class="font-lato text-sm">@Model</span>
+        <button type="button" title="Close" id="close-button">
+            <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4 stroke-dark">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+    </div>
+}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var closeButton = document.getElementById('close-button');
+        if (Boolean(closeButton)) {
+            closeButton.addEventListener('click', function() {
+                this.parentElement.classList.add('hidden');
+            });
+        }
+    });
+</script>

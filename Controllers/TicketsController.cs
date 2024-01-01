@@ -20,10 +20,10 @@ namespace BugscapeMVC.Controllers
         private readonly ITicketService _ticketService;
         private readonly IFileService _fileService;
         private readonly ITicketHistoryService _historyService;
+        private readonly ITicketAttachmentService _attachmentService;
         private readonly UserManager<AppUser> _userManager;
-        private readonly ApplicationDbContext _context;
 
-        public TicketsController(ApplicationDbContext context, UserManager<AppUser> userManager, IProjectService projectService, ILookupService lookupService, ITicketService ticketService, IFileService fileService, ITicketHistoryService historyService)
+        public TicketsController(UserManager<AppUser> userManager, IProjectService projectService, ILookupService lookupService, ITicketService ticketService, IFileService fileService, ITicketHistoryService historyService, ITicketAttachmentService attachmentService)
         {
             _userManager = userManager;
             _projectService = projectService;
@@ -31,7 +31,7 @@ namespace BugscapeMVC.Controllers
             _ticketService = ticketService;
             _fileService = fileService;
             _historyService = historyService;
-            _context = context;
+            _attachmentService = attachmentService;
         }
 
         // GET: Tickets/MyTickets
@@ -207,7 +207,7 @@ namespace BugscapeMVC.Controllers
 
         // GET: Tickets/Details/5
         [HttpGet]
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? id, string? statusMessage)
         {
             if (id == null)
             {
@@ -220,6 +220,8 @@ namespace BugscapeMVC.Controllers
             {
                 return NotFound();
             }
+
+            if (!string.IsNullOrEmpty(statusMessage)) ViewBag.StatusMessage = statusMessage;
 
             return View(ticket);
         }
@@ -288,7 +290,7 @@ namespace BugscapeMVC.Controllers
             return RedirectToAction("Details", new { id = ticketAttachment.TicketId, statusMessage });
         }
 
-        // GET: Tickets/ShowFile
+        // GET: Tickets/ShowFile/5
         [HttpGet]
         public async Task<IActionResult> ShowFile(int id)
         {
@@ -303,6 +305,25 @@ namespace BugscapeMVC.Controllers
             Response.Headers.Add("Content-Disposition", $"inline; filename={fileName}");
 
             return File(fileData, $"application/{ext}");
+        }
+
+        // POST: Tickets/DeleteFile/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteFile(int id)
+        {
+            TicketAttachment? ticketAttachment = await _ticketService.GetTicketAttachmentByIdAsync(id);
+
+            bool status = false;
+
+            if (ticketAttachment is not null)
+            {
+                status = await _attachmentService.DeleteAttachmentAsync(ticketAttachment.Id);
+            }
+
+            string statusMessage = status ? "Success: Attachment deleted." : "Error: Failed to delete attachment.";
+
+            return RedirectToAction("Details", new { id = ticketAttachment?.TicketId, statusMessage });
         }
 
         // GET: Tickets/Create
