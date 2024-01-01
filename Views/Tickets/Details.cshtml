@@ -12,7 +12,7 @@
 
 @{
     AppUser? user = await UserManager.GetUserAsync(User);
-    AppUser? projectManager = await ProjectService.GetProjectManagerAsync(Model.Id);
+    AppUser? projectManager = await ProjectService.GetProjectManagerAsync(Model.Project!.Id);
 
     ViewData["Title"] = "Ticket Details";
 }
@@ -58,7 +58,7 @@
                     }
                     else
                     {
-                        <img class="rounded-full h-10 w-10" src="~/images/default-avatar.png" alt="Developer Profile">
+                        <img class="rounded-full h-10 w-10 opacity-30" src="~/images/default-avatar.png" alt="Developer Profile">
                         <div class="space-y-2">
                             <p class="text-sm">Not Assigned</p>
                         </div>
@@ -175,21 +175,28 @@
     <section aria-label="Ticket Attachments" class="col-span-12 rounded-md bg-white px-6 py-3 shadow-sm">
         <h2 class="font-rockwell text-dark text-xl font-bold mb-6">Ticket Attachments</h2>
 
-        <div class="flex flex-wrap gap-10 items-start">
-            @foreach (TicketAttachment attachment in Model.Attachments)
-            {
-                <div class="flex flex-col gap-2">
-                    <a asp-action="ShowFile" asp-controller="Tickets" asp-route-id="@attachment.Id">
-                        <img src="@FileService.GetFileIcon(attachment.FileName!)" alt="@attachment.FileName" width="50" height="50">
-                    </a>
-
+        @if (Model.Attachments.Count > 0)
+        {
+            <div class="flex flex-wrap gap-10 items-start">
+                @foreach (TicketAttachment attachment in Model.Attachments)
+                {
                     <div class="flex flex-col gap-2">
-                        <small class="text-xs text-zinc-700 font-lato">@attachment.Description</small>
-                        <small class="text-xs text-zinc-700 font-lato">Size: @FileService.FormatFileSize(attachment.FileData!.Length)</small>
+                        <a asp-action="ShowFile" asp-controller="Tickets" asp-route-id="@attachment.Id">
+                            <img src="@FileService.GetFileIcon(attachment.FileName!)" alt="@attachment.FileName" width="50" height="50">
+                        </a>
+
+                        <div class="flex flex-col gap-2">
+                            <small class="text-xs text-zinc-700 font-lato">@attachment.Description</small>
+                            <small class="text-xs text-zinc-700 font-lato">Size: @FileService.FormatFileSize(attachment.FileData!.Length)</small>
+                        </div>
                     </div>
-                </div>
-            }
-        </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p class="font-lato">There are no attachments to show.</p>
+        }
 
         @if (Model.DeveloperUserId == user?.Id || Model.OwnerUserId == user?.Id || projectManager?.Id == user?.Id || User.IsInRole(nameof(Roles.Admin)))
         {
