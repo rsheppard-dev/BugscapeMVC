@@ -27,6 +27,8 @@ namespace BugscapeMVC.Controllers
         private readonly IInviteService _inviteService;
         private readonly IEmailSender _emailService;
         private readonly IProjectService _projectService;
+        private readonly IRoleService _roleService;
+        private readonly INotificationService _notificationService;
         private readonly SignInManager<AppUser> _signInManager;
 
         public InvitesController(
@@ -35,6 +37,8 @@ namespace BugscapeMVC.Controllers
             IInviteService inviteService,
             IEmailSender emailService,
             IProjectService projectService,
+            IRoleService roleService,
+            INotificationService notificationService,
             SignInManager<AppUser> signInManager
         ) 
         {
@@ -44,6 +48,8 @@ namespace BugscapeMVC.Controllers
             _emailService = emailService;
             _projectService = projectService;
             _signInManager = signInManager;
+            _roleService = roleService;
+            _notificationService = notificationService;
         }
 
         // GET: Invites
@@ -220,6 +226,17 @@ namespace BugscapeMVC.Controllers
 
                     TempData["StatusMessage"] = "You have successfully joined the team.";
                     TempData["Email"] = member.Email;
+
+                    // add notification
+                    var notification = new Notification()
+                    {
+                        Title = $"{member.FullName} joined the team.",
+                        Message = $"{member.FullName} accepted your invitation and joined the team as a {(await _roleService.GetUserRolesAsync(member)).FirstOrDefault()?.Replace("_", " ")}.",
+                        RecipientId = invite?.InvitorId ?? throw new Exception("Invitor not found."),
+                        SenderId = member.Id,
+                    };
+
+                    await _notificationService.AddNotificationAsync(notification);
 
                     return RedirectToPage("/Account/Login", new { area = "Identity" });
                 }
