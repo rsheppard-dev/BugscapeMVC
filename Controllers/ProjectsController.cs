@@ -20,9 +20,19 @@ namespace BugscapeMVC.Controllers
         private readonly IProjectService _projectService;
         private readonly ICompanyInfoService _companyInfoService;
         private readonly ITicketService _ticketService;
+        private readonly INotificationService _notificationService;
         private readonly UserManager<AppUser> _userManager;
 
-        public ProjectsController(IRoleService roleService, ILookupService lookupService, IFileService fileService, IProjectService projectService, UserManager<AppUser> userManager, ICompanyInfoService companyInfoService, ITicketService ticketService)
+        public ProjectsController(
+            IRoleService roleService,
+            ILookupService lookupService,
+            IFileService fileService,
+            IProjectService projectService,
+            UserManager<AppUser> userManager,
+            ICompanyInfoService companyInfoService,
+            ITicketService ticketService,
+            INotificationService notificationService
+        )
         {
             _roleService = roleService;
             _lookupService = lookupService;
@@ -31,6 +41,7 @@ namespace BugscapeMVC.Controllers
             _userManager = userManager;
             _companyInfoService = companyInfoService;
             _ticketService = ticketService;
+            _notificationService = notificationService;
         }
 
         // GET: Projects/MyProjects
@@ -177,6 +188,17 @@ namespace BugscapeMVC.Controllers
             if (!string.IsNullOrEmpty(model.ProjectManagerId) && model.Project is not null)
             {
                 await _projectService.AddProjectManagerAsync(model.ProjectManagerId, model.Project.Id);
+                var project = await _projectService.GetProjectByIdAsync(model.Project.Id, User.Identity?.GetCompanyId() ?? throw new Exception("Company ID not valid."));
+
+                Notification notification = new()
+                {
+                    Title = "Project Manager Assigned",
+                    Message = $"You have been assigned as the Project Manager for {project?.Name}.",
+                    SenderId = _userManager.GetUserId(User) ?? throw new Exception("User ID not valid."),
+                    RecipientId = model.ProjectManagerId,
+                };
+
+                await _notificationService.AddNotificationAsync(notification);
 
                 return RedirectToAction(nameof(Details), new { id = model.Project.Id });
             }

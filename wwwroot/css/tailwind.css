@@ -24,6 +24,14 @@
     @apply font-lato rounded-lg text-zinc-700 shadow-sm border-2 border-mid focus:border-light focus:ring-light;
   }
 
+  #notifications_menu {
+    @apply invisible;
+  }
+  
+  #notifications_menu[data-show] {
+    @apply visible;
+  }
+
   hr {
     @apply h-[2px] rounded bg-mid border-0;
   }

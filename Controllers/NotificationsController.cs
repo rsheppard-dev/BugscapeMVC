@@ -7,16 +7,22 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BugscapeMVC.Data;
 using BugscapeMVC.Models;
+using BugscapeMVC.Services.Interfaces;
 
 namespace BugscapeMVC.Controllers
 {
     public class NotificationsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly INotificationService _notificationService;
 
-        public NotificationsController(ApplicationDbContext context)
+        public NotificationsController(
+            ApplicationDbContext context,
+            INotificationService notificationService
+        )
         {
             _context = context;
+            _notificationService = notificationService;
         }
 
         // GET: Notifications
@@ -43,6 +49,12 @@ namespace BugscapeMVC.Controllers
             {
                 return NotFound();
             }
+
+            notification.Viewed = true;
+
+            _context.Update(notification);
+            await _context.SaveChangesAsync();
+
 
             return View(notification);
         }

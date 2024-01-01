@@ -8,7 +8,7 @@ namespace BugscapeMVC.Models
         public int Id { get; set; }
 
         [Display(Name = "Ticket")]
-        public int TicketId { get; set; }
+        public int? TicketId { get; set; }
 
         [Required]
         public required string Title { get; set; }
@@ -18,7 +18,7 @@ namespace BugscapeMVC.Models
 
         [DataType(DataType.Date)]
         [Display(Name = "Date")]
-        public DateTimeOffset Created { get; set; }
+        public DateTimeOffset Created { get; set; } = DateTimeOffset.Now;
 
         [Required]
         [Display(Name = "Recipient")]

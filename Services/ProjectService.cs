@@ -14,7 +14,10 @@ namespace BugscapeMVC.Services
         #endregion
 
         #region Constructor
-        public ProjectService(ApplicationDbContext context, IRoleService roleService)
+        public ProjectService(
+            ApplicationDbContext context,
+            IRoleService roleService
+        )
         {
             _context = context;
             _roleService = roleService;
@@ -57,6 +60,7 @@ namespace BugscapeMVC.Services
             try
             {
                 await AddUserToProjectAsync(userId, projectId);
+
                 return true;
             }
             catch (Exception ex)
