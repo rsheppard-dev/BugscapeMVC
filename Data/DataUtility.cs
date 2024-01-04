@@ -59,7 +59,7 @@ namespace BugscapeMVC.Data
             await SeedRolesAsync(roleManagerSvc);
             await SeedDefaultCompaniesAsync(dbContextSvc);
             await SeedDefaultUsersAsync(userManagerSvc);
-            await SeedDemo_UsersAsync(userManagerSvc);
+            await SeedDemoUsersAsync(userManagerSvc);
             await SeedDefaultTicketTypeAsync(dbContextSvc);
             await SeedDefaultTicketStatusAsync(dbContextSvc);
             await SeedDefaultTicketPriorityAsync(dbContextSvc);
@@ -546,18 +546,19 @@ namespace BugscapeMVC.Data
 
         }
 
-        public static async Task SeedDemo_UsersAsync(UserManager<AppUser> userManager)
+        public static async Task SeedDemoUsersAsync(UserManager<AppUser> userManager)
         {
-            //Seed Demo Admin User
+            // seed demo admin user
             var defaultUser = new AppUser
             {
-                UserName = "demoadmin@bugtracker.com",
-                Email = "demoadmin@bugtracker.com",
+                UserName = "demoadmin@bugscape.com",
+                Email = "demoadmin@bugscape.com",
                 FirstName = "Demo",
                 LastName = "Admin",
                 EmailConfirmed = true,
                 CompanyId = company1Id
             };
+            
             try
             {
                 var user = await userManager.FindByEmailAsync(defaultUser.Email);
@@ -579,15 +580,15 @@ namespace BugscapeMVC.Data
             }
 
 
-            //Seed Demo Project_Manager User
+            // seed demo project manager user
             defaultUser = new AppUser
             {
-                UserName = "demopm@bugtracker.com",
-                Email = "demopm@bugtracker.com",
+                UserName = "demopm@bugscape.com",
+                Email = "demopm@bugscape.com",
                 FirstName = "Demo",
-                LastName = "Project_Manager",
+                LastName = "Project-Manager",
                 EmailConfirmed = true,
-                CompanyId = company2Id
+                CompanyId = company1Id
             };
             try
             {
@@ -609,15 +610,15 @@ namespace BugscapeMVC.Data
             }
 
 
-            //Seed Demo Developer User
+            // seed demo developer user
             defaultUser = new AppUser
             {
-                UserName = "demodev@bugtracker.com",
-                Email = "demodev@bugtracker.com",
+                UserName = "demodev@bugscape.com",
+                Email = "demodev@bugscape.com",
                 FirstName = "Demo",
                 LastName = "Developer",
                 EmailConfirmed = true,
-                CompanyId = company2Id
+                CompanyId = company1Id
             };
             try
             {
@@ -639,16 +640,17 @@ namespace BugscapeMVC.Data
             }
 
 
-            //Seed Demo Submitter User
+            // seed demo submitter user
             defaultUser = new AppUser
             {
-                UserName = "demosub@bugtracker.com",
-                Email = "demosub@bugtracker.com",
+                UserName = "demosub@bugscape.com",
+                Email = "demosub@bugscape.com",
                 FirstName = "Demo",
                 LastName = "Submitter",
                 EmailConfirmed = true,
-                CompanyId = company2Id
+                CompanyId = company1Id
             };
+
             try
             {
                 var user = await userManager.FindByEmailAsync(defaultUser.Email);
@@ -669,15 +671,15 @@ namespace BugscapeMVC.Data
             }
 
 
-            //Seed Demo New User
+            // seed demo new user
             defaultUser = new AppUser
             {
-                UserName = "demonew@bugtracker.com",
-                Email = "demonew@bugtracker.com",
+                UserName = "demonew@bugscape.com",
+                Email = "demonew@bugscape.com",
                 FirstName = "Demo",
                 LastName = "NewUser",
                 EmailConfirmed = true,
-                CompanyId = company2Id
+                CompanyId = company1Id
             };
             try
             {

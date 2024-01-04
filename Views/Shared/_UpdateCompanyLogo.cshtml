@@ -1,23 +1,19 @@
-@model BugscapeMVC.Models.AppUser
+@model BugscapeMVC.Models.Company
 
 @using BugscapeMVC.Services.Interfaces
-@using Microsoft.AspNetCore.Identity
 
-@inject UserManager<AppUser> UserManager
 @inject IFileService FileService
 
 @{
-    AppUser? user = await UserManager.GetUserAsync(User);
-    bool isSignedIn = user is not null ? true : false;
-    bool isAvatarNull = user?.AvatarFileData is null ? true : false;
+    bool isLogoNull = Model?.LogoFileData is null ? true : false;
 
-    string? avatarSource = user?.AvatarFileData is not null && user.AvatarContentType is not null
-        ? FileService.ConvertByteArrayToFile(user.AvatarFileData, user.AvatarContentType)
-        : "/images/default-avatar.png";
+    string? logoSource = Model?.LogoFileData is not null && Model?.LogoContentType is not null
+        ? FileService.ConvertByteArrayToFile(Model.LogoFileData, Model.LogoContentType)
+        : "/images/default-company.png";
 }
 
 <dialog data-modal class="p-0 backdrop:bg-gray-400 backdrop:bg-opacity-50 rounded-lg shadow-md open:animate-fade-in open:backdrop:animate-fade-in">
-    <form asp-action="UpdateUserImage" asp-controller="Account" method="post" enctype="multipart/form-data">
+    <form asp-action="UpdateCompanyLogo" asp-controller="Companies" method="post" enctype="multipart/form-data">
         <div class="pt-10 px-6 py-3">
             <button type="button" data-close-modal title="Close" class="absolute right-2 top-2">
                 <svg xmlns="http://www.w3.org/2000/svg" aria-hidden class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -27,18 +23,18 @@
 
             <div class="flex flex-col items-center gap-4">
                 <div>
-                    <img data-image-output class="h-40 w-40 object-cover rounded-full" src="@avatarSource"
-                        alt="@user?.FullName">
+                    <img data-image-output class="h-40 w-40 object-cover rounded-full" src="@logoSource"
+                        alt="@Model?.Name">
                 </div>
 
                 <div class="flex items-center flex-wrap justify-center gap-2">
-                    <label asp-for="AvatarFormFile" class="flex gap-1 items-center px-4 py-2 rounded-md cursor-pointer bg-info hover:bg-opacity-80 transition-opacity">
+                    <label asp-for="LogoFormFile" class="flex gap-1 items-center px-4 py-2 rounded-md cursor-pointer bg-info hover:bg-opacity-80 transition-opacity">
                         <svg xmlns="http://www.w3.org/2000/svg" aria-hidden class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                         </svg>
                         <span class="font-lato">Upload</span>
                     </label>
-                    <input data-image-input asp-for="AvatarFormFile" class="hidden" accept="image/jpg, image/jpeg, image/png, image/webp, image/gif" />
+                    <input data-image-input asp-for="LogoFormFile" class="hidden" accept="image/jpg, image/jpeg, image/png, image/webp, image/gif" />
 
                     <button data-save-button class="flex items-center gap-1 px-4 py-2 rounded-md bg-success enabled:hover:bg-opacity-80 transition-opacity disabled:opacity-30">
                         <svg aria-hidden xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -47,7 +43,7 @@
                         <span class="font-lato">Save</span>
                     </button>
 
-                    <a data-delete-button asp-action="DeleteUserImage" asp-controller="Account" class="@(isAvatarNull ? "pointer-event-none opacity-30" : "hover:bg-opacity-80") px-4 py-2 flex items-center gap-1 whitespace-nowrap rounded-md bg-danger font-lato transition-opacity">
+                    <a data-delete-button asp-action="DeleteCompanyLogo" asp-controller="Companies" class="@(isLogoNull ? "pointer-event-none opacity-30" : "hover:bg-opacity-80") px-4 py-2 flex items-center gap-1 whitespace-nowrap rounded-md bg-danger font-lato transition-opacity">
                         <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                         </svg>
@@ -63,7 +59,7 @@
 <script src="~/js/imagePreview.js"></script>
 <script>
     const modalInstance = new Modal();
-    const imagePreviewInstance = new ImagePreview("@avatarSource");
+    const imagePreviewInstance = new ImagePreview("@logoSource");
 
     modalInstance.init();
     imagePreviewInstance.init();

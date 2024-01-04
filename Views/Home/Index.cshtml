@@ -1,8 +1,56 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Bugscape";
 }
 
-<div class="">
-    <h1 class="text-xl text-red-600">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div>
+    <div class="relative isolate">
+        <div aria-hidden class="pointer-events-none absolute inset-x-0 -top-[400px] sm:-top-32 -z-10 transform-gpu overflow-hidden blur-3xl ">
+            <div style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)" class="relative left-[calc(50%)-11rem] sm:left-[calc(50%-30rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:w-[72.1875rem]" />
+        </div>
+    </div>
+
+    <section class="flex flex-col gap-10 justify-center items-center">
+        <h2 class="flex flex-col gap-4 sm:gap-6 text-center font-rockwell text-3xl sm:text-4xl lg:text-5xl font-bold text-zinc-700 items-center">
+            <div>Escape <span class="text-danger sm:text-outline-red">Bugs</span></div>
+            <div>Manage <span class="text-success sm:text-outline-green">Solutions</span></div>
+        </h2>
+
+        <h1 class="balance font-lato text-xl sm:text-2xl text-zinc-700 text-center leading-loose sm:leading-loose">Embark on a journey of project mastery with Bugscape! Where bug tracking meets intuitive project management, delivering a powerful experience right at your fingertips.</h1>
+
+        <div class="flex flex-wrap gap-4 items-center">
+            <button type="button" data-open-modal class="px-4 py-2 text-xl rounded-md bg-info text-zinc-900 font-bold font-lato hover:bg-opacity-80 transition-opacity">Demo</button>
+            <a asp-area="Identity" asp-page="/Account/Register" class="px-4 py-2 text-xl font-bold rounded-md cursor-pointer bg-success text-zinc-900 font-lato hover:bg-opacity-80 transition-opacity">Signup</a>
+        </div>
+        <img src="/images/hero-logo.png" alt="Bugscape" class=" mx-auto max-w-[320px]">
+    </section>
 </div>
+
+<dialog data-modal class="p-0 backdrop:bg-gray-400 backdrop:bg-opacity-50 rounded-lg shadow-md open:animate-fade-in open:backdrop:animate-fade-in">
+    <div class="pt-10 px-6 py-3">
+        <button type="button" data-close-modal title="Close" class="absolute right-2 top-2">
+            <svg xmlns="http://www.w3.org/2000/svg" aria-hidden class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+
+        <div class="flex flex-wrap items-center justify-center gap-4 w-fit">
+            <p class="font-lato text-zinc-700 font-bold">Choose a role to demo:</p>
+            <hr class="my-4 h-[2px] w-full rounded bg-mid border-0" />
+            <form asp-controller="Account" asp-action="DemoLogin">
+                <input type="hidden" name="role" id="role" value="" />
+
+                <button onclick="document.getElementById('role').value='admin';" class="px-4 py-2 text-sm rounded-md bg-warning text-zinc-900 font-bold font-lato hover:bg-opacity-80 transition-opacity whitespace-nowrap">Demo Admin</button>
+                <button onclick="document.getElementById('role').value='project_manager';" class="px-4 py-2 text-sm rounded-md bg-warning text-zinc-900 font-bold font-lato hover:bg-opacity-80 transition-opacity whitespace-nowrap">Demo Project Manager</button>
+                <button onclick="document.getElementById('role').value='developer';" class="px-4 py-2 text-sm rounded-md bg-warning text-zinc-900 font-bold font-lato hover:bg-opacity-80 transition-opacity whitespace-nowrap">Demo Developer</button>
+                <button onclick="document.getElementById('role').value='submitter';" class="px-4 py-2 text-sm rounded-md bg-warning text-zinc-900 font-bold font-lato hover:bg-opacity-80 transition-opacity whitespace-nowrap">Demo Submitter</button>
+            </form>
+        </div>
+    </div>
+</dialog>
+
+<script src="~/js/modal.js"></script>
+<script>
+    const modalInstance = new Modal();
+
+    modalInstance.init();
+</script>

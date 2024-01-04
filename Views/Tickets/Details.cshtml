@@ -69,7 +69,7 @@
             <div class="col-span-2 flex gap-2 items-center flex-wrap">
                 @if (User.IsInRole(nameof(Roles.Admin)) || user?.Id == projectManager?.Id)
                 {
-                    @if (User.IsInRole(nameof(Roles.Admin)) && projectManager is null)
+                    @if (User.IsInRole(nameof(Roles.Admin)) && Model.DeveloperUser is null)
                     {
                         <a class="block w-fit bg-info text-white uppercase px-2 py-1 rounded-md text-xs font-bold hover:bg-opacity-80 transition-opacity" asp-action="AssignDeveloper" asp-controller="Tickets" asp-route-id="@Model.Id">Assign Developer</a>
                     }

@@ -8,10 +8,37 @@ namespace BugscapeMVC.Services
     public class CompanyInfoService : ICompanyInfoService
     {
         private readonly ApplicationDbContext _context;
+        private readonly IFileService _fileService;
 
-        public CompanyInfoService(ApplicationDbContext context)
+        public CompanyInfoService(
+            ApplicationDbContext context,
+            IFileService fileService
+        )
         {
             _context = context;
+            _fileService = fileService;
+        }
+
+        public async Task<bool> DeleteCompanyLogoAsync(int companyId)
+        {
+            try
+            {
+                Company company = _context.Companies.Find(companyId) ?? throw new Exception("Unable to find company.");
+
+                company.LogoFileData = null;
+                company.LogoContentType = null;
+                company.LogoFileName = null;
+
+                _context.Update(company);
+                await _context.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+                throw;
+            }
         }
 
         public async Task<List<AppUser>> GetAllMembersAsync(int companyId)
@@ -78,6 +105,28 @@ namespace BugscapeMVC.Services
                     .FirstOrDefaultAsync(company => company.Id == companyId);
 
             return result;
+        }
+
+        public async Task<bool> UpdateCompanyLogoAsync(int companyId, IFormFile logo)
+        {
+            try
+            {
+                Company company = _context.Companies.Find(companyId) ?? throw new Exception("Unable to find company.");
+
+                company.LogoFileData = await _fileService.ConvertFileToByteArrayAsync(logo);
+                company.LogoContentType = logo.ContentType;
+                company.LogoFileName = logo.FileName;
+
+                _context.Update(company);
+                await _context.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+                throw;
+            }
         }
     }
 }

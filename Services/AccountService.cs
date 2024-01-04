@@ -5,13 +5,13 @@ using Microsoft.AspNetCore.Identity;
 
 namespace BugscapeMVC.Services
 {
-    public class UserService : IUserService
+    public class AccountService : IAccountService
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly IFileService _fileService;
 
 
-        public UserService(UserManager<AppUser> userManager, IFileService fileService)
+        public AccountService(UserManager<AppUser> userManager, IFileService fileService)
         {
             _userManager = userManager;
             _fileService = fileService;

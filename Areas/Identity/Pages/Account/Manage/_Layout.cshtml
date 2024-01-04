@@ -22,7 +22,7 @@
 <h1 class="font-rockwell text-dark text-xl font-bold mb-4">Manage Your Account</h1>
 
 <div class="mb-4 flex items-center flex-wrap gap-4">
-    <button type="button" data-open-modal aria-label="Update Profile Image" class="group relative w-fit">
+    <button type="button" data-open-modal title="Update Profile Image" class="group relative w-fit">
         @if (user?.AvatarFileData is null || user.AvatarContentType is null)
         {
             <img class="h-20 w-20 object-cover rounded-full ring-4 ring-mid" src="~/images/default-avatar.png"
@@ -34,9 +34,9 @@
                 src="@FileService.ConvertByteArrayToFile(user.AvatarFileData, user.AvatarContentType)"
                 alt="@user.FullName">
         }
-        <span class="opacity-0 group-hover:opacity-100 transition-opacity absolute bg-opacity-70 text-sm font-lato right-2 top-2 bg-mid rounded p-2" title="Edit Profile Picture">
-            <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+        <span aria-hidden class="opacity-0 group-hover:opacity-100 transition-opacity absolute text-sm font-lato bg-opacity-60 -right-1 -top-1 rounded-full p-2 bg-mid">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 fill-zinc-700" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
             </svg>
         </span>
     </button>

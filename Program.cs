@@ -36,7 +36,7 @@ builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IInviteService, InviteService>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<ILookupService, LookupService>();
-builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IMemberService, MemberService>();
 builder.Services.AddScoped<ITicketAttachmentService, TicketAttachmentService>();
 

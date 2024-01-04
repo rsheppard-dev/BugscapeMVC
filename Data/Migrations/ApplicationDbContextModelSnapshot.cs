@@ -3,20 +3,17 @@ using System;
 using BugscapeMVC.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace BugscapeMVC.Migrations
+namespace BugscapeMVC.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230811124226_Migration002")]
-    partial class Migration002
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -181,7 +178,6 @@ namespace BugscapeMVC.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("InviteeId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("InviteeLastName")
@@ -189,16 +185,21 @@ namespace BugscapeMVC.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("InvitorId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<bool>("IsValid")
                         .HasColumnType("boolean");
 
-                    b.Property<DateTimeOffset>("JoinDate")
+                    b.Property<DateTimeOffset?>("JoinDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("ProjectId")
+                    b.Property<string>("Message")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("ProjectId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Role")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -237,7 +238,7 @@ namespace BugscapeMVC.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("TicketId")
+                    b.Property<int?>("TicketId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Title")
@@ -714,21 +715,15 @@ namespace BugscapeMVC.Migrations
 
                     b.HasOne("BugscapeMVC.Models.AppUser", "Invitee")
                         .WithMany()
-                        .HasForeignKey("InviteeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("InviteeId");
 
                     b.HasOne("BugscapeMVC.Models.AppUser", "Invitor")
                         .WithMany()
-                        .HasForeignKey("InvitorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("InvitorId");
 
                     b.HasOne("BugscapeMVC.Models.Project", "Project")
                         .WithMany()
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ProjectId");
 
                     b.Navigation("Company");
 
@@ -755,9 +750,7 @@ namespace BugscapeMVC.Migrations
 
                     b.HasOne("BugscapeMVC.Models.Ticket", "Ticket")
                         .WithMany("Notifications")
-                        .HasForeignKey("TicketId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("TicketId");
 
                     b.Navigation("Recipient");
 

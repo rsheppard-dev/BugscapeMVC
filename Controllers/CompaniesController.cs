@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using BugscapeMVC.Models.Enums;
 using BugscapeMVC.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using BugscapeMVC.Extensions;
 
 namespace BugscapeMVC.Controllers
 {
@@ -134,6 +135,47 @@ namespace BugscapeMVC.Controllers
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [Authorize(Roles = nameof(Roles.Admin))]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateCompanyLogo([Bind("LogoFormFile")] Company model)
+        {
+            try
+            {
+                int? companyId = User.Identity?.GetCompanyId() ?? throw new Exception("Unable to find company.");
+                IFormFile imageFormFile = model.LogoFormFile ?? throw new Exception("Unable to find image.");
+
+                bool result = await _companyInfoService.UpdateCompanyLogoAsync(companyId.Value, imageFormFile);
+
+                return result ?
+                    RedirectToAction(nameof(Details), new {id = companyId}) :
+                    View();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        [Authorize(Roles = nameof(Roles.Admin))]
+        public async Task<IActionResult> DeleteCompanyLogo()
+        {
+            try
+            {
+                int? companyId = User.Identity?.GetCompanyId() ?? throw new Exception("Unable to find company.");
+
+                bool result = await _companyInfoService.DeleteCompanyLogoAsync(companyId.Value);
+
+                return result ?
+                    RedirectToAction(nameof(Details), new {id = companyId}) :
+                    View();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         private bool CompanyExists(int id)

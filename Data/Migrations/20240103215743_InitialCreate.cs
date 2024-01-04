@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace BugscapeMVC.Migrations
+namespace BugscapeMVC.Data.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration
@@ -33,7 +33,10 @@ namespace BugscapeMVC.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: false),
-                    Description = table.Column<string>(type: "text", nullable: true)
+                    Description = table.Column<string>(type: "text", nullable: true),
+                    LogoFileName = table.Column<string>(type: "text", nullable: true),
+                    LogoContentType = table.Column<string>(type: "text", nullable: true),
+                    LogoFileData = table.Column<byte[]>(type: "bytea", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -160,7 +163,7 @@ namespace BugscapeMVC.Migrations
                     CompanyId = table.Column<int>(type: "integer", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: true),
                     StartDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    EndDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    EndDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     ProjectPriorityId = table.Column<int>(type: "integer", nullable: true),
                     ImageFileName = table.Column<string>(type: "text", nullable: true),
                     ImageContentType = table.Column<string>(type: "text", nullable: true),
@@ -299,15 +302,17 @@ namespace BugscapeMVC.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     InviteDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    JoinDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    JoinDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     CompanyToken = table.Column<Guid>(type: "uuid", nullable: false),
                     CompanyId = table.Column<int>(type: "integer", nullable: false),
-                    ProjectId = table.Column<int>(type: "integer", nullable: false),
-                    InvitorId = table.Column<string>(type: "text", nullable: false),
-                    InviteeId = table.Column<string>(type: "text", nullable: false),
+                    Role = table.Column<int>(type: "integer", nullable: false),
+                    ProjectId = table.Column<int>(type: "integer", nullable: true),
+                    InvitorId = table.Column<string>(type: "text", nullable: true),
+                    InviteeId = table.Column<string>(type: "text", nullable: true),
                     InviteeEmail = table.Column<string>(type: "text", nullable: false),
                     InviteeFirstName = table.Column<string>(type: "text", nullable: false),
                     InviteeLastName = table.Column<string>(type: "text", nullable: false),
+                    Message = table.Column<string>(type: "text", nullable: true),
                     IsValid = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -317,14 +322,12 @@ namespace BugscapeMVC.Migrations
                         name: "FK_Invites_AspNetUsers_InviteeId",
                         column: x => x.InviteeId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Invites_AspNetUsers_InvitorId",
                         column: x => x.InvitorId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Invites_Companies_CompanyId",
                         column: x => x.CompanyId,
@@ -335,8 +338,7 @@ namespace BugscapeMVC.Migrations
                         name: "FK_Invites_Projects_ProjectId",
                         column: x => x.ProjectId,
                         principalTable: "Projects",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -403,7 +405,7 @@ namespace BugscapeMVC.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    TicketId = table.Column<int>(type: "integer", nullable: false),
+                    TicketId = table.Column<int>(type: "integer", nullable: true),
                     Title = table.Column<string>(type: "text", nullable: false),
                     Message = table.Column<string>(type: "text", nullable: false),
                     Created = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
@@ -430,8 +432,7 @@ namespace BugscapeMVC.Migrations
                         name: "FK_Notifications_Tickets_TicketId",
                         column: x => x.TicketId,
                         principalTable: "Tickets",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -442,11 +443,11 @@ namespace BugscapeMVC.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     TicketId = table.Column<int>(type: "integer", nullable: false),
                     Created = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    UserId = table.Column<string>(type: "text", nullable: false),
+                    UserId = table.Column<string>(type: "text", nullable: true),
                     Description = table.Column<string>(type: "text", nullable: true),
-                    FileName = table.Column<string>(type: "text", nullable: false),
-                    FileData = table.Column<byte[]>(type: "bytea", nullable: false),
-                    FileContentType = table.Column<string>(type: "text", nullable: false)
+                    FileName = table.Column<string>(type: "text", nullable: true),
+                    FileData = table.Column<byte[]>(type: "bytea", nullable: true),
+                    FileContentType = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -455,8 +456,7 @@ namespace BugscapeMVC.Migrations
                         name: "FK_TicketAttachments_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_TicketAttachments_Tickets_TicketId",
                         column: x => x.TicketId,
@@ -471,10 +471,10 @@ namespace BugscapeMVC.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Comment = table.Column<string>(type: "text", nullable: false),
+                    Comment = table.Column<string>(type: "text", nullable: true),
                     Created = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     TicketId = table.Column<int>(type: "integer", nullable: false),
-                    UserId = table.Column<string>(type: "text", nullable: false)
+                    UserId = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -483,8 +483,7 @@ namespace BugscapeMVC.Migrations
                         name: "FK_TicketComments_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_TicketComments_Tickets_TicketId",
                         column: x => x.TicketId,
