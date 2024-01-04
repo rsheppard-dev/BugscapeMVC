@@ -21,9 +21,19 @@ namespace BugscapeMVC.Controllers
         private readonly IFileService _fileService;
         private readonly ITicketHistoryService _historyService;
         private readonly ITicketAttachmentService _attachmentService;
+        private readonly INotificationService _notificationService;
         private readonly UserManager<AppUser> _userManager;
 
-        public TicketsController(UserManager<AppUser> userManager, IProjectService projectService, ILookupService lookupService, ITicketService ticketService, IFileService fileService, ITicketHistoryService historyService, ITicketAttachmentService attachmentService)
+        public TicketsController(
+            UserManager<AppUser> userManager,
+            IProjectService projectService,
+            ILookupService lookupService,
+            ITicketService ticketService,
+            IFileService fileService,
+            ITicketHistoryService historyService,
+            ITicketAttachmentService attachmentService,
+            INotificationService notificationService
+        )
         {
             _userManager = userManager;
             _projectService = projectService;
@@ -32,6 +42,7 @@ namespace BugscapeMVC.Controllers
             _fileService = fileService;
             _historyService = historyService;
             _attachmentService = attachmentService;
+            _notificationService = notificationService;
         }
 
         // GET: Tickets/MyTickets
@@ -189,15 +200,28 @@ namespace BugscapeMVC.Controllers
                 try
                 {
                     await _ticketService.AssignTicketAsync(model.Ticket.Id, model.DeveloperId);
+
+                    Ticket? newTicket = await _ticketService.GetTicketAsNoTrackingAsync(model.Ticket.Id);
+
+                    await _historyService.AddHistoryAsync(oldTicket, newTicket, userId);
+
+                    // send notification
+                    Notification notification = new()
+                    {
+                        TicketId = model.Ticket.Id,
+                        Title = "Developer Assignment",
+                        Message = $"You have been assigned as the developer on ticket: {newTicket.Title}.",
+                        SenderId = userId,
+                        RecipientId = model.DeveloperId,
+                    };
+
+                    await _notificationService.AddNotificationAsync(notification);
+                    _ = _notificationService.SendEmailNotificationAsync(notification, notification.Title);
                 }
                 catch (Exception)
                 {
                     throw;
                 }
-
-                Ticket? newTicket = await _ticketService.GetTicketAsNoTrackingAsync(model.Ticket.Id);
-
-                await _historyService.AddHistoryAsync(oldTicket, newTicket, userId);
 
                 return RedirectToAction(nameof(Details), new { id = model.Ticket?.Id });
             }
@@ -235,6 +259,8 @@ namespace BugscapeMVC.Controllers
             {
                 try
                 {
+                    Ticket ticket = await _ticketService.GetTicketByIdAsync(ticketComment.TicketId) ?? throw new Exception("Ticket not found.");
+
                     ticketComment.UserId = _userManager.GetUserId(User) ?? throw new Exception("UserId cannot be null.");
                     ticketComment.Created = DateTime.Now;
 
@@ -242,6 +268,22 @@ namespace BugscapeMVC.Controllers
 
                     // add history
                     await _historyService.AddHistoryAsync(ticketComment.TicketId, nameof(TicketComment), ticketComment.UserId);
+
+                    // add notification
+
+                    var recipient = ticket?.OwnerUserId == ticketComment?.UserId ? ticket?.DeveloperUserId : ticket?.OwnerUserId;
+
+                    Notification notification = new()
+                    {
+                        TicketId = ticketComment?.TicketId,
+                        Title = "New Comment",
+                        Message = $"A new comment has been added to ticket: {ticket?.Title}.",
+                        SenderId = ticketComment?.UserId ?? throw new Exception("UserId cannot be null."),
+                        RecipientId = recipient ?? throw new Exception("RecipientId cannot be null."),
+                    };
+
+                    await _notificationService.AddNotificationAsync(notification);
+                    _ = _notificationService.SendEmailNotificationAsync(notification, notification.Title);
                 }
                 catch (Exception)
                 {
@@ -263,6 +305,8 @@ namespace BugscapeMVC.Controllers
             {
                 try
                 {
+                    Ticket ticket = await _ticketService.GetTicketByIdAsync(ticketAttachment.TicketId) ?? throw new Exception("Ticket not found.");
+
                     ticketAttachment.FileData = await _fileService.ConvertFileToByteArrayAsync(ticketAttachment.FormFile);
                     ticketAttachment.FileContentType = ticketAttachment.FormFile.ContentType;
                     ticketAttachment.FileName = ticketAttachment.FormFile.FileName;
@@ -274,6 +318,18 @@ namespace BugscapeMVC.Controllers
 
                     // add history
                     await _historyService.AddHistoryAsync(ticketAttachment.TicketId, nameof(TicketAttachment), ticketAttachment.UserId);
+
+                    // add notification
+                    var recipient = ticketAttachment.UserId == ticket.OwnerUserId ? ticket.DeveloperUserId : ticket.OwnerUserId;
+
+                    Notification notification = new()
+                    {
+                        TicketId = ticketAttachment.TicketId,
+                        Title = "New Attachment",
+                        Message = $"A new attachment has been added to ticket: {ticket.Title}.",
+                        SenderId = ticketAttachment.UserId,
+                        RecipientId = recipient ?? throw new Exception("RecipientId cannot be null."),
+                    };
                 }
                 catch (Exception)
                 {      
@@ -366,6 +422,8 @@ namespace BugscapeMVC.Controllers
             {
                 try
                 {
+                    Project project = await _projectService.GetProjectByIdAsync(ticket.ProjectId, companyId.Value) ?? throw new Exception("Project not found.");
+
                     ticket.Created = DateTime.Now;
                     ticket.OwnerUserId = userId;
                     ticket.TicketStatusId = (await _ticketService.LookupTicketStatusIdAsync(nameof(TicketStatuses.New))).Value;   
@@ -376,7 +434,18 @@ namespace BugscapeMVC.Controllers
                     var newTicket = await _ticketService.GetTicketAsNoTrackingAsync(ticket.Id);
                     await _historyService.AddHistoryAsync(null, newTicket, userId);
 
-                    // todo: add notification
+                    // add notification
+                    Notification notification = new()
+                    {
+                        TicketId = ticket.Id,
+                        Title = "New Ticket",
+                        Message = $"A new ticket for {project.Name} has been created: {ticket.Title}.",
+                        SenderId = userId,
+                        RecipientId = (await _projectService.GetProjectManagerAsync(ticket.ProjectId))?.Id ?? throw new Exception("RecipientId cannot be null."),
+                    };
+
+                    await _notificationService.AddNotificationAsync(notification);
+                    _ = _notificationService.SendEmailNotificationAsync(notification, notification.Title);
                 }
                 catch (Exception)
                 { 

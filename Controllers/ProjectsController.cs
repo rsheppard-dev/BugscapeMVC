@@ -199,6 +199,7 @@ namespace BugscapeMVC.Controllers
                 };
 
                 await _notificationService.AddNotificationAsync(notification);
+                _ = _notificationService.SendEmailNotificationAsync(notification, notification.Title);
 
                 return RedirectToAction(nameof(Details), new { id = model.Project.Id });
             }
@@ -273,11 +274,32 @@ namespace BugscapeMVC.Controllers
                 foreach (string member in memberIds)
                     await _projectService.RemoveUserFromProjectAsync(member, model.Project.Id);
 
-                // Add the selected members to the project
+                var tasks = new List<Task>();
+
+                // add the selected members to the project
                 foreach (string memberId in model.SelectedUsers ?? new List<string>())
                 {
+                    // add user to project
                     await _projectService.AddUserToProjectAsync(memberId, model.Project.Id);
+
+                    // check if the user was already a member
+                    if (!memberIds.Contains(memberId))
+                    {
+                        // send notification to new members
+                        Notification notification = new()
+                        {
+                            Title = "Project Assignment",
+                            Message = $"You have been assigned to the project {model.Project.Name}.",
+                            SenderId = _userManager.GetUserId(User) ?? throw new Exception("User ID not valid."),
+                            RecipientId = memberId,
+                        };
+
+                        tasks.Add(_notificationService.AddNotificationAsync(notification));
+                        _ = _notificationService.SendEmailNotificationAsync(notification, notification.Title);
+                    }
                 }
+
+                await Task.WhenAll(tasks);
 
                 return RedirectToAction("Details", new { id = model.Project.Id });
             }
@@ -354,6 +376,18 @@ namespace BugscapeMVC.Controllers
                     if (!string.IsNullOrEmpty(model.PmId))
                     {
                         await _projectService.AddProjectManagerAsync(model.PmId, model.Project.Id);
+
+                        // send notification to PM
+                        Notification notification = new()
+                        {
+                            Title = "Project Assignment",
+                            Message = $"You have been assigned as the Project Manager for {model.Project.Name}.",
+                            SenderId = _userManager.GetUserId(User) ?? throw new Exception("User ID not valid."),
+                            RecipientId = model.PmId,
+                        };
+
+                        await _notificationService.AddNotificationAsync(notification);
+                        _ = _notificationService.SendEmailNotificationAsync(notification, notification.Title);
                     }
 
                     return RedirectToAction("MyProjects");

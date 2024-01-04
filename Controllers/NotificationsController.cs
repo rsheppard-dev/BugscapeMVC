@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using BugscapeMVC.Data;
 using BugscapeMVC.Models;
 using BugscapeMVC.Services.Interfaces;
+using Microsoft.AspNetCore.Identity;
 
 namespace BugscapeMVC.Controllers
 {
@@ -15,14 +16,17 @@ namespace BugscapeMVC.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly INotificationService _notificationService;
+        private readonly UserManager<AppUser> _userManager;
 
         public NotificationsController(
             ApplicationDbContext context,
+            UserManager<AppUser> userManager,
             INotificationService notificationService
         )
         {
             _context = context;
             _notificationService = notificationService;
+            _userManager = userManager;
         }
 
         // GET: Notifications
@@ -35,25 +39,18 @@ namespace BugscapeMVC.Controllers
         // GET: Notifications/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Notifications == null)
+            if (id is null ) return NotFound();
+
+            var notification = await _notificationService.GetNotificationByIdAsync(id.Value);
+
+            if (notification is null) return NotFound();
+
+            // check if the current user is the recipient of the notification
+            if (notification.RecipientId == _userManager.GetUserId(User))
             {
-                return NotFound();
+                notification.Viewed = true;
+                await _notificationService.UpdateNotificationAsync(notification);
             }
-
-            var notification = await _context.Notifications
-                .Include(n => n.Recipient)
-                .Include(n => n.Sender)
-                .Include(n => n.Ticket)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (notification == null)
-            {
-                return NotFound();
-            }
-
-            notification.Viewed = true;
-
-            _context.Update(notification);
-            await _context.SaveChangesAsync();
 
 
             return View(notification);
@@ -69,7 +66,7 @@ namespace BugscapeMVC.Controllers
         }
 
         // POST: Notifications/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // To protect from over-posting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]

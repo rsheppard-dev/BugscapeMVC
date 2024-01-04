@@ -237,6 +237,7 @@ namespace BugscapeMVC.Controllers
                     };
 
                     await _notificationService.AddNotificationAsync(notification);
+                    _ = _notificationService.SendEmailNotificationAsync(notification, notification.Title);
 
                     return RedirectToPage("/Account/Login", new { area = "Identity" });
                 }

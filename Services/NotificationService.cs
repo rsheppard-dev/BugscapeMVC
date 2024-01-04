@@ -32,6 +32,17 @@ namespace BugscapeMVC.Services
             }
         }
 
+        public async Task<Notification?> GetNotificationByIdAsync(int id)
+        {
+            var notification = await _context.Notifications
+                .Include(n => n.Recipient)
+                .Include(n => n.Sender)
+                .Include(n => n.Ticket)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            return notification;
+        }
+
         public async Task<List<Notification>> GetReceivedNotificationsAsync(string userId)
         {
             try
@@ -122,6 +133,21 @@ namespace BugscapeMVC.Services
             }
             catch (Exception)
             {          
+                throw;
+            }
+        }
+
+        public async Task<bool> UpdateNotificationAsync(Notification notification)
+        {
+            try
+            {
+                _context.Update(notification);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;                
                 throw;
             }
         }
