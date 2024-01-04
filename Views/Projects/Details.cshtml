@@ -237,7 +237,7 @@
 
     <section aria-label="Project Members" class="col-span-12 lg:col-span-6 xl:col-span-5 shadow-sm rounded-md bg-white px-6 py-3 flex flex-col">
         @{
-            ViewBag.Title = "Project Members";
+            ViewBag.SectionTitle = "Project Members";
             ViewBag.ProjectId = Model.Id;
         }
         <partial name="_TeamMembersPartial" model="@projectMembers" />

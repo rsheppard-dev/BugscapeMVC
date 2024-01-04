@@ -22,10 +22,8 @@
             </button>
 
             <div class="flex flex-col items-center gap-4">
-                <div>
-                    <img data-image-output class="h-40 w-40 object-cover rounded-full" src="@logoSource"
-                        alt="@Model?.Name">
-                </div>
+                <img data-image-output class="h-40 w-40 object-contain" src="@logoSource"
+                    alt="@Model?.Name">
 
                 <div class="flex items-center flex-wrap justify-center gap-2">
                     <label asp-for="LogoFormFile" class="flex gap-1 items-center px-4 py-2 rounded-md cursor-pointer bg-info hover:bg-opacity-80 transition-opacity">

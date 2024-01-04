@@ -63,14 +63,14 @@
                                         string firstCharacter = company.Name[0].ToString().ToUpper();
 
                                         <div
-                                            class="rounded-full bg-info h-6 w-6 flex items-center justify-center font-lato font-bold text-white">
+                                            class="rounded-full bg-info h-8 w-8 flex items-center justify-center font-lato font-bold text-white">
                                             @firstCharacter
                                         </div>
                                     }
                                 }
                                 else
                                 {
-                                    <img class="h-6 w-6"
+                                    <img class="h-8 w-8"
                                         src="@FileService.ConvertByteArrayToFile(company.LogoFileData, company.LogoContentType)"
                                         alt="@company.Name">
                                 }
