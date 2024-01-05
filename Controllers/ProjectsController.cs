@@ -274,8 +274,6 @@ namespace BugscapeMVC.Controllers
                 foreach (string member in memberIds)
                     await _projectService.RemoveUserFromProjectAsync(member, model.Project.Id);
 
-                var tasks = new List<Task>();
-
                 // add the selected members to the project
                 foreach (string memberId in model.SelectedUsers ?? new List<string>())
                 {
@@ -294,12 +292,10 @@ namespace BugscapeMVC.Controllers
                             RecipientId = memberId,
                         };
 
-                        tasks.Add(_notificationService.AddNotificationAsync(notification));
-                        _ = _notificationService.SendEmailNotificationAsync(notification, notification.Title);
+                        await _notificationService.AddNotificationAsync(notification);
+                        // _ = _notificationService.SendEmailNotificationAsync(notification, notification.Title);
                     }
                 }
-
-                await Task.WhenAll(tasks);
 
                 return RedirectToAction("Details", new { id = model.Project.Id });
             }

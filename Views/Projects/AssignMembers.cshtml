@@ -10,7 +10,7 @@
 
 <p class="font-lato mb-4 text-zinc-700">Assign team members to join this project.</p>
 
-<form asp-action="AssignMembers" method="post">
+<form data-form asp-action="AssignMembers" method="post">
     <input type="hidden" asp-for="Project.Id">
     <input type="hidden" asp-for="Project.Name">
     <h3 class="font-rockwell font-semibold mb-4 text-lg text-dark">Assign Developers</h3>
@@ -70,8 +70,9 @@
     </div>
 
     <div class="flex justify-end">
-        <button type="submit"
-            class="px-4 py-2 text-sm rounded-md cursor-pointer bg-success font-lato hover:bg-opacity-80 transition-opacity">Update Team</button>
+        <button type="submit" class="px-4 py-2 text-sm rounded-md bg-success font-lato enabled:hover:bg-opacity-80 disabled:bg-opacity-30 transition-opacity">
+            Update Team
+        </button>
     </div>
 </form>
 
