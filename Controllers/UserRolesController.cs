@@ -4,12 +4,13 @@ using BugscapeMVC.Models.Enums;
 using BugscapeMVC.Models.ViewModels;
 using BugscapeMVC.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BugscapeMVC.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = nameof(Roles.Admin))]
     public class UserRolesController : Controller
     {
         private readonly IRoleService _roleService;
@@ -30,6 +31,7 @@ namespace BugscapeMVC.Controllers
             if (companyId == 0) return View(model);
 
             List<AppUser> users = await _companyInfoService.GetAllMembersAsync(companyId);
+            List<IdentityRole> roles = await _roleService.GetRolesAsync();
 
             foreach (AppUser user in users)
             {
@@ -38,7 +40,7 @@ namespace BugscapeMVC.Controllers
                 ManageUserRolesViewModel viewModel = new()
                 {
                     AppUser = user,
-                    Roles = new MultiSelectList(await _roleService.GetRolesAsync(), "Name", "Name", selected),
+                    Roles = new MultiSelectList(roles, "Name", "Name", selected),
                 };
 
                 model.Add(viewModel);

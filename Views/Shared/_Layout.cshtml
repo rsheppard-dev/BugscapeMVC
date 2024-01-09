@@ -236,14 +236,37 @@
                             <span>Notifications</span>
                         </a>
 
-                        <div class="flex gap-4 items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" aria-hidden width="24" viewBox="0 0 30 28.5" class="fill-light">
-                                <path id="Icon_material-star" data-name="Icon material-star"
-                                    d="M18,25.905,27.27,31.5,24.81,20.955,33,13.86l-10.785-.915L18,3l-4.215,9.945L3,13.86l8.19,7.1L8.73,31.5Z"
-                                    transform="translate(-3 -3)" />
-                            </svg>
-                            <span>Admin</span>
-                        </div>
+                        @if (User.IsInRole(nameof(Roles.Admin)))
+                        {
+                            <div class="dropdown space-y-4">
+                                <div class="trigger cursor-pointer flex items-center justify-between group">
+                                    <div class="flex items-center gap-4">
+                                        <svg xmlns="http://www.w3.org/2000/svg" aria-hidden width="24" viewBox="0 0 30 28.5" class="fill-light">
+                                            <path id="Icon_material-star" data-name="Icon material-star"
+                                                d="M18,25.905,27.27,31.5,24.81,20.955,33,13.86l-10.785-.915L18,3l-4.215,9.945L3,13.86l8.19,7.1L8.73,31.5Z"
+                                                transform="translate(-3 -3)" />
+                                        </svg>
+                                        <span>Admin</span>
+                                    </div>
+
+                                    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden viewBox="0 0 20 20"
+                                        class="switch fill-light h-4 w-4 transition-transform group-hover:scale-125">
+                                        <path id="Icon_awesome-plus" data-name="Icon awesome-plus"
+                                            d="M18.571,10.107H12.143V3.679A1.429,1.429,0,0,0,10.714,2.25H9.286A1.429,1.429,0,0,0,7.857,3.679v6.429H1.429A1.429,1.429,0,0,0,0,11.536v1.429a1.429,1.429,0,0,0,1.429,1.429H7.857v6.429A1.429,1.429,0,0,0,9.286,22.25h1.429a1.429,1.429,0,0,0,1.429-1.429V14.393h6.429A1.429,1.429,0,0,0,20,12.964V11.536A1.429,1.429,0,0,0,18.571,10.107Z"
+                                            transform="translate(0 -2.25)" />
+                                    </svg>
+                                </div>
+
+                                <div class="content gap-10">
+                                    <div class="flex bg-light w-1"></div>
+                                    <div class="flex flex-col gap-4 font-normal text-xs">
+                                        <a asp-controller="Invites" asp-action="Create">Invite Member</a>
+                                        <a asp-controller="Companies" asp-action="Edit" asp-route-id="@company?.Id">Update Company</a>
+                                        <a asp-controller="UserRoles" asp-action="ManageUserRoles">Manage User Roles</a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
 
                         <a asp-area="Identity" asp-page="/Account/Manage/Index" class="flex gap-4 items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" aria-hidden width="24" viewBox="0 0 30 30.842" class="fill-light">

@@ -127,5 +127,5 @@
 
 @if (Model.TotalPages > 1)
 {
-    @await Html.PartialAsync("~/Views/Tickets/_TicketsPaginationPartial.cshtml", Model);
+    <partial name="~/Views/Tickets/_TicketsPaginationPartial.cshtml" model="@Model" />
 }

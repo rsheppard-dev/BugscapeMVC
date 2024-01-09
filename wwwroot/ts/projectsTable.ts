@@ -28,7 +28,7 @@ class ProjectsTable {
     this.projects = projects ?? [],
     this.container = container ?? document.querySelector('[data-container="projects"]') as HTMLElement,
     this.page = page ?? 1,
-    this.limit = limit ?? 10,
+    this.limit = limit ?? 5,
     this.sortBy = sortBy ?? 'name',
     this.order = order ?? 'asc'
   }

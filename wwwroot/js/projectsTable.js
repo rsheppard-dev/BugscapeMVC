@@ -40,7 +40,7 @@ var ProjectsTable = /** @class */ (function () {
         this.projects = projects !== null && projects !== void 0 ? projects : [],
             this.container = container !== null && container !== void 0 ? container : document.querySelector('[data-container="projects"]'),
             this.page = page !== null && page !== void 0 ? page : 1,
-            this.limit = limit !== null && limit !== void 0 ? limit : 10,
+            this.limit = limit !== null && limit !== void 0 ? limit : 5,
             this.sortBy = sortBy !== null && sortBy !== void 0 ? sortBy : 'name',
             this.order = order !== null && order !== void 0 ? order : 'asc';
     }

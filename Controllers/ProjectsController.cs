@@ -354,6 +354,14 @@ namespace BugscapeMVC.Controllers
 
                 if (companyId is null) return RedirectToAction("Create");
 
+                if (!ModelState.IsValid)
+                {
+                    model.PMList = new SelectList(await _roleService.GetUsersInRoleAsync(Roles.Project_Manager.ToString(), companyId.Value), "Id", "FullName");
+                    model.PriorityList = new SelectList(await _lookupService.GetProjectPrioritiesAsync(), "Id", "Name");
+    
+                    return View(model);
+                }
+
                 try
                 {
                     if (model.Project?.ImageFormFile is not null)
@@ -386,7 +394,9 @@ namespace BugscapeMVC.Controllers
                         _ = _notificationService.SendEmailNotificationAsync(notification, notification.Title);
                     }
 
-                    return RedirectToAction("MyProjects");
+                    return User.IsInRole(nameof(Roles.Admin)) ?
+                        RedirectToAction("Index") :
+                        RedirectToAction("MyProjects");
                 }
                 catch (Exception)
                 { 
@@ -448,12 +458,9 @@ namespace BugscapeMVC.Controllers
                         await _projectService.AddProjectManagerAsync(model.PmId, model.Project.Id);
                     }
 
-                    if (User.IsInRole(nameof(Roles.Admin)))
-                    {
-                        return RedirectToAction("Index");
-                    }
-                    
-                    return RedirectToAction("MyProjects");
+                    return User.IsInRole(nameof(Roles.Admin)) ?
+                        RedirectToAction("Index") :
+                        RedirectToAction("MyProjects");
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -588,7 +595,7 @@ namespace BugscapeMVC.Controllers
 
             projects = Sort(projects, sortBy, order);
 
-            return PartialView("_ProjectsTablePartial", new PaginatedList<Project>(projects, page ?? 1, limit ?? 10));
+            return PartialView("_ProjectsTablePartial", new PaginatedList<Project>(projects, page ?? 1, limit ?? 5));
         }
 
         private static List<Project> Sort(List<Project> projects, string sortBy, string order = "asc")

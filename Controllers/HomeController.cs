@@ -45,12 +45,14 @@ public class HomeController : Controller
         
         model.Projects = (await _companyInfoService.GetAllProjectsAsync(companyId.Value))
             .Where(project => !project.Archived)
-            .ToList();     
+            .ToList();
+
         model.Tickets = model.Projects
             .SelectMany(project => project.Tickets)
             .Where(ticket => !ticket.Archived)
             .OrderBy(ticket => ticket.Title)
             .ToList();
+            
         model.Members = model.Company.Members.ToList();
 
         return View(model);

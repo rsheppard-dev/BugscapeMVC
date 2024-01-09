@@ -68,14 +68,16 @@
                 }
                 else
                 {
-                    @if (Project_Manager?.AvatarFileData is null || Project_Manager?.AvatarContentType is null)
-                    {
-                        <img class="h-8 w-8 object-cover rounded-full" src="~/images/default-avatar.png" alt="@Project_Manager?.FullName">
-                    }
-                    else
-                    {
-                        <img class="h-8 w-8 object-cover rounded-full" src="@FileService.ConvertByteArrayToFile(Project_Manager.AvatarFileData, Project_Manager.AvatarContentType)" alt="@Project_Manager?.FullName">
-                    }
+                    <div class="h-8 w-8 flex-shrink-0">
+                        @if (Project_Manager?.AvatarFileData is null || Project_Manager?.AvatarContentType is null)
+                        {
+                            <img class="object-cover rounded-full" src="~/images/default-avatar.png" alt="@Project_Manager?.FullName">
+                        }
+                        else
+                        {
+                            <img class="object-cover rounded-full" src="@FileService.ConvertByteArrayToFile(Project_Manager.AvatarFileData, Project_Manager.AvatarContentType)" alt="@Project_Manager?.FullName">
+                        }
+                    </div>
                 }
             </td>
             <td class="px-6 py-4">
@@ -118,5 +120,5 @@
 
 @if (Model.TotalPages > 1)
 {
-   @await Html.PartialAsync("~/Views/Projects/_ProjectsPaginationPartial.cshtml", Model);
+   <partial name="~/Views/Projects/_ProjectsPaginationPartial.cshtml" model="@Model" />
 }

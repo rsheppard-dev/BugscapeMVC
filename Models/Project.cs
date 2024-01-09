@@ -26,6 +26,7 @@ namespace BugscapeMVC.Models
         public DateTimeOffset EndDate { get; set; }
 
         [Display(Name = "Priority")]
+        [Required (ErrorMessage = "Please select a priority")]
         public int? ProjectPriorityId { get; set; }
 
         [NotMapped]
