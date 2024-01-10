@@ -20,6 +20,9 @@ namespace BugscapeMVC.Models
         [DataType(DataType.DateTime)]
         public DateTimeOffset? Updated { get; set; }
 
+        [DataType(DataType.Date)]
+        public DateTimeOffset? ResolvedDate { get; set; }
+
         [DefaultValue(false)]
         public bool Archived { get; set; }
 

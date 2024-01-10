@@ -5,7 +5,7 @@ namespace BugscapeMVC.Models.ViewModels
     public class ManageUserRolesViewModel
     {
         public required AppUser AppUser { get; set; }
-        public required MultiSelectList Roles { get; set; }
-        public List<string>? SelectedRoles { get; set; }
+        public required SelectList Roles { get; set; }
+        public string? SelectedRole { get; set; }
     }
 }

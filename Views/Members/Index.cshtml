@@ -136,7 +136,7 @@
                             <span class="font-lato text-zinc-700">@member?.FullName</span>
                         </th>
                     <td class="px-6 py-4">
-                        <span class="bg-dark text-white uppercase px-2 py-1 rounded-md text-xs font-bold">@((RoleService.GetUserRolesAsync(member!)).Result.FirstOrDefault()?.Replace("_", " "))</span>
+                        <span class="bg-dark text-white whitespace-nowrap uppercase px-2 py-1 rounded-md text-xs font-bold">@((RoleService.GetUserRolesAsync(member!)).Result.FirstOrDefault()?.Replace("_", " "))</span>
                     </td>
                     <td class="px-6 py-4">
                         <a href="mailto:@member?.Email" class="font-lato underline text-zinc-700">@member?.Email</a>

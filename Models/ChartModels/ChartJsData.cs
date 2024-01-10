@@ -9,6 +9,6 @@ namespace BugscapeMVC.Models.ChartModels
     {
         public DateTime Date { get; set; }
         public int TicketsSubmitted { get; set; }
-        public int TicketsUpdated { get; set; }
+        public int TicketsResolved { get; set; }
     }
 }

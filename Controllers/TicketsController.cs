@@ -513,6 +513,11 @@ namespace BugscapeMVC.Controllers
 
                 try
                 {
+                    if (ticket.TicketStatusId == (await _ticketService.LookupTicketStatusIdAsync(nameof(TicketStatuses.Resolved))).Value)
+                    {
+                        ticket.ResolvedDate = DateTime.Now;
+                    }
+                    
                     await _ticketService.UpdateTicketAsync(ticket);
                 }
                 catch (DbUpdateConcurrencyException)

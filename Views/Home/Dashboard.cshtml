@@ -240,7 +240,7 @@
         const today = new Date();
         const days = [];
         const dataSubmitted = [];
-        const dataUpdated = [];
+        const dataResolved = [];
 
         // Generate data for the last 30 days, starting from today and going backward
         for (let i = 29; i >= 0; i--) {
@@ -259,14 +259,14 @@
             // If data for this date exists, push it to the dataSubmitted array
             if (dataForThisDate) {
                 dataSubmitted.push(dataForThisDate.TicketsSubmitted);
-                dataUpdated.push(dataForThisDate.TicketsUpdated);
+                dataResolved.push(dataForThisDate.TicketsResolved);
             } else {
                 dataSubmitted.push(0);
-                dataUpdated.push(0);
+                dataResolved.push(0);
             }
         }
 
-        console.log(dataSubmitted);
+        console.log(dataResolved)
 
         new Chart(ticketsResolved, {
             type: 'line',
@@ -280,8 +280,8 @@
                         tension: 0.1
                     },
                     {
-                        label: 'Tickets Updated',
-                        data: dataUpdated,
+                        label: 'Tickets Resolved',
+                        data: dataResolved,
                         borderColor: '#0AD69F',
                         tension: 0.1
                     }

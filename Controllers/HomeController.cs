@@ -57,18 +57,40 @@ public class HomeController : Controller
         // chart data
         DateTime oneMonthAgo = DateTime.Now.AddMonths(-1);
 
-        var ticketsSubmitted = model.Tickets
+        ChartJsItem[] ticketsSubmitted = model.Tickets
             .Where(t => t.Created >= oneMonthAgo)
             .GroupBy(t => t.Created.Date)
-            .Select(g => new ChartJsItem { 
-                Date = g.Key,
-                TicketsSubmitted = g.Count(),
-                TicketsUpdated = g.Count(t => t.Updated >= oneMonthAgo)
+            .Select(g => new ChartJsItem 
+            { 
+                Date = g.Key, 
+                TicketsSubmitted = g.Count()
             })
             .OrderBy(i => i.Date)
             .ToArray();
 
-        model.ChartData = new ChartJsData { Data = ticketsSubmitted };
+        ChartJsItem[] ticketsResolved = model.Tickets
+            .Where(t => t.ResolvedDate != null && t.ResolvedDate.Value.Date >= oneMonthAgo)
+            .GroupBy(t => t.ResolvedDate?.Date)
+            .Select(g => new ChartJsItem 
+            { 
+                Date = g.Key ?? DateTime.MinValue, 
+                TicketsResolved = g.Count()
+            })
+            .OrderBy(i => i.Date)
+            .ToArray();
+
+        ChartJsItem[] chartData = ticketsSubmitted.Concat(ticketsResolved)
+            .GroupBy(i => i.Date)
+            .Select(g => new ChartJsItem 
+            { 
+                Date = g.Key, 
+                TicketsSubmitted = g.Sum(i => i.TicketsSubmitted), 
+                TicketsResolved = g.Sum(i => i.TicketsResolved)
+            })
+            .OrderBy(i => i.Date)
+            .ToArray();
+
+        model.ChartData = new ChartJsData { Data = chartData };
 
         return View(model);
     }
