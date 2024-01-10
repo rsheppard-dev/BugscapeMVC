@@ -45,6 +45,7 @@ public class HomeController : Controller
         
         model.Projects = (await _companyInfoService.GetAllProjectsAsync(companyId.Value))
             .Where(project => !project.Archived)
+            .OrderBy(project => project.Name)
             .ToList();     
         model.Tickets = model.Projects
             .SelectMany(project => project.Tickets)
@@ -52,6 +53,22 @@ public class HomeController : Controller
             .OrderBy(ticket => ticket.Title)
             .ToList();
         model.Members = model.Company.Members.ToList();
+
+        // chart data
+        DateTime oneMonthAgo = DateTime.Now.AddMonths(-1);
+
+        var ticketsSubmitted = model.Tickets
+            .Where(t => t.Created >= oneMonthAgo)
+            .GroupBy(t => t.Created.Date)
+            .Select(g => new ChartJsItem { 
+                Date = g.Key,
+                TicketsSubmitted = g.Count(),
+                TicketsUpdated = g.Count(t => t.Updated >= oneMonthAgo)
+            })
+            .OrderBy(i => i.Date)
+            .ToArray();
+
+        model.ChartData = new ChartJsData { Data = ticketsSubmitted };
 
         return View(model);
     }

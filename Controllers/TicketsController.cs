@@ -513,7 +513,6 @@ namespace BugscapeMVC.Controllers
 
                 try
                 {
-                    ticket.Updated = DateTimeOffset.Now;
                     await _ticketService.UpdateTicketAsync(ticket);
                 }
                 catch (DbUpdateConcurrencyException)

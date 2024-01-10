@@ -10,6 +10,8 @@
 @{
     ViewData["Title"] = "Dashboard";
     AppUser? user = await UserManager.GetUserAsync(User);
+
+    var ticketsData = Newtonsoft.Json.JsonConvert.SerializeObject(Model.ChartData?.Data);
 }
 
 <section class="grid grid-cols-12 justify-between gap-4 mb-6">
@@ -234,10 +236,11 @@
             },
         });
 
+        const ticketsData = @Html.Raw(ticketsData);
         const today = new Date();
         const days = [];
         const dataSubmitted = [];
-        const dataResolved = [];
+        const dataUpdated = [];
 
         // Generate data for the last 30 days, starting from today and going backward
         for (let i = 29; i >= 0; i--) {
@@ -250,10 +253,20 @@
             // Push the formatted date to the labels array
             days.push(formattedDate);
 
-            // Generate some example data for Tickets Submitted and Tickets Resolved
-            dataSubmitted.push(Math.floor(Math.random() * 100));
-            dataResolved.push(Math.floor(Math.random() * 100));
+            // Find the data for this date
+            const dataForThisDate = ticketsData.find(d => new Date(d.Date).toDateString() === date.toDateString());
+           
+            // If data for this date exists, push it to the dataSubmitted array
+            if (dataForThisDate) {
+                dataSubmitted.push(dataForThisDate.TicketsSubmitted);
+                dataUpdated.push(dataForThisDate.TicketsUpdated);
+            } else {
+                dataSubmitted.push(0);
+                dataUpdated.push(0);
+            }
         }
+
+        console.log(dataSubmitted);
 
         new Chart(ticketsResolved, {
             type: 'line',
@@ -267,8 +280,8 @@
                         tension: 0.1
                     },
                     {
-                        label: 'Tickets Resolved',
-                        data: dataResolved,
+                        label: 'Tickets Updated',
+                        data: dataUpdated,
                         borderColor: '#0AD69F',
                         tension: 0.1
                     }
@@ -310,7 +323,7 @@
                         title: {
                             display: true,
                             text: 'Value'
-                        }
+                        },
                     }
                 }
             }

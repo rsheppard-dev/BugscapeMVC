@@ -1,3 +1,5 @@
+using BugscapeMVC.Models.ChartModels;
+
 namespace BugscapeMVC.Models.ViewModels
 {
     public class DashboardViewModel
@@ -6,5 +8,6 @@ namespace BugscapeMVC.Models.ViewModels
         public List<Project>? Projects { get; set; }
         public List<Ticket>? Tickets { get; set; }
         public List<AppUser>? Members { get; set; }
+        public ChartJsData? ChartData { get; set; }
     }
 }

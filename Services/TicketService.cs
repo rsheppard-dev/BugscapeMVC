@@ -652,6 +652,7 @@ namespace BugscapeMVC.Services
         {
             try
             {
+                ticket.Updated = DateTimeOffset.Now;
                 _context.Update(ticket);
                 await _context.SaveChangesAsync();
             }
