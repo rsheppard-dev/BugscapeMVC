@@ -199,7 +199,12 @@ namespace BugscapeMVC.Controllers
                 };
 
                 await _notificationService.AddNotificationAsync(notification);
-                _ = _notificationService.SendEmailNotificationAsync(notification, notification.Title);
+                
+                if (!User.IsInRole(nameof(Roles.Demo_User)))
+                {
+                    _ = _notificationService.SendEmailNotificationAsync(notification, notification.Title);
+
+                }
 
                 return RedirectToAction(nameof(Details), new { id = model.Project.Id });
             }
@@ -293,7 +298,12 @@ namespace BugscapeMVC.Controllers
                         };
 
                         await _notificationService.AddNotificationAsync(notification);
-                        // _ = _notificationService.SendEmailNotificationAsync(notification, notification.Title);
+                        
+                        if (!User.IsInRole(nameof(Roles.Demo_User)))
+                        {
+                            _ = _notificationService.SendEmailNotificationAsync(notification, notification.Title);
+
+                        }
                     }
                 }
 
@@ -391,7 +401,11 @@ namespace BugscapeMVC.Controllers
                         };
 
                         await _notificationService.AddNotificationAsync(notification);
-                        _ = _notificationService.SendEmailNotificationAsync(notification, notification.Title);
+                        if (!User.IsInRole(nameof(Roles.Demo_User)))
+                        {
+                            _ = _notificationService.SendEmailNotificationAsync(notification, notification.Title);
+
+                        }
                     }
 
                     return User.IsInRole(nameof(Roles.Admin)) ?

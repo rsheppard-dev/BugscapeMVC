@@ -93,9 +93,7 @@ namespace BugscapeMVC.Controllers
 
             IEnumerable<string> roles = await _roleService.GetUserRolesAsync(user);
 
-            string? selectedUserRole = member.SelectedRole;
-
-            if (member.SelectedRole is not null && member.SelectedRole.Any())
+            if (member.SelectedRole is not null)
             {
                 await _roleService.RemoveUserFromRolesAsync(user, roles);
 

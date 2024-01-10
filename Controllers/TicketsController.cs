@@ -216,7 +216,12 @@ namespace BugscapeMVC.Controllers
                     };
 
                     await _notificationService.AddNotificationAsync(notification);
-                    _ = _notificationService.SendEmailNotificationAsync(notification, notification.Title);
+                    
+                    if (!User.IsInRole(nameof(Roles.Demo_User)))
+                    {
+                        _ = _notificationService.SendEmailNotificationAsync(notification, notification.Title);
+
+                    }
                 }
                 catch (Exception)
                 {
@@ -283,7 +288,12 @@ namespace BugscapeMVC.Controllers
                     };
 
                     await _notificationService.AddNotificationAsync(notification);
-                    _ = _notificationService.SendEmailNotificationAsync(notification, notification.Title);
+                    
+                    if (!User.IsInRole(nameof(Roles.Demo_User)))
+                    {
+                        _ = _notificationService.SendEmailNotificationAsync(notification, notification.Title);
+
+                    }
                 }
                 catch (Exception)
                 {
@@ -445,7 +455,11 @@ namespace BugscapeMVC.Controllers
                     };
 
                     await _notificationService.AddNotificationAsync(notification);
-                    _ = _notificationService.SendEmailNotificationAsync(notification, notification.Title);
+                    if (!User.IsInRole(nameof(Roles.Demo_User)))
+                    {
+                        _ = _notificationService.SendEmailNotificationAsync(notification, notification.Title);
+
+                    }
                 }
                 catch (Exception)
                 { 
