@@ -595,7 +595,7 @@ namespace BugscapeMVC.Controllers
 
             projects = Sort(projects, sortBy, order);
 
-            return PartialView("_ProjectsTablePartial", new PaginatedList<Project>(projects, page ?? 1, limit ?? 5));
+            return PartialView("_ProjectsTablePartial", new PaginatedList<Project>(projects, page ?? 1, limit ?? 4));
         }
 
         private static List<Project> Sort(List<Project> projects, string sortBy, string order = "asc")

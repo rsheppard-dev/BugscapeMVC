@@ -102,9 +102,7 @@
         }
         else
         {
-            <div data-container="projects"
-                class="grow relative overflow-x-auto rounded-t-lg scrollbar-thin scrollbar-thumb-light scrollbar-track-white">
-                <partial name="~/Views/Projects/_ProjectsTablePartial.cshtml" model="(new PaginatedList<Project>(Model.Projects ?? new List<Project>(), 1, 5))" />
+            <div data-container="projects" class="grow relative overflow-x-auto rounded-t-lg scrollbar-thin scrollbar-thumb-light scrollbar-track-white">
             </div>
         }
 
@@ -148,9 +146,7 @@
         }
         else
         {
-            <div data-container="tickets"
-                class="grow relative overflow-x-auto rounded-t-lg scrollbar-thin scrollbar-thumb-light scrollbar-track-white">
-                <partial name="~/Views/Tickets/_TicketsTablePartial.cshtml" model="@(new PaginatedList<Ticket>(Model.Tickets ?? new List<Ticket>(), 1, 10))" />
+            <div data-container="tickets" class="grow relative overflow-x-auto rounded-t-lg scrollbar-thin scrollbar-thumb-light scrollbar-track-white">
             </div>
         }
 

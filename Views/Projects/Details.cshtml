@@ -175,63 +175,65 @@
         }
     </section>
 
-    <section aria-label="Project Activity" class="col-span-12 lg:col-span-6 xl:col-span-7 shadow-sm rounded-md bg-white px-6 py-3 flex flex-col">
-        <h2 class="font-rockwell text-dark text-xl font-bold mb-6">Project Activity</h2>
+    <section aria-label="Project Activity" class="col-span-12 lg:col-span-6 xl:col-span-7 shadow-sm rounded-md bg-white py-3 flex flex-col">
+        <h2 class="font-rockwell text-dark text-xl font-bold mb-6 px-6">Project Activity</h2>
 
         @if (ticketHistories.Count == 0)
         {
-            <p class="font-lato">There is no activity to show.</p>
+            <p class="font-lato px-6">There is no activity to show.</p>
         }
         else
         {
-            <ol class="relative border-s border-light">                  
-                @foreach (TicketHistory history in ticketHistories.OrderByDescending(h => h.Created))
-                {
-                    <li class="mb-10 ms-6">            
-                        <a asp-action="Details" asp-controller="Members" asp-route-id="@history.User?.Id" class="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -start-3 ring-4 ring-mid">
-                            @if (history.User?.AvatarFileData is null || history.User?.AvatarContentType is null)
-                            {
-                                <img class="rounded-full shadow-lg" src="~/images/default-avatar.png"
-                                    alt="@history.User?.FullName">
-                            }
-                            else
-                            {
-                                <img class="rounded-full shadow-lg"
-                                    src="@FileService.ConvertByteArrayToFile(history.User.AvatarFileData, history.User.AvatarContentType)"
-                                    alt="@history.User?.FullName">
-                            }
-                        </a>
-                        <div class="justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex">
-                            <time class="mb-1 text-xs font-normal text-gray-400 sm:order-last sm:mb-0">@history.Created.Humanize()</time>
-                            <div class="space-y-2">
-                                <a asp-action="Details" asp-controller="Tickets" asp-route-id="@history.TicketId" class="font-lato underline text-sm font-bold mb-2">@history.Ticket?.Title</a>
-                                @if (!string.IsNullOrEmpty(history.Description) && history.Description.Contains("New ticket created"))
+            <div class="pl-6 scrollbar-thin scrollbar-thumb-light scrollbar-track-white overflow-y-auto max-h-[400px]">
+                <ol class="relative border-s pr-6 border-light">                  
+                    @foreach (TicketHistory history in ticketHistories.OrderByDescending(h => h.Created))
+                    {
+                        <li class="mb-10 ms-6">            
+                            <a asp-action="Details" asp-controller="Members" asp-route-id="@history.User?.Id" class="absolute flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full -start-3 ring-4 ring-mid">
+                                @if (history.User?.AvatarFileData is null || history.User?.AvatarContentType is null)
                                 {
-                                    <p class="text-sm font-lato">A new ticket was added by <a asp-action="Details" asp-controller="Members" asp-route-id="@history.User?.Id" class="underline">@history.User?.FullName</a>.</p>
-                                }
-                                else if (history.Property.Equals("TicketComment"))
-                                {
-                                    <p class="text-sm font-lato">New comment added by <a asp-action="Details" asp-controller="Members" asp-route-id="@history.User?.Id" class="underline">@history.User?.FullName</a>.</p>
-                                    <div class="p-3 text-xs italic font-normal text-gray-500 border border-gray-200 rounded-lg bg-gray-50">@history.Description</div>
-                                }
-                                else if (history.Property.Equals("TicketAttachment"))
-                                {
-                                    <p class="text-sm font-lato">A ticket attachment was added by <a asp-action="Details" asp-controller="Members" asp-route-id="@history.User?.Id" class="underline">@history.User?.FullName</a>.</p>
+                                    <img class="rounded-full shadow-lg" src="~/images/default-avatar.png"
+                                        alt="@history.User?.FullName">
                                 }
                                 else
                                 {
-                                    <p class="text-sm font-lato"><b>@history.Property</b> was edited by <a asp-action="Details" asp-controller="Members" asp-route-id="@history.User?.Id" class="underline">@history.User?.FullName</a>.</p>
-                                    @if (history.OldValue != null)
-                                    {
-                                        <p class="text-sm font-lato">Previous @history.Property: <span class="line-through">@Regex.Replace(history.OldValue, "<.*?>", string.Empty).Replace("_", " ")</span></p>
-                                    }
-                                    <p class="text-sm font-lato">Current @history.Property: @Regex.Replace(history.NewValue, "<.*?>", string.Empty).Replace("_", " ")</p>
+                                    <img class="rounded-full shadow-lg"
+                                        src="@FileService.ConvertByteArrayToFile(history.User.AvatarFileData, history.User.AvatarContentType)"
+                                        alt="@history.User?.FullName">
                                 }
+                            </a>
+                            <div class="justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm sm:flex">
+                                <time class="mb-1 text-xs font-normal text-gray-400 sm:order-last sm:mb-0">@history.Created.Humanize()</time>
+                                <div class="space-y-2">
+                                    <a asp-action="Details" asp-controller="Tickets" asp-route-id="@history.TicketId" class="font-lato underline text-sm font-bold mb-2">@history.Ticket?.Title</a>
+                                    @if (!string.IsNullOrEmpty(history.Description) && history.Description.Contains("New ticket created"))
+                                    {
+                                        <p class="text-sm font-lato">A new ticket was added by <a asp-action="Details" asp-controller="Members" asp-route-id="@history.User?.Id" class="underline">@history.User?.FullName</a>.</p>
+                                    }
+                                    else if (history.Property.Equals("TicketComment"))
+                                    {
+                                        <p class="text-sm font-lato">New comment added by <a asp-action="Details" asp-controller="Members" asp-route-id="@history.User?.Id" class="underline">@history.User?.FullName</a>.</p>
+                                        <div class="p-3 text-xs italic font-normal text-gray-500 border border-gray-200 rounded-lg bg-gray-50">@history.Description</div>
+                                    }
+                                    else if (history.Property.Equals("TicketAttachment"))
+                                    {
+                                        <p class="text-sm font-lato">A ticket attachment was added by <a asp-action="Details" asp-controller="Members" asp-route-id="@history.User?.Id" class="underline">@history.User?.FullName</a>.</p>
+                                    }
+                                    else
+                                    {
+                                        <p class="text-sm font-lato"><b>@history.Property</b> was edited by <a asp-action="Details" asp-controller="Members" asp-route-id="@history.User?.Id" class="underline">@history.User?.FullName</a>.</p>
+                                        @if (history.OldValue != null)
+                                        {
+                                            <p class="text-sm font-lato">Previous @history.Property: <span class="line-through">@Regex.Replace(history.OldValue, "<.*?>", string.Empty).Replace("_", " ")</span></p>
+                                        }
+                                        <p class="text-sm font-lato">Current @history.Property: @Regex.Replace(history.NewValue, "<.*?>", string.Empty).Replace("_", " ")</p>
+                                    }
+                                </div>
                             </div>
-                        </div>
-                    </li>
-                }
-            </ol>       
+                        </li>
+                    }
+                </ol>
+            </div>       
         }
     </section>
 
@@ -254,7 +256,6 @@
         {
             <div data-container="tickets"
                 class="relative overflow-x-auto rounded-t-lg scrollbar-thin scrollbar-thumb-light scrollbar-track-white">
-                <partial name="~/Views/Tickets/_TicketsTablePartial.cshtml" model="@(new PaginatedList<Ticket>(Model.Tickets.ToList(), 1, 10))" />
             </div>
         }
 
