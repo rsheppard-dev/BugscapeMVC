@@ -45,7 +45,7 @@
     {
         <div class="flex flex-col gap-1">
             <span class="font-rockwell text-dark text-lg font-semibold">@user.FullName</span>
-            <span class="text-lato text-sm text-zinc-700 block">@((RoleService.GetUserRolesAsync(user)).Result.FirstOrDefault()?.Replace("_", " "))</span>
+            <span class="font-lato font-normal text-sm text-zinc-700">@((RoleService.GetUserRolesAsync(user)).Result.FirstOrDefault()?.Replace("_", " "))</span>
         </div>
     }
 </div>

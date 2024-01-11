@@ -66,14 +66,14 @@
     </div>
 </form>
 
-<section class="grid grid-cols-12 mb-4">
+<section class="mb-4">
 	@if (Model.Count() == 0)
     {
-        <p class="font-lato col-span-12">There are currently no members to show.</p>
+        <p class="font-lato text-zinc-700">There are currently no members to show.</p>
     }
     else
     {        
-    <div class="relative col-span-12 overflow-x-auto rounded-t-lg scrollbar-thin scrollbar-thumb-light scrollbar-track-lightest mb-4">
+    <div class="relative overflow-x-auto rounded-t-lg scrollbar-thin scrollbar-thumb-light scrollbar-track-lightest mb-4">
         <table id="projectTable" class="w-full text-sm text-left text-dark font-lato">
             <thead class="text-xs bg-light uppercase">
                 <tr>
@@ -88,7 +88,7 @@
                             }
                         </a>
                     </th>
-                    <th scope="col" class="px-6 py-3 whitespace-nowrap">
+                    <th scope="col" class="px-6 py-3 whitespace-nowrap hidden lg:table-cell">
                         <a asp-action="ManageUserRoles" asp-controller="UserRoles" asp-all-route-data="@routeValues" asp-route-sortBy="role"  asp-route-order="@GetNewOrder("role")" class="flex items-center gap-2">
                         <span>Current Role</span>
                             @if (ViewBag.SortBy == "role")
@@ -131,15 +131,23 @@
 								{
 									<img class="h-8 w-8 object-cover rounded-full" src="@FileService.ConvertByteArrayToFile(member.AppUser.AvatarFileData, member.AppUser.AvatarContentType)" alt="@member?.AppUser.FullName">
 								}
-								<span class="font-lato text-zinc-700">@member?.AppUser.FullName</span>
+								<div class="flex flex-col gap-1">
+                                <span class="font-lato text-zinc-700">@member?.AppUser.FullName</span>
+                                <dl class="flex flex-col gap-1 lg:hidden">
+                                    <dt class="sr-only">Current Role</dt>
+                                    <dd class="whitespace-nowrap font-lato font-normal text-xs text-zinc-700">@((RoleService.GetUserRolesAsync(member?.AppUser!)).Result.FirstOrDefault()?.Replace("_", " "))</dd>
+                                </dl>
+                            </div>
 							</th>
-							<td class="px-6 py-4">
+							<td class="px-6 py-4 hidden lg:table-cell">
 								<span class="bg-dark text-white whitespace-nowrap uppercase px-2 py-1 rounded-md text-xs font-bold">@((RoleService.GetUserRolesAsync(member!.AppUser)).Result.FirstOrDefault()?.Replace("_", " "))</span>
 							</td>
-							<td class="px-6 py-4 flex items-center gap-2">
-								<select asp-for="@member.SelectedRole" asp-items="@member.Roles">
-								</select>
-								<button type="submit" class="px-4 py-2 text-sm rounded-md bg-success font-lato hover:bg-opacity-80 transition-opacity">Assign Role</button>
+							<td class="px-6 py-4">
+								<div class="flex flex-wrap gap-2 items-center">
+                                    <select asp-for="@member.SelectedRole" asp-items="@member.Roles" class="text-sm grow">
+                                    </select>
+                                    <button type="submit" class="grow px-4 py-2 text-sm rounded-md bg-success font-lato hover:bg-opacity-80 transition-opacity whitespace-nowrap">Assign Role</button>
+                                </div>
 							</td>
 						</tr>
 					</form>

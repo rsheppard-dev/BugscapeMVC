@@ -84,7 +84,7 @@
         </section>
     }
 
-    <section class="col-span-12 lg:col-span-8 rounded-md bg-white px-6 py-3 flex flex-col lg:order-3">
+    <section class="col-span-12 xl:col-span-8 rounded-md bg-white px-6 py-3 flex flex-col lg:order-3">
         <div class="flex justify-between items-center mb-6">
             <h2 class="font-rockwell text-dark text-xl font-bold">Projects</h2>
 
@@ -169,7 +169,7 @@
         </div>
     </section>
 
-    <section class="col-span-12 lg:col-span-4 rounded-md bg-white py-3 flex flex-col lg:order-4">
+    <section class="col-span-12 xl:col-span-4 rounded-md bg-white py-3 flex flex-col lg:order-4">
         @{
             ViewBag.SectionTitle = "Team";
         }
@@ -266,8 +266,6 @@
             }
         }
 
-        console.log(dataResolved)
-
         new Chart(ticketsResolved, {
             type: 'line',
             data: {
@@ -322,7 +320,7 @@
                         display: true,
                         title: {
                             display: true,
-                            text: 'Value'
+                            text: 'Tickets'
                         },
                     }
                 }

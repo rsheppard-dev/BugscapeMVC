@@ -17,7 +17,7 @@
                     </svg>
                 </button>
             </th>
-            <th scope="col">
+            <th scope="col" class="hidden xl:table-cell">
                 <button type="button" data-page="@Model.CurrentPage" data-sort="pm" data-order="@ViewData["SortOrder"]" data-sortable class="px-6 py-3 flex items-center gap-2">
                     <span class="whitespace-no-wrap text-xs uppercase">PM</span>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" title="Order" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3 order">
@@ -25,7 +25,7 @@
                     </svg>
                 </button>
             </th>
-            <th scope="col">
+            <th scope="col" class="hidden 2xl:table-cell">
                 <button type="button" data-page="@Model.CurrentPage" data-sort="enddate" data-order="@ViewData["SortOrder"]" data-sortable class="px-6 py-3 flex items-center gap-2">
                     <span class="whitespace-no-wrap text-xs uppercase">Due</span>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" title="Order" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3 order">
@@ -33,7 +33,7 @@
                     </svg>
                 </button>
             </th>
-            <th scope="col">
+            <th scope="col" class="hidden xl:table-cell">
                 <button type="button" data-page="@Model.CurrentPage" data-sort="priority" data-order="@ViewData["SortOrder"]" data-sortable class="px-6 py-3 flex items-center gap-2">
                     <span class="whitespace-no-wrap text-xs uppercase">priority</span>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" title="Order" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3 order">
@@ -41,8 +41,7 @@
                     </svg>
                 </button>
             </th>
-            <th scope="col" class="px-6 py-3 whitespace-nowrap">
-                Details
+            <th scope="col" class="px-6 py-3 whitespace-nowrap" aria-label="Details">
             </th>
         </tr>
     </thead>
@@ -53,37 +52,39 @@
 
         @foreach (Project project in Model)
         {
-            AppUser? Project_Manager = await ProjectService.GetProjectManagerAsync(project.Id);
+            AppUser? projectManager = await ProjectService.GetProjectManagerAsync(project.Id);
             string rowColor = project.Archived ? "bg-danger bg-opacity-60" : rowNumber % 2 == 0 ? "bg-lightest" : "bg-mid";
             rowNumber++;
         
         <tr class="@rowColor border-b">
-            <th scope="row" class="px-6 py-4 whitespace-nowrap">
-                @project.Name
+            <th scope="row" class="px-6 py-4 w-full">
+                <a asp-action="Details" asp-controller="Projects" asp-route-id="@project.Id" class="font-lato text-zinc-700 hover:underline underline-offset-2">
+                    @project.Name
+                </a>
             </th>
-            <td class="px-6 py-4">
-                @if (Project_Manager is null)
+            <td class="px-6 py-4 hidden xl:table-cell">
+                @if (projectManager is null)
                 {
                     <span class="bg-gray-200 text-dark uppercase px-2 py-1 rounded-md text-xs font-bold">Unassigned</span>
                 }
                 else
                 {
-                    <div class="h-8 w-8 flex-shrink-0">
-                        @if (Project_Manager?.AvatarFileData is null || Project_Manager?.AvatarContentType is null)
+                    <a asp-action="Details" asp-controller="Members" asp-route-id="@projectManager?.Id" class="h-8 w-8 block hover:scale-110 transition-transform" aria-label="PM Profile">
+                        @if (projectManager?.AvatarFileData is null || projectManager?.AvatarContentType is null)
                         {
-                            <img class="object-cover rounded-full" src="~/images/default-avatar.png" alt="@Project_Manager?.FullName">
+                            <img class="object-cover rounded-full" src="~/images/default-avatar.png" alt="@projectManager?.FullName">
                         }
                         else
                         {
-                            <img class="object-cover rounded-full" src="@FileService.ConvertByteArrayToFile(Project_Manager.AvatarFileData, Project_Manager.AvatarContentType)" alt="@Project_Manager?.FullName">
+                            <img class="object-cover rounded-full" src="@FileService.ConvertByteArrayToFile(projectManager.AvatarFileData, projectManager.AvatarContentType)" alt="@projectManager?.FullName">
                         }
-                    </div>
+                    </a>
                 }
             </td>
-            <td class="px-6 py-4">
+            <td class="px-6 py-4 hidden 2xl:table-cell">
                 @project.EndDate.ToString("dd.MM.yyyy")
             </td>
-            <td class="px-6 py-4">
+            <td class="px-6 py-4 hidden xl:table-cell">
                 @{
                     string badgeClass = "bg-danger";
 
