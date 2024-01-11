@@ -28,14 +28,14 @@ else
                 : FileService.ConvertByteArrayToFile(member.AvatarFileData, member.AvatarContentType);
 
             <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                        <img class="h-10 w-10 object-cover rounded-full" src="@avatarSource" alt="@member.FullName">
+                <a asp-action="Details" asp-controller="Members" asp-route-id="@member.Id" class="group flex items-center gap-2">
+                        <img class="h-10 w-10 object-cover rounded-full group-hover:scale-110 transition-transform" src="@avatarSource" alt="@member.FullName">
                     <div class="flex flex-col">
-                        <strong class="font-bold font-lato text-sm">@member.FullName</strong>
+                        <strong class="font-bold font-lato text-sm group-hover:underline underline-offset-2">@member.FullName</strong>
                         <span
                             class="font-lato text-gray-400 text-xs">@((RoleService.GetUserRolesAsync(member)).Result.FirstOrDefault()?.Replace("_", " "))</span>
                     </div>
-                </div>
+                </a>
 
                 <div class="flex items-center gap-2">
                     <a asp-action="Details" asp-controller="Members" asp-route-id="@member.Id" title="Member Profile" class="p-2 bg-mid rounded-full hover:scale-110 transition-transform">

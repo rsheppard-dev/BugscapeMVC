@@ -30,10 +30,23 @@ namespace BugscapeMVC.Controllers
         }
 
         // GET: Notifications
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1, string search = "", string order = "asc", string sortBy = "name", int limit = 10)
         {
-            var applicationDbContext = _context.Notifications.Include(n => n.Recipient).Include(n => n.Sender).Include(n => n.Ticket);
-            return View(await applicationDbContext.ToListAsync());
+            ViewBag.Search = search;
+            ViewBag.Order = order;
+            ViewBag.SortBy = sortBy;
+
+            var notifications = await _context.Notifications.Include(n => n.Recipient).Include(n => n.Sender).Include(n => n.Ticket).OrderByDescending(n => n.Created).ToListAsync();
+
+            // if search argument
+            if (!string.IsNullOrEmpty(search))
+            {
+                notifications = Search(notifications, search);
+            }
+
+            notifications = Sort(notifications, sortBy, order);
+
+            return View(notifications.ToList());
         }
 
         // GET: Notifications/Details/5
@@ -179,6 +192,35 @@ namespace BugscapeMVC.Controllers
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        private static List<Notification> Sort(List<Notification> notifications, string sortBy = "date", string order = "asc")
+        {
+            notifications = sortBy.ToLower() switch
+            {
+                "title" => order == "asc" ?
+                    notifications.OrderBy(n => n.Title).ToList() :
+                    notifications.OrderByDescending(n => n.Title).ToList(),
+                "sender" => order == "asc" ?
+                    notifications.OrderBy(n => n.Sender?.FullName).ToList() :
+                    notifications.OrderByDescending(n => n.Sender?.FullName).ToList(),
+                _ => order == "asc" ?
+                    notifications.OrderBy(n => n.Created).ToList() :
+                    notifications.OrderByDescending(n => n.Created).ToList(),
+            };
+
+            return notifications;
+        }
+
+        private static List<Notification> Search(List<Notification> notifications, string search)
+        {
+            if (notifications is null) return new List<Notification>();
+            
+            return notifications
+                .Where(n => (n.Sender?.FullName?.ToLower().Contains(search.ToLower()) ?? false) ||
+                    (n.Message?.ToLower().Contains(search.ToLower()) ?? false) ||
+                    (n.Title?.ToLower().Contains(search.ToLower()) ?? false))
+                .ToList();
         }
 
         private bool NotificationExists(int id)

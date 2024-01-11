@@ -122,23 +122,25 @@
                         }
                 
 						<tr class="@rowColor border-b">
-							<th scope="row" class="px-6 py-4 whitespace-nowrap flex gap-2 items-center">
-								@if (member?.AppUser.AvatarFileData is null || member?.AppUser.AvatarContentType is null)
-								{
-									<img class="h-8 w-8 object-cover rounded-full" src="~/images/default-avatar.png" alt="@member?.AppUser.FullName">
-								}
-								else
-								{
-									<img class="h-8 w-8 object-cover rounded-full" src="@FileService.ConvertByteArrayToFile(member.AppUser.AvatarFileData, member.AppUser.AvatarContentType)" alt="@member?.AppUser.FullName">
-								}
-								<div class="flex flex-col gap-1">
-                                <span class="font-lato text-zinc-700">@member?.AppUser.FullName</span>
-                                <dl class="flex flex-col gap-1 lg:hidden">
-                                    <dt class="sr-only">Current Role</dt>
-                                    <dd class="whitespace-nowrap font-lato font-normal text-xs text-zinc-700">@((RoleService.GetUserRolesAsync(member?.AppUser!)).Result.FirstOrDefault()?.Replace("_", " "))</dd>
-                                </dl>
-                            </div>
-							</th>
+							<th scope="row" class="px-6 py-4">
+                                <a asp-action="Details" asp-route-id="@member?.AppUser.Id" class="group whitespace-nowrap flex gap-2 items-center w-fit">
+                                    @if (member.AppUser.AvatarFileData is null || member.AppUser.AvatarContentType is null)
+                                    {
+                                        <img class="h-8 w-8 object-cover rounded-full group-hover:scale-110 transition-transform" src="~/images/default-avatar.png" alt="@member.AppUser.FullName">
+                                    }
+                                    else
+                                    {
+                                        <img class="h-8 w-8 object-cover rounded-full group-hover:scale-110 transition-transform" src="@FileService.ConvertByteArrayToFile(member.AppUser.AvatarFileData, member.AppUser.AvatarContentType)" alt="@member?.AppUser.FullName">
+                                    }
+                                    <div class="flex flex-col gap-1">
+                                        <span class="font-lato text-zinc-700 group-hover:underline underline-offset-2">@member?.AppUser.FullName</span>
+                                        <dl class="flex flex-col gap-1 sm:hidden">
+                                            <dt class="sr-only">Current Role</dt>
+                                            <dd class="whitespace-nowrap font-lato font-normal text-xs text-zinc-700">@((RoleService.GetUserRolesAsync(member!.AppUser)).Result.FirstOrDefault()?.Replace("_", " "))</dd>
+                                        </dl>
+                                    </div>
+                                </a>
+                            </th>
 							<td class="px-6 py-4 hidden lg:table-cell">
 								<span class="bg-dark text-white whitespace-nowrap uppercase px-2 py-1 rounded-md text-xs font-bold">@((RoleService.GetUserRolesAsync(member!.AppUser)).Result.FirstOrDefault()?.Replace("_", " "))</span>
 							</td>

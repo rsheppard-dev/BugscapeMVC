@@ -1,14 +1,39 @@
 @model IEnumerable<BugscapeMVC.Models.Notification>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Notifications Inbox";
 }
 
-<h1>Index</h1>
+<div class="flex items-center justify-between mb-4">
+    <h1 class="font-rockwell text-dark text-xl font-bold">@ViewData["Title"]</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+    <a asp-action="Create" title="Compose New Message" class="bg-success hover:bg-opacity-80 transition-opacity flex items-center justify-center rounded-full p-2">
+        <svg xmlns="http://www.w3.org/2000/svg" aria-hidden class="h-6 w-6 fill-zinc-700" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+        </svg>
+    </a>
+</div>
+
+<hr class="mb-4" />
+
+<form asp-action="Index" method="get" class="flex flex-wrap items-center gap-2 justify-between mb-4">
+    <div class="flex gap-1 items-center">
+        <select name="limit" id="limit" class="font-lato text-sm" onchange="this.form.submit()">
+            @foreach (var option in new int[] { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50 })
+            {
+                @* <option value="@option" selected="@((Model.Limit == option))">@option</option> *@
+            }
+        </select>
+        <label for="limit" class="font-lato text-sm">results per page</label>
+    </div>
+    <div class="relative">
+        <input type="search" name="search" value="@ViewBag.Search" class="text-lato text-sm bg-white rounded-lg px-4 py-2 border-gray-200 pl-10 placeholder:text-gray-400" placeholder="Search projects...">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 absolute top-2 left-2 stroke-dark">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+        </svg>
+    </div>
+</form>
+
 <table class="table">
     <thead>
         <tr>
