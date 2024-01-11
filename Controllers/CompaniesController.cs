@@ -69,7 +69,7 @@ namespace BugscapeMVC.Controllers
         [Authorize(Roles = nameof(Roles.Admin))]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description")] Company company)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,LogoFileName,LogoContentType,LogoFileData")] Company company)
         {
             if (id != company.Id) return NotFound();
 

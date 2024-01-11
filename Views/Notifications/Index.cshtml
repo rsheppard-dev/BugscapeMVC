@@ -1,7 +1,50 @@
-@model IEnumerable<BugscapeMVC.Models.Notification>
+@model PaginatedList<BugscapeMVC.Models.Notification>
+
+@using BugscapeMVC.Services.Interfaces
+
+@inject IFileService FileService
 
 @{
     ViewData["Title"] = "Notifications Inbox";
+
+    var routeValues = new Dictionary<string, string>
+    {
+        { "search", ViewBag.Search },
+        { "sortBy", ViewBag.SortBy },
+        { "order", ViewBag.Order },
+        { "page", Model.CurrentPage.ToString() },
+        { "limit", Model.Limit.ToString() },
+    };
+
+    string GetNewOrder(string column)
+    {
+        if (ViewBag.SortBy == column)
+        {
+            return ViewBag.Order == "asc" ? "desc" : "asc";
+        }
+
+        return "asc";
+    }
+
+    string FormatDate(DateTime date)
+    {
+        var now = DateTime.Now;
+        var startOfWeek = now.AddDays(-1 * (int)(now.DayOfWeek));
+        var endOfWeek = startOfWeek.AddDays(7);
+
+        if (date.Date == now.Date)
+        {
+            return date.ToString("HH:mm");
+        }
+        else if (date >= startOfWeek && date <= endOfWeek)
+        {
+            return date.ToString("dddd HH:mm");
+        }
+        else
+        {
+            return date.ToString("dd MMM yyyy HH:mm");
+        }
+    }
 }
 
 <div class="flex items-center justify-between mb-4">
@@ -21,76 +64,190 @@
         <select name="limit" id="limit" class="font-lato text-sm" onchange="this.form.submit()">
             @foreach (var option in new int[] { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50 })
             {
-                @* <option value="@option" selected="@((Model.Limit == option))">@option</option> *@
+                <option value="@option" selected="@((Model.Limit == option))">@option</option>
             }
         </select>
         <label for="limit" class="font-lato text-sm">results per page</label>
     </div>
     <div class="relative">
-        <input type="search" name="search" value="@ViewBag.Search" class="text-lato text-sm bg-white rounded-lg px-4 py-2 border-gray-200 pl-10 placeholder:text-gray-400" placeholder="Search projects...">
+        <input type="search" name="search" value="@ViewBag.Search" class="font-lato text-sm bg-white rounded-lg px-4 py-2 border-gray-200 pl-10 placeholder:text-gray-400" placeholder="Search notifications...">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 absolute top-2 left-2 stroke-dark">
             <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
         </svg>
     </div>
 </form>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Message)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Created)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Viewed)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Ticket)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Recipient)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Sender)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Message)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Created)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Viewed)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Ticket.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Recipient.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Sender.Id)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+<section>
+    @if (Model.TotalItems == 0)
+    {
+        <p class="font-lato text-zinc-700">There are currently no notifications to show.</p>
+    }
+    else
+    {        
+    <div class="relative overflow-x-auto rounded-t-lg scrollbar-thin scrollbar-thumb-light scrollbar-track-lightest mb-4">
+        <table id="projectTable" class="w-full text-sm text-left text-dark font-lato">
+            <thead class="text-xs bg-light uppercase">
+                <tr>
+                    <th scope="col" aria-label="Viewed" class="px-6 py-3 whitespace-nowrap w-fit"></th>
+                    <th scope="col" class="px-6 py-3 whitespace-nowrap">
+                        <a asp-action="Index" asp-controller="Notifications" asp-all-route-data="@routeValues" asp-route-sortBy="sender" asp-route-order="@GetNewOrder("sender")" class="flex items-center gap-2">
+                            <span>Sender</span>
+                            @if (ViewBag.SortBy == "sender")
+                            {
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3 @(ViewBag.Order == "asc" ? "rotate-180" : "rotate-none")">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" />
+                                </svg>
+                            }
+                        </a>
+                    </th>
+                    <th scope="col" class="px-6 py-3 whitespace-nowrap hidden sm:table-cell">
+                        <a asp-action="Index" asp-controller="Notifications" asp-all-route-data="@routeValues" asp-route-sortBy="subject"  asp-route-order="@GetNewOrder("subject")" class="flex items-center gap-2">
+                        <span>Subject</span>
+                            @if (ViewBag.SortBy == "subject")
+                            {
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3 @(ViewBag.Order == "asc" ? "rotate-180" : "rotate-none")">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" />
+                                </svg>
+                            }
+                        </a>
+                    </th>
+                    <th scope="col" class="px-6 py-3 whitespace-nowrap hidden lg:table-cell">
+                        <a asp-action="Index" asp-controller="Notifications" asp-all-route-data="@routeValues" asp-route-sortBy="date" asp-route-order="@GetNewOrder("date")" class="flex items-center gap-2">
+                        <span>Received</span>
+                            @if (ViewBag.SortBy == "date")
+                            {
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-3 h-3 @(ViewBag.Order == "asc" ? "rotate-180" : "rotate-none")">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" />
+                                </svg>
+                            }
+                        </a>
+                    </th>
+                    <th scope="col" class="px-6 py-3 whitespace-nowrap" aria-label="Actions">
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int rowNumber = 0;
+                }
+
+                @foreach (Notification notification in Model)
+                {
+                    string rowColor = rowNumber % 2 == 0 ? "bg-lightest" : "bg-mid";
+                    rowNumber++;
+                
+                    <tr class="@rowColor border-b">
+                        <td class="pl-6 py-4 w-fit">
+                            @if (notification.Viewed)
+                            {
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 9v.906a2.25 2.25 0 0 1-1.183 1.981l-6.478 3.488M2.25 9v.906a2.25 2.25 0 0 0 1.183 1.981l6.478 3.488m8.839 2.51-4.66-2.51m0 0-1.023-.55a2.25 2.25 0 0 0-2.134 0l-1.022.55m0 0-4.661 2.51m16.5 1.615a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V8.844a2.25 2.25 0 0 1 1.183-1.981l7.5-4.039a2.25 2.25 0 0 1 2.134 0l7.5 4.039a2.25 2.25 0 0 1 1.183 1.98V19.5Z" />
+                                </svg>
+                            }
+                            else
+                            {
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+                                </svg>
+                            }
+                        </td>
+
+                        <th scope="row" class="px-6 py-4">
+                            <a asp-action="Details" asp-route-id="@notification.Sender?.Id" class="group whitespace-nowrap flex gap-2 items-center w-fit">
+                                @if (notification.Sender?.AvatarFileData is null || notification.Sender?.AvatarContentType is null)
+                                {
+                                    <img class="h-8 w-8 object-cover rounded-full group-hover:scale-110 transition-transform" src="~/images/default-avatar.png" alt="@notification.Sender?.FullName">
+                                }
+                                else
+                                {
+                                    <img class="h-8 w-8 object-cover rounded-full group-hover:scale-110 transition-transform" src="@FileService.ConvertByteArrayToFile(notification.Sender.AvatarFileData, notification.Sender.AvatarContentType)" alt="@notification.Sender?.FullName">
+                                }
+                                <div class="flex flex-col gap-1">
+                                    <span class="font-lato text-zinc-700 font-normal group-hover:underline underline-offset-2">@notification.Sender?.FullName</span>
+                                </div>
+                            </a>
+                        </th>
+
+                        <td class="px-6 py-4 hidden sm:table-cell w-full">
+                            <a asp-action="Details" asp-route-id="@notification?.Id" class="@(notification!.Viewed ? "font-normal" : "font-bold") font-lato text-zinc-700 hover:underline underline-offset-2">
+                                @notification?.Title
+                            </a>
+                        </td>
+                        <td class="px-6 py-4 hidden lg:table-cell">
+                            <span class="font-lato text-zinc-700 whitespace-nowrap">
+                                @FormatDate(notification!.Created.DateTime)
+                            </span>
+                        </td>
+                        
+                        <td class="px-6 py-4 table-cell">
+                            <div class="flex items-center gap-2 justify-end">
+                                <a asp-action="Details" asp-controller="Notifications" title="Sender Profile" asp-route-id="@notification?.Id" class="hover:scale-110 transition-transform">
+                                    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                </a>
+
+                                <a asp-action="Create" title="Reply" asp-route-recipientId="@notification?.SenderId" asp-route-ticketId="@notification?.TicketId" asp-route-subject="@notification?.Title" class="hover:scale-110 transition-transform">
+                                    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                                    </svg>
+                                </a>
+
+                                <form asp-action="Delete" asp-controller="Notifications" method="post">
+                                    <input type="hidden" name="id" value="@notification?.Id" />
+                                    <button type="submit" title="Delete" class="hover:scale-110 transition-transform">
+                                        <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                        </svg>
+                                    </button>
+                                </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="flex flex-wrap items-center justify-between gap-2 col-span-12">
+        @if (Model.TotalPages > 1)
+        {
+            <div class="flex items-center gap-2">
+    
+                <a title="First Page" asp-action="Index" asp-controller="Notifications" asp-route-search="@ViewBag.Search" asp-route-sortBy="@ViewBag.SortBy" asp-route-order="@ViewBag.Order" asp-route-limit="@Model.Limit" asp-route-page="1" class="@(Model.CurrentPage > 1 ? "hover:bg-info hover:bg-opacity-80" : "opacity-60 pointer-events-none") h-8 w-8 flex items-center justify-center text-dark rounded-md font-lato transition-colors bg-gray-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5" />
+                    </svg>
+                </a>
+                <a title="Previous Page" asp-action="Index" asp-controller="Notifications" asp-route-search="@ViewBag.Search" asp-route-sortBy="@ViewBag.SortBy" asp-route-order="@ViewBag.Order" asp-route-limit="@Model.Limit" asp-route-page="@(Model.CurrentPage - 1)" class="@(Model.CurrentPage > 1 ? "hover:bg-info hover:bg-opacity-80" : "opacity-60 pointer-events-none") h-8 w-8 flex items-center justify-center text-dark rounded-md font-lato transition-colors bg-gray-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                    </svg>
+                </a>
+
+                @for (int p = Model.FirstPageButton; p <= Model.LastPageButton; p++)
+                {
+                    <a aria-label="Page @p" asp-action="Index" asp-controller="Notifications" asp-route-search="@ViewBag.Search" asp-route-sortBy="@ViewBag.SortBy" asp-route-order="@ViewBag.Order" asp-route-limit="@Model.Limit" asp-route-page="@p" class="h-8 w-8 flex text-sm items-center justify-center text-dark rounded-md font-lato transition-all @(Model.CurrentPage == p ? "scale-110 bg-light pointer-events-none" : "hover:bg-info bg-mid")">
+                        @p
+                    </a>
+                }
+
+                <a title="Next Page" asp-action="Index" asp-controller="Notifications" asp-route-search="@ViewBag.Search" asp-route-sortBy="@ViewBag.SortBy" asp-route-order="@ViewBag.Order" asp-route-limit="@Model.Limit" asp-route-page="@(Model.CurrentPage != Model.TotalPages ? Model.CurrentPage + 1 : Model.TotalPages)" class="@(Model.CurrentPage != Model.TotalPages ? "hover:bg-info hover:bg-opacity-80" : "opacity-60 pointer-events-none") h-8 w-8 flex items-center justify-center text-dark rounded-md font-lato transition-colors bg-gray-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                    </svg>
+                </a>
+                <a title="Last Page" asp-action="Index" asp-controller="Notifications" asp-route-search="@ViewBag.Search" asp-route-sortBy="@ViewBag.SortBy" asp-route-order="@ViewBag.Order" asp-route-limit="@Model.Limit" asp-route-page="@Model.TotalPages" class="@(Model.CurrentPage != Model.TotalPages ? "hover:bg-info hover:bg-opacity-80" : "opacity-60 pointer-events-none") h-8 w-8 flex items-center justify-center text-dark rounded-md font-lato transition-colors bg-gray-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 4.5l7.5 7.5-7.5 7.5m-6-15l7.5 7.5-7.5 7.5" />
+                    </svg>
+                </a>
+            </div>
+        }
+
+        <span class="font-lato text-sm">
+            Showing @Model.FirstItemOnPage to @Model.LastItemOnPage of @Model.TotalItems members.
+        </span>
+    </div>
 }
-    </tbody>
-</table>
+</section>

@@ -43,18 +43,17 @@
 
             @foreach (var project in Model.Projects.OrderBy(p => p.Name))
             {
-                <div class="flex items-center gap-2">
+                <a asp-action="Details" asp-controller="Projects" asp-route-id="@project.Id" class="group flex items-center gap-2">
                     @if(project.ImageFileData is not null && project.ImageContentType is not null)
                     {
-                        <img src="@FileService.ConvertByteArrayToFile(project.ImageFileData, project.ImageContentType)" alt="@project.Name" class="h-8 w-8 object-cover rounded-full ring-4 ring-mid">
+                        <img src="@FileService.ConvertByteArrayToFile(project.ImageFileData, project.ImageContentType)" alt="@project.Name" class="h-8 w-8 group-hover:scale-110 transition-transform object-cover rounded-full ring-4 ring-mid">
                     }
                     else
                     {
-                        <img class="h-8 w-8 object-cover rounded-full ring-4 ring-mid" src="~/images/default-project.png">
+                        <img class="h-8 w-8 object-cover rounded-full ring-4 ring-mid group-hover:scale-110 transition-transform" src="~/images/default-project.png">
                     }
-                    <a asp-action="Details" asp-controller="Projects" asp-route-id="@project.Id
-                        class="font-lato text-sm text-zinc-700 hover:underline">@project.Name</a>
-                </div>
+                    <span class="font-lato text-sm text-zinc-700 group-hover:underline underline-offset-2">@project.Name</span>
+                </a>
             }
         </section>
     }

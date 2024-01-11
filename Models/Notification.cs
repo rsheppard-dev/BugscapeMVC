@@ -13,7 +13,7 @@ namespace BugscapeMVC.Models
         [Required]
         public required string Title { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Message is required.")]
         public required string Message { get; set; }
 
         [DataType(DataType.Date)]

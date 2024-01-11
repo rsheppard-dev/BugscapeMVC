@@ -5,6 +5,7 @@ namespace BugscapeMVC.Services.Interfaces
     public interface INotificationService
     {
         public Task AddNotificationAsync(Notification notification);
+        public Task<bool> DeleteNotificationAsync(int id);
         public Task<Notification?> GetNotificationByIdAsync(int id);
         public Task<List<Notification>> GetReceivedNotificationsAsync(string userId);
         public Task<List<Notification>> GetSentNotificationsAsync(string userId);

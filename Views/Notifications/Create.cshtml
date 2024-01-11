@@ -1,59 +1,68 @@
 @model BugscapeMVC.Models.Notification
 
+@using Microsoft.AspNetCore.Identity
+
+@inject UserManager<AppUser> UserManager
+
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Compose New Message";
+
+    string? senderId = UserManager.GetUserId(User);
 }
 
-<h1>Create</h1>
+<head>
+    <script src="/lib/tinymce/tinymce.min.js" referrerpolicy="origin"></script>
+</head>
 
-<h4>Notification</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="TicketId" class="control-label"></label>
-                <select asp-for="TicketId" class ="form-control" asp-items="ViewBag.TicketId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="Title" class="control-label"></label>
-                <input asp-for="Title" class="form-control" />
-                <span asp-validation-for="Title" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Message" class="control-label"></label>
-                <input asp-for="Message" class="form-control" />
-                <span asp-validation-for="Message" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Created" class="control-label"></label>
-                <input asp-for="Created" class="form-control" />
-                <span asp-validation-for="Created" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="RecipientId" class="control-label"></label>
-                <select asp-for="RecipientId" class ="form-control" asp-items="ViewBag.RecipientId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="SenderId" class="control-label"></label>
-                <select asp-for="SenderId" class ="form-control" asp-items="ViewBag.SenderId"></select>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Viewed" /> @Html.DisplayNameFor(model => model.Viewed)
-                </label>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+<h1 class="font-rockwell text-dark text-xl font-bold mb-4">@ViewData["Title"]</h1>
+<hr class="mb-4 h-[2px] rounded bg-mid border-0" />
+
+<form asp-action="Create" method="post" class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+    <div asp-validation-summary="ModelOnly" class="error"></div>
+    <input type="hidden" asp-for="SenderId" value=@senderId />
+
+    <div class="flex flex-col lg:col-span-2 gap-2">
+        <label asp-for="RecipientId" class="font-lato text-sm font-bold"></label>
+        <select asp-for="RecipientId" class="font-lato text-sm" asp-items="ViewBag.RecipientId">
+            <option selected hidden disabled>-- Select Recipient --</option>
+        </select>
+        <span asp-validation-for="RecipientId" class="error"></span>
     </div>
-</div>
+    
+    <div class="flex flex-col lg:col-span-2 gap-2">
+        <label asp-for="Title" class="font-lato text-sm font-bold"></label>
+        <input asp-for="Title" class="font-lato text-sm" value=@(string.IsNullOrEmpty(ViewBag.Subject) ? "" : $"RE: {ViewBag.Subject}") />
+        <span asp-validation-for="Title" class="error"></span>
+    </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+    <div class="flex flex-col lg:col-span-2 gap-2">
+        <label asp-for="TicketId" class="font-lato text-sm font-bold"></label>
+        <select asp-for="TicketId" class="font-lato text-sm" asp-items="ViewBag.TicketId">
+            <option selected hidden disabled>-- Select Ticket (optional) --</option>
+        </select>
+        <span asp-validation-for="TicketId" class="error"></span>
+    </div>
+
+    <div class="flex flex-col lg:col-span-2 gap-2">
+        <label asp-for="Message" class="font-lato text-sm font-bold"></label>
+        <textarea asp-for="Message" data-tinymce class="font-lato text-sm" rows="3"></textarea>
+        <span asp-validation-for="Message" class="error"></span>
+    </div>
+
+    <div class="lg:col-span-2 flex justify-end">
+        <button type="submit" class="px-4 py-2 text-sm rounded-md bg-success font-lato hover:bg-opacity-80 transition-opacity">Send
+        </button>
+    </div>
+</form>
+
+<script>
+    tinymce.init({
+        selector: '[data-tinymce]',
+        menubar: false,
+        statusbar: false,
+        height: 200
+    });
+</script>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

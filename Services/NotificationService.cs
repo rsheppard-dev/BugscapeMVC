@@ -32,6 +32,24 @@ namespace BugscapeMVC.Services
             }
         }
 
+        public async Task<bool> DeleteNotificationAsync(int id)
+        {
+            try
+            {
+                Notification notification = await _context.Notifications.FindAsync(id) ?? throw new KeyNotFoundException();
+
+                _context.Notifications.Remove(notification);
+                await _context.SaveChangesAsync();
+                
+                return true;
+            }
+            catch (System.Exception)
+            {
+                return false;
+                throw;
+            }
+        }
+
         public async Task<Notification?> GetNotificationByIdAsync(int id)
         {
             var notification = await _context.Notifications
@@ -53,6 +71,7 @@ namespace BugscapeMVC.Services
                     .Include(notification => notification.Ticket)
                         .ThenInclude(ticket => ticket!.Project)
                     .Where(notification => notification.RecipientId == userId)
+                    .OrderByDescending(notification => notification.Created)
                     .ToListAsync();
 
                 return notifications;
@@ -73,6 +92,7 @@ namespace BugscapeMVC.Services
                     .Include(notification => notification.Ticket)
                         .ThenInclude(ticket => ticket!.Project)
                     .Where(notification => notification.SenderId == userId)
+                    .OrderByDescending(notification => notification.Created)
                     .ToListAsync();
 
                 return notifications;
