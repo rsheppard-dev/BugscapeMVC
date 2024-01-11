@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using BugscapeMVC.Models;
+using BugscapeMVC.Models.Enums;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -105,6 +106,12 @@ namespace BugscapeMVC.Areas.Identity.Pages.Account.Manage
             if (user == null)
             {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+            }
+
+            if (User.IsInRole(nameof(Roles.Demo_User)))
+            {
+                ModelState.AddModelError(string.Empty, "Demo users cannot save changes to account settings.");
+                return Page();
             }
 
             if (!ModelState.IsValid)
