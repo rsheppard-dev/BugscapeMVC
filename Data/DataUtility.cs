@@ -65,7 +65,7 @@ namespace BugscapeMVC.Data
             await SeedDefaultTicketPriorityAsync(dbContextSvc);
             await SeedDefaultProjectPriorityAsync(dbContextSvc);
             await SeedDefaultProjectsAsync(dbContextSvc);
-            await SeedDefautTicketsAsync(dbContextSvc);
+            await SeedDefaultTicketsAsync(dbContextSvc);
         }
 
 
@@ -83,21 +83,66 @@ namespace BugscapeMVC.Data
         {
             try
             {
-                IList<Company> defaultcompanies = new List<Company>() {
-                    new Company() { Name = "Company1", Description="This is default Company 1" },
-                    new Company() { Name = "Company2", Description="This is default Company 2" },
-                    new Company() { Name = "Company3", Description="This is default Company 3" },
-                    new Company() { Name = "Company4", Description="This is default Company 4" },
-                    new Company() { Name = "Company5", Description="This is default Company 5" }
+                IList<Company> defaultCompanies = new List<Company>() {
+                    new() 
+                    { 
+                        Name = "Democorp",
+                        Description=@"
+                        <section>
+                            <h2>Overview:</h2>
+                            <p>Democorp Project Management Solutions is a forward-thinking and client-centric project management company committed to delivering tailored solutions that meet the unique needs of our clients. With a focus on innovation, efficiency, and client satisfaction, we bring a wealth of expertise to every project we undertake.</p>
+                        </section>
+
+                        <section>
+                            <h2>Mission Statement:</h2>
+                            <p>""At Democorp, our mission is to empower businesses by providing top-notch project management services that drive success. We strive to build lasting relationships with our clients through transparent communication, meticulous planning, and the relentless pursuit of excellence in project execution.""</p>
+                        </section>
+
+                        <section>
+                            <h2>Key Services:</h2>
+                            <ol>
+                                <li><strong>Customized Project Planning:</strong> Democorp understands that every project is unique. Our team collaborates closely with clients to create customized project plans that align with specific goals, ensuring a clear roadmap to success.</li>
+                                <li><strong>Strategic Execution:</strong> We pride ourselves on turning strategies into tangible results. Democorp's project management experts excel in coordinating tasks, managing resources, and executing plans with precision to achieve project objectives.</li>
+                                <li><strong>Proactive Risk Management:</strong> Anticipating and addressing risks is at the core of our approach. Democorp employs proactive risk management strategies to identify and mitigate potential challenges, ensuring a smooth project flow.</li>
+                                <li><strong>Transparent Communication:</strong> Open communication is the cornerstone of our client relationships. Democorp keeps clients informed at every stage, providing regular updates on project progress, challenges, and achievements to foster trust and collaboration.</li>
+                                <li><strong>Technology Integration for Efficiency:</strong> Democorp harnesses the power of cutting-edge project management tools to enhance efficiency and collaboration. Our tech-driven approach ensures real-time insights, streamlined processes, and optimal project performance.</li>
+                            </ol>
+                        </section>
+                            <section>
+                                <h2>Industries Served:</h2>
+                                <ul>
+                                    <li>Technology and IT</li>
+                                    <li>Construction and Infrastructure</li>
+                                    <li>Healthcare and Life Sciences</li>
+                                    <li>Financial Services</li>
+                                    <li>Manufacturing and Logistics</li>
+                                    <li>Energy and Sustainability</li>
+                                </ul>
+                            </section>
+
+                            <section>
+                                <h2>Why Choose Democorp:</h2>
+                                <ul>
+                                    <li><strong>Client-Centric Focus:</strong> Democorp prioritizes client satisfaction, tailoring solutions to meet unique project requirements.</li>
+                                    <li><strong>Experienced Team:</strong> Our team consists of seasoned project management professionals with a proven track record in delivering successful outcomes.</li>
+                                    <li><strong>Innovation and Agility:</strong> We stay ahead of industry trends, integrating innovative solutions and adapting to changes swiftly to keep projects on course.</li>
+                                    <li><strong>Quality Assurance:</strong> Democorp is dedicated to delivering high-quality results, with rigorous quality assurance measures integrated into our project management methodology.</li>
+                                    <li><strong>Cost-Effective Solutions:</strong> We optimize resource allocation to ensure cost-effectiveness without compromising on the quality of deliverables.</li>
+                                </ul>
+                            </section>
+
+                            <footer>
+                                <p>Choose Democorp Project Management Solutions for a collaborative, results-driven approach to project success. Partner with us to turn your visions into reality.</p>
+                            </footer>"
+                    },
                 };
 
                 var dbCompanies = context.Companies.Select(c => c.Name).ToList();
-                await context.Companies.AddRangeAsync(defaultcompanies.Where(c => !dbCompanies.Contains(c.Name)));
+                await context.Companies.AddRangeAsync(defaultCompanies.Where(c => !dbCompanies.Contains(c.Name)));
                 await context.SaveChangesAsync();
 
                 //Get company Ids
-                company1Id = context.Companies.FirstOrDefault(p => p.Name == "Company1")?.Id ?? throw new Exception("Failed to get companyId");
-                company2Id = context.Companies.FirstOrDefault(p => p.Name == "Company2")?.Id ?? throw new Exception("Failed to get companyId");
+                company1Id = context.Companies.FirstOrDefault(p => p.Name == "Democorp")?.Id ?? throw new Exception("Failed to get companyId");
             }
             catch (Exception ex)
             {
@@ -781,7 +826,7 @@ namespace BugscapeMVC.Data
             }
         }
 
-        public static async Task SeedDefautTicketsAsync(ApplicationDbContext context)
+        public static async Task SeedDefaultTicketsAsync(ApplicationDbContext context)
         {
             //Get project Ids
             int portfolioId = (context.Projects.FirstOrDefault(p => p.Name == "Build a Personal Porfolio")?.Id) ?? throw new Exception("Failed to get projectId.");
