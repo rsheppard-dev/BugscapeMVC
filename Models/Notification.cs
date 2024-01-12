@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using BugscapeMVC.Services.Validation;
 
 namespace BugscapeMVC.Models
 {
@@ -13,7 +14,7 @@ namespace BugscapeMVC.Models
         [Required]
         public required string Title { get; set; }
 
-        [Required(ErrorMessage = "Message is required.")]
+        [RequiredHtmlClean(ErrorMessage = "A message is required.")]
         public required string Message { get; set; }
 
         [DataType(DataType.Date)]

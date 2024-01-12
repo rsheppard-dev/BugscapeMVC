@@ -13,18 +13,18 @@
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create" method="post" class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
-            <div asp-validation-summary="ModelOnly" class="text-danger text-sm font-lato font-bold"></div>
+            <div asp-validation-summary="ModelOnly" class="error"></div>
             
             <div class="flex flex-col lg:col-span-2 gap-2">
                 <label asp-for="Title" class="font-lato text-sm font-bold"></label>
                 <input asp-for="Title" class="font-lato text-sm" />
-                <span asp-validation-for="Title" class="text-danger text-sm font-lato font-bold"></span>
+                <span asp-validation-for="Title" class="error"></span>
             </div>
 
             <div class="flex flex-col lg:col-span-2 gap-2">
                 <label asp-for="Description" class="font-lato text-sm font-bold"></label>
                 <textarea asp-for="Description" data-tinymce class="font-lato text-sm" rows="3"></textarea>
-                <span asp-validation-for="Description" class="text-danger text-sm font-lato font-bold"></span>
+                <span asp-validation-for="Description" class="error"></span>
             </div>
 
             <div class="flex flex-col lg:col-span-2 gap-2">
@@ -32,7 +32,7 @@
                 <select asp-for="ProjectId" class="font-lato text-sm" asp-items="@ViewBag.Projects">
                     <option disabled selected hidden class="font-lato text-sm">Choose Project</option>
                 </select>
-                <span asp-validation-for="ProjectId" class="text-danger text-sm font-lato font-bold"></span>
+                <span asp-validation-for="ProjectId" class="error"></span>
             </div>
 
             <div class="flex flex-col gap-2">
@@ -40,7 +40,7 @@
                 <select asp-for="TicketTypeId" class="font-lato text-sm" asp-items="@ViewBag.TicketTypes">
                     <option disabled selected hidden class="font-lato text-sm">Choose Type</option>
                 </select>
-                <span asp-validation-for="TicketTypeId" class="text-danger text-sm font-lato font-bold"></span>
+                <span asp-validation-for="TicketTypeId" class="error"></span>
             </div>
 
             <div class="flex flex-col gap-2">
@@ -48,7 +48,7 @@
                 <select asp-for="TicketPriorityId" class="font-lato text-sm" asp-items="@ViewBag.Priorities">
                     <option disabled selected hidden class="font-lato text-sm">Choose Priority</option>
                 </select>
-                <span asp-validation-for="TicketPriorityId" class="text-danger text-sm font-lato font-bold"></span>
+                <span asp-validation-for="TicketPriorityId" class="error"></span>
             </div>
 
             <div class="lg:col-span-2 flex justify-end">

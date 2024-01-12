@@ -123,7 +123,7 @@ namespace BugscapeMVC.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            return RedirectToAction(nameof(Create), new { subject, recipientId, ticketId });
+            return View(notification);
         }
 
         // POST: Notifications/Delete/5
