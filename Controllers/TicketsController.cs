@@ -299,7 +299,7 @@ namespace BugscapeMVC.Controllers
                 }
             }
 
-            return RedirectToAction("Details", new { id = ticketComment.TicketId });
+            return RedirectToAction("Details", new { id = ticketComment?.TicketId });
         }
 
         // POST: Tickets/AddTicketAttachment

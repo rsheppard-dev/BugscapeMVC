@@ -227,13 +227,13 @@
                             <span>Team</span>
                         </a>
 
-                        <a asp-action="Index" asp-controller="Notifications" class="flex gap-4 items-center">
+                        <a asp-action="Inbox" asp-controller="Notifications" class="flex gap-4 items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" aria-hidden width="24" viewBox="0 0 30 24" class="fill-light">
                                 <path id="Icon_material-email" data-name="Icon material-email"
                                     d="M30,6H6A3,3,0,0,0,3.015,9L3,27a3.009,3.009,0,0,0,3,3H30a3.009,3.009,0,0,0,3-3V9A3.009,3.009,0,0,0,30,6Zm0,6L18,19.5,6,12V9l12,7.5L30,9Z"
                                     transform="translate(-3 -6)" />
                             </svg>
-                            <span>Notifications</span>
+                            <span>Inbox</span>
                         </a>
 
                         @if (User.IsInRole(nameof(Roles.Admin)))

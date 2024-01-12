@@ -30,8 +30,13 @@ namespace BugscapeMVC.Controllers
             _userManager = userManager;
         }
 
+        public IActionResult Index()
+        {
+            return RedirectToActionPermanent(nameof(Inbox));
+        }
+
         // GET: Notifications
-        public async Task<IActionResult> Index(int page = 1, string search = "", string order = "desc", string sortBy = "date", int limit = 10)
+        public async Task<IActionResult> Inbox(int page = 1, string search = "", string order = "desc", string sortBy = "date", int limit = 10)
         {
             string? userId = _userManager.GetUserId(User);
 
@@ -46,7 +51,31 @@ namespace BugscapeMVC.Controllers
             // if search argument
             if (!string.IsNullOrEmpty(search))
             {
-                notifications = Search(notifications, search);
+                notifications = Search(true, notifications, search);
+            }
+
+            notifications = Sort(notifications, sortBy, order);
+
+            return View(new PaginatedList<Notification>(notifications, page, limit));
+        }
+
+        // GET: Notifications
+        public async Task<IActionResult> Outbox(int page = 1, string search = "", string order = "desc", string sortBy = "date", int limit = 10)
+        {
+            string? userId = _userManager.GetUserId(User);
+
+            if (string.IsNullOrEmpty(userId)) return NotFound();
+
+            ViewBag.Search = search;
+            ViewBag.Order = order;
+            ViewBag.SortBy = sortBy;
+
+            List<Notification> notifications = await _notificationService.GetSentNotificationsAsync(userId);
+
+            // if search argument
+            if (!string.IsNullOrEmpty(search))
+            {
+                notifications = Search(false, notifications, search);
             }
 
             notifications = Sort(notifications, sortBy, order);
@@ -120,7 +149,7 @@ namespace BugscapeMVC.Controllers
                     _ = _notificationService.SendEmailNotificationAsync(notification, notification.Title);
                 }
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Inbox));
             }
 
             return View(notification);
@@ -133,7 +162,7 @@ namespace BugscapeMVC.Controllers
         {
             await _notificationService.DeleteNotificationAsync(id);
             
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Inbox));
         }
 
         private static List<Notification> Sort(List<Notification> notifications, string sortBy = "date", string order = "asc")
@@ -143,6 +172,9 @@ namespace BugscapeMVC.Controllers
                 "subject" => order == "asc" ?
                     notifications.OrderBy(n => n.Title).ToList() :
                     notifications.OrderByDescending(n => n.Title).ToList(),
+                "recipient" => order == "asc" ?
+                    notifications.OrderBy(n => n.Recipient?.FullName).ToList() :
+                    notifications.OrderByDescending(n => n.Recipient?.FullName).ToList(),
                 "sender" => order == "asc" ?
                     notifications.OrderBy(n => n.Sender?.FullName).ToList() :
                     notifications.OrderByDescending(n => n.Sender?.FullName).ToList(),
@@ -154,15 +186,28 @@ namespace BugscapeMVC.Controllers
             return notifications;
         }
 
-        private static List<Notification> Search(List<Notification> notifications, string search)
+        private static List<Notification> Search(bool inbox, List<Notification> notifications, string search)
         {
             if (notifications is null) return new List<Notification>();
-            
-            return notifications
-                .Where(n => (n.Sender?.FullName?.ToLower().Contains(search.ToLower()) ?? false) ||
+
+            if (inbox)
+            {
+                notifications = notifications
+                    .Where(n => (n.Sender?.FullName?.ToLower().Contains(search.ToLower()) ?? false) ||
+                        (n.Message?.ToLower().Contains(search.ToLower()) ?? false) ||
+                        (n.Title?.ToLower().Contains(search.ToLower()) ?? false))
+                    .ToList();
+            }
+            else
+            {
+                notifications = notifications
+                .Where(n => (n.Recipient?.FullName?.ToLower().Contains(search.ToLower()) ?? false) ||
                     (n.Message?.ToLower().Contains(search.ToLower()) ?? false) ||
                     (n.Title?.ToLower().Contains(search.ToLower()) ?? false))
                 .ToList();
+            }
+            
+            return notifications;
         }
     }
 }
