@@ -211,7 +211,6 @@ namespace BugscapeMVC.Controllers
                         TicketId = model.Ticket.Id,
                         Title = "Developer Assignment",
                         Message = $"You have been assigned as the developer on ticket: {newTicket.Title}.",
-                        SenderId = userId,
                         RecipientId = model.DeveloperId,
                     };
 
@@ -283,7 +282,6 @@ namespace BugscapeMVC.Controllers
                         TicketId = ticketComment?.TicketId,
                         Title = "New Comment",
                         Message = $"A new comment has been added to ticket: {ticket?.Title}.",
-                        SenderId = ticketComment?.UserId ?? throw new Exception("UserId cannot be null."),
                         RecipientId = recipient ?? throw new Exception("RecipientId cannot be null."),
                     };
 
@@ -450,7 +448,6 @@ namespace BugscapeMVC.Controllers
                         TicketId = ticket.Id,
                         Title = "New Ticket",
                         Message = $"A new ticket for {project.Name} has been created: {ticket.Title}.",
-                        SenderId = userId,
                         RecipientId = (await _projectService.GetProjectManagerAsync(ticket.ProjectId))?.Id ?? throw new Exception("RecipientId cannot be null."),
                     };
 

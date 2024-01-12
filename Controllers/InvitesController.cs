@@ -232,8 +232,7 @@ namespace BugscapeMVC.Controllers
                     {
                         Title = $"{member.FullName} joined the team.",
                         Message = $"{member.FullName} accepted your invitation and joined the team as a {(await _roleService.GetUserRolesAsync(member)).FirstOrDefault()?.Replace("_", " ")}.",
-                        RecipientId = invite?.InvitorId ?? throw new Exception("Invitor not found."),
-                        SenderId = member.Id,
+                        RecipientId = invite?.InvitorId ?? throw new Exception("Invitor not found.")
                     };
 
                     await _notificationService.AddNotificationAsync(notification);

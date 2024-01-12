@@ -194,7 +194,6 @@ namespace BugscapeMVC.Controllers
                 {
                     Title = "Project Manager Assigned",
                     Message = $"You have been assigned as the Project Manager for {project?.Name}.",
-                    SenderId = _userManager.GetUserId(User) ?? throw new Exception("User ID not valid."),
                     RecipientId = model.ProjectManagerId,
                 };
 
@@ -292,8 +291,7 @@ namespace BugscapeMVC.Controllers
                         Notification notification = new()
                         {
                             Title = "Project Assignment",
-                            Message = $"You have been assigned to the project {model.Project.Name}.",
-                            SenderId = _userManager.GetUserId(User) ?? throw new Exception("User ID not valid."),
+                            Message = $"You have been assigned to the project: {model.Project.Name}.",
                             RecipientId = memberId,
                         };
 
@@ -395,8 +393,7 @@ namespace BugscapeMVC.Controllers
                         Notification notification = new()
                         {
                             Title = "Project Assignment",
-                            Message = $"You have been assigned as the Project Manager for {model.Project.Name}.",
-                            SenderId = _userManager.GetUserId(User) ?? throw new Exception("User ID not valid."),
+                            Message = $"You have been assigned as the Project Manager for: {model.Project.Name}.",
                             RecipientId = model.PmId,
                         };
 

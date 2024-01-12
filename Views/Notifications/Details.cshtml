@@ -16,11 +16,14 @@
         </div>
 
         <div class="flex items-center gap-2">
-            <a asp-action="Create" title="Reply" asp-route-recipientId="@Model?.SenderId" asp-route-ticketId="@Model?.TicketId" asp-route-subject="@Model?.Title" class="bg-warning hover:bg-opacity-80 transition-opacity flex items-center justify-center rounded-full p-2">
-                <svg xmlns="http://www.w3.org/2000/svg" aria-hidden class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
-                </svg>
-            </a>
+            @if (Model?.Sender is not null)
+            {
+                <a asp-action="Create" title="Reply" asp-route-recipientId="@Model.SenderId" asp-route-ticketId="@Model?.TicketId" asp-route-subject="@Model?.Title" class="bg-warning hover:bg-opacity-80 transition-opacity flex items-center justify-center rounded-full p-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                    </svg>
+                </a>
+            }
 
             <form asp-action="Delete" asp-controller="Notifications" method="post">
                 <input type="hidden" name="id" value="@Model?.Id" />
@@ -33,20 +36,30 @@
         </div>
     </div>
 
-    <div class="mb-4 grid grid-cols-12 gap-1">
+    <div class="mb-4 grid grid-cols-12 gap-2">
         <div class="font-lato font-semibold text-zinc-700 text-sm col-span-2 md:col-span-1">From:</div>
 
-        <a asp-action="Details" asp-controller="Members" asp-route-id="@Model?.Sender?.Id" class="col-span-10 md:col-span-11 group h-8 w-8 flex gap-2" aria-label="Sender&apos;s Profile">
-            @if (Model?.Sender?.AvatarFileData is null || Model?.Sender?.AvatarContentType is null)
-            {
-                <img class="h-5 w-5 object-cover rounded-full group-hover:scale-110 transition-transform" src="~/images/default-avatar.png" alt="@Model?.Sender?.FullName">
-            }
-            else
-            {
-                <img class="h-5 w-5 object-cover rounded-full group-hover:scale-110 transition-transform" src="@FileService.ConvertByteArrayToFile(Model.Sender.AvatarFileData, Model.Sender.AvatarContentType)" alt="@Model.Sender?.FullName">
-            }
-            <span class="whitespace-nowrap group-hover:underline underline-offset-2 text-sm font-lato text-zinc-700">@Model?.Sender?.FullName</span>
-        </a>
+        @if (Model?.Sender is not null)
+        {
+            <a asp-action="Details" asp-controller="Members" asp-route-id="@Model?.SenderId" class="col-span-10 md:col-span-11 group h-8 w-8 flex gap-2" aria-label="Sender&apos;s Profile">
+                @if (Model?.Sender?.AvatarFileData is null || Model?.Sender?.AvatarContentType is null)
+                {
+                    <img class="h-5 w-5 object-cover rounded-full group-hover:scale-110 transition-transform" src="~/images/default-avatar.png" alt="@Model?.Sender?.FullName">
+                }
+                else
+                {
+                    <img class="h-5 w-5 object-cover rounded-full group-hover:scale-110 transition-transform" src="@FileService.ConvertByteArrayToFile(Model.Sender.AvatarFileData, Model.Sender.AvatarContentType)" alt="@Model.Sender?.FullName">
+                }
+                <span class="whitespace-nowrap group-hover:underline underline-offset-2 text-sm font-lato text-zinc-700">@Model?.Sender?.FullName</span>
+            </a>
+        }
+        else
+        {
+            <div class="flex gap-2 items-center col-span-10 md:col-span-11">
+                <img src="~/images/bugbot.png" alt="Bug Bot" class="h-5 w-5">
+                <span class="font-lato text-sm whitespace-nowrap text-zinc-700 font-normal">Bug Bot</span>
+            </div>
+        }
 
         <div class="font-lato font-semibold text-zinc-700 text-sm col-span-2 md:col-span-1">To:</div>
 

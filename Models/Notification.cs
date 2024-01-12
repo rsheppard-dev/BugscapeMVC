@@ -25,9 +25,8 @@ namespace BugscapeMVC.Models
         [Display(Name = "Recipient")]
         public required string RecipientId { get; set; }
 
-        [Required]
         [Display(Name = "Sender")]
-        public required string SenderId { get; set; }
+        public string? SenderId { get; set; }
 
         [DefaultValue(false)]
         [Display(Name = "Has been viewed")]
