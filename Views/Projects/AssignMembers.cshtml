@@ -10,9 +10,12 @@
 
 <p class="font-lato mb-4 text-zinc-700">Assign team members to join this project.</p>
 
+@Html.ValidationSummary(true, "", new { @class = "error" })
+
 <form data-form asp-action="AssignMembers" method="post">
     <input type="hidden" asp-for="Project.Id">
     <input type="hidden" asp-for="Project.Name">
+    <input type="hidden" asp-for="Project.ProjectPriorityId">
     <h3 class="font-rockwell font-semibold mb-4 text-lg text-dark">Assign Developers</h3>
     <div class="flex gap-4 mb-4" data-container="developers">
         <div class="flex flex-col gap-2 grow">

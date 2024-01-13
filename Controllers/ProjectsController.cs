@@ -310,7 +310,11 @@ namespace BugscapeMVC.Controllers
             else
             {
                 var errors = ModelState.Values.SelectMany(v => v.Errors);
-                return RedirectToAction("AssignMembers", new { id = model.Project?.Id });
+                foreach (var error in errors)
+                {
+                    ModelState.AddModelError("", error.ErrorMessage);
+                }
+                return View(model); // Return the view with the same model to display the errors
             }
         }
 
