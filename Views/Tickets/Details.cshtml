@@ -75,7 +75,9 @@
             </div>
 
             <p class="font-bold text-sm">Project:</p>
-            <p class="text-sm">@Model.Project.Name</p>
+            <a asp-action="Details" asp-controller="Projects" asp-route-id="@Model.Project.Id" class="font-lato text-zinc-700 text-sm hover:underline underline-offset-2">
+                @Model.Project.Name
+            </a>
 
             <p class="font-bold text-sm mb-2">Progress:</p>
             <p class="font-normal text-sm">@percent%</p>
@@ -203,7 +205,7 @@
         }
         else
         {
-            <p class="font-lato">There are no attachments to show.</p>
+            <p class="font-lato text-zinc-700">There are no attachments to show.</p>
         }
 
         @if (Model.DeveloperUserId == user?.Id || Model.OwnerUserId == user?.Id || projectManager?.Id == user?.Id || User.IsInRole(nameof(Roles.Admin)))
@@ -240,7 +242,7 @@
 
         @if (Model.History.Count == 0)
         {
-            <p class="font-lato">There is no activity to show.</p>
+            <p class="font-lato text-zinc-700">There is no activity to show.</p>
         }
         else
         {
@@ -316,7 +318,7 @@
 
         @if (Model.Comments.Count == 0)
         {
-            <p class="font-lato">There are no comments to show.</p>
+            <p class="font-lato text-zinc-700">There are no comments to show.</p>
         }
         else
         {

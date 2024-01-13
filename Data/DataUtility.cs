@@ -179,7 +179,31 @@ namespace BugscapeMVC.Data
                     {
                         CompanyId = company1Id,
                         Name = "Online Learning Platform",
-                        Description = @"Develop an <b>online learning platform</b> that allows users to access courses, participate in quizzes, and track their progress.",
+                        Description = @"
+                        <p>Embark on the creation of a dynamic Online Learning Platform designed to revolutionize education delivery and provide a seamless learning experience. This project focuses on building an engaging platform that empowers educators, facilitates student learning, and fosters collaboration in the digital education landscape.</p>
+
+                        <h2>Key Features:</h2>
+                        <ul>
+                            <li><strong>Course Management:</strong> Easily create, manage, and organize courses with diverse content types.</li>
+                            <li><strong>User Authentication:</strong> Secure user authentication and access control for educators and students.</li>
+                            <li><strong>Interactive Content:</strong> Engage learners with multimedia content, quizzes, and interactive assessments.</li>
+                            <li><strong>Discussion Forums:</strong> Foster a sense of community with discussion forums for students and educators to interact.</li>
+                            <li><strong>Progress Tracking:</strong> Monitor student progress, track completion, and provide performance analytics.</li>
+                            <li><strong>Mobile Accessibility:</strong> Ensure a responsive design for seamless access on various devices.</li>
+                        </ul>
+
+                        <h2>Technologies Used:</h2>
+                        <ul>
+                            <li>HTML5</li>
+                            <li>CSS3</li>
+                            <li>JavaScript</li>
+                            <li>React.js (or Angular/Vue.js)</li>
+                            <li>Node.js (or Django/Flask for Python)</li>
+                            <li>MongoDB (or MySQL/PostgreSQL)</li>
+                        </ul>
+
+                        <p>Join us in creating an Online Learning Platform that transforms education into an interactive and accessible experience. Let's build a platform that empowers educators, inspires learners, and shapes the future of digital education!</p>
+                        ",
                         StartDate = DateTime.Now.AddMonths(-1),
                         EndDate = DateTime.Now.AddMonths(5),
                         ProjectPriorityId = priorityLow,
@@ -191,7 +215,31 @@ namespace BugscapeMVC.Data
                      {
                         CompanyId = company1Id,
                         Name = "Build a Blog Web Application",
-                        Description="Candidate's custom built web application using .Net Core with MVC, a postgres database and hosted in a heroku container.  The app is designed for the candidate to create, update and maintain a live blog site.",
+                        Description=@"
+                        <p>Embark on a journey to create a dynamic and feature-rich blog web application that not only captures attention but also provides a seamless user experience. This project focuses on developing a platform where content creators can share their thoughts, stories, and expertise with a global audience. The goal is to build a robust and engaging blogging solution that stands out in the digital landscape.</p>
+
+                        <h2>Key Features:</h2>
+                        <ul>
+                            <li><strong>User-Friendly Interface:</strong> Intuitive design for easy navigation and content consumption.</li>
+                            <li><strong>Content Management System (CMS):</strong> Empower authors with a user-friendly CMS to create, edit, and manage blog posts effortlessly.</li>
+                            <li><strong>Responsive Design:</strong> Ensure a seamless experience across various devices with a fully responsive web application.</li>
+                            <li><strong>Commenting System:</strong> Foster community engagement with a robust commenting system for reader interaction.</li>
+                            <li><strong>Search Functionality:</strong> Implement a powerful search feature for users to find relevant content quickly.</li>
+                            <li><strong>Social Media Integration:</strong> Enhance content sharing and user reach by integrating social media sharing capabilities.</li>
+                        </ul>
+
+                        <h2>Technologies Used:</h2>
+                        <ul>
+                            <li>HTML5</li>
+                            <li>CSS3</li>
+                            <li>JavaScript</li>
+                            <li>Node.js</li>
+                            <li>Express.js</li>
+                            <li>MongoDB</li>
+                        </ul>
+
+                        <p>Join us on this exciting venture to revolutionize the blogging experience. Let's create a platform that not only reflects your brand but also empowers content creators in the digital age!</p>
+                        ",
                         StartDate = DateTime.Now.AddDays(-7),
                         EndDate = DateTime.Now.AddDays(-7).AddMonths(3),
                         ProjectPriorityId = priorityMedium,
@@ -203,7 +251,31 @@ namespace BugscapeMVC.Data
                      {
                         CompanyId = company1Id,
                         Name = "E-commerce Website",
-                        Description = @"Build a feature-rich <i>e-commerce website</i> with secure payment processing, product catalog, and user account management.",
+                        Description = @"
+                        <p>Embark on the journey of creating a powerful and user-friendly e-commerce website that not only showcases your products but also provides a seamless shopping experience for your customers. This project is focused on building a robust online store that reflects your brand identity, attracts customers, and drives sales in the competitive digital marketplace.</p>
+
+                        <h2>Key Features:</h2>
+                        <ul>
+                            <li><strong>Product Catalog:</strong> Showcase your products with high-quality images, detailed descriptions, and categorization for easy navigation.</li>
+                            <li><strong>Shopping Cart and Checkout:</strong> Implement a secure and user-friendly shopping cart system with a seamless checkout process.</li>
+                            <li><strong>Payment Gateway Integration:</strong> Integrate popular payment gateways to offer a variety of secure payment options for customers.</li>
+                            <li><strong>Responsive Design:</strong> Ensure a consistent and engaging shopping experience across devices with a responsive design.</li>
+                            <li><strong>Customer Accounts:</strong> Allow customers to create accounts, track orders, and manage their preferences for personalized shopping.</li>
+                            <li><strong>Search Functionality:</strong> Implement a robust search feature for customers to easily find products based on keywords or categories.</li>
+                        </ul>
+
+                        <h2>Technologies Used:</h2>
+                        <ul>
+                            <li>HTML5</li>
+                            <li>CSS3</li>
+                            <li>JavaScript</li>
+                            <li>React.js (or Angular/Vue.js)</li>
+                            <li>Node.js (or Django/Flask for Python)</li>
+                            <li>MongoDB (or MySQL/PostgreSQL)</li>
+                        </ul>
+
+                        <p>Join us in creating an e-commerce website that not only meets but exceeds the expectations of your customers. Let's build an online shopping destination that showcases your products and elevates your brand presence!</p>
+                        ",
                         StartDate = DateTime.Now.AddMonths(-2).AddDays(-5),
                         EndDate = DateTime.Now.AddDays(-5).AddMonths(1),
                         ProjectPriorityId = priorityHigh,
@@ -215,7 +287,31 @@ namespace BugscapeMVC.Data
                      {
                         CompanyId = company1Id,
                         Name = "Customer Relationship Management (CRM) System",
-                        Description = @"Create a comprehensive <u>CRM system</u> to manage customer interactions, leads, and communication effectively.",
+                        Description = @"
+                        <p>Embark on the creation of a comprehensive Customer Relationship Management (CRM) System designed to empower your business in managing customer interactions, leads, and communication effectively. This project focuses on building a centralized platform that enhances customer relationships, streamlines communication, and provides valuable insights to drive business growth.</p>
+
+                        <h2>Key Features:</h2>
+                        <ul>
+                            <li><strong>Customer Database:</strong> Centralized storage for customer information, interactions, and preferences.</li>
+                            <li><strong>Lead Management:</strong> Efficiently track and manage leads from acquisition to conversion.</li>
+                            <li><strong>Communication Tools:</strong> Integrated tools for seamless communication with customers via email, phone, and other channels.</li>
+                            <li><strong>Task and Appointment Management:</strong> Schedule tasks, appointments, and follow-ups to ensure timely and organized interactions.</li>
+                            <li><strong>Analytics and Reporting:</strong> Generate insightful reports and analytics to understand customer behavior and make informed business decisions.</li>
+                            <li><strong>Integration Capabilities:</strong> Integrate with other business systems and tools for a unified workflow.</li>
+                        </ul>
+
+                        <h2>Technologies Used:</h2>
+                        <ul>
+                            <li>HTML5</li>
+                            <li>CSS3</li>
+                            <li>JavaScript</li>
+                            <li>React.js (or Angular/Vue.js)</li>
+                            <li>Node.js (or Django/Flask for Python)</li>
+                            <li>MongoDB (or MySQL/PostgreSQL)</li>
+                        </ul>
+
+                        <p>Join us in creating a CRM System that goes beyond managing data; it's a strategic tool to enhance customer relationships and drive business success. Let's build a system that grows with your business!</p>
+                        ",
                         StartDate = DateTime.Now.AddMonths(-2).AddDays(-3),
                         EndDate = DateTime.Now.AddDays(-3).AddMonths(6),
                         ProjectPriorityId = priorityUrgent,
@@ -241,13 +337,13 @@ namespace BugscapeMVC.Data
 
         public static async Task SeedDefaultUsersAsync(UserManager<AppUser> userManager)
         {
-            //Seed Default Admin User
+            // Seed Default Admin User
             var defaultUser = new AppUser
             {
-                UserName = "btadmin1@bugtracker.com",
-                Email = "btadmin1@bugtracker.com",
-                FirstName = "Bill",
-                LastName = "Appuser",
+                UserName = "scott.miles@democorp.com",
+                Email = "scott.miles@democorp.com",
+                FirstName = "Scott",
+                LastName = "Miles",
                 EmailConfirmed = true,
                 CompanyId = company1Id
             };
@@ -269,13 +365,13 @@ namespace BugscapeMVC.Data
                 throw;
             }
 
-            //Seed Default Admin User
+            // Seed Default Admin User
             defaultUser = new AppUser
             {
-                UserName = "btadmin2@bugtracker.com",
-                Email = "btadmin2@bugtracker.com",
-                FirstName = "Steve",
-                LastName = "Appuser",
+                UserName = "michael.brown@democorp.com",
+                Email = "michael.brown@democorp.com",
+                FirstName = "Michael",
+                LastName = "Brown",
                 EmailConfirmed = true,
                 CompanyId = company1Id
             };
@@ -298,13 +394,13 @@ namespace BugscapeMVC.Data
             }
 
 
-            //Seed Default ProjectManager1 User
+            // Seed Default Project_Manager User
             defaultUser = new AppUser
             {
-                UserName = "ProjectManager1@bugtracker.com",
-                Email = "ProjectManager1@bugtracker.com",
-                FirstName = "John",
-                LastName = "Appuser",
+                UserName = "olivia.jones@democorp.com",
+                Email = "olivia.jones@democorp.com",
+                FirstName = "Olivia",
+                LastName = "Jones",
                 EmailConfirmed = true,
                 CompanyId = company1Id
             };
@@ -327,13 +423,13 @@ namespace BugscapeMVC.Data
             }
 
 
-            //Seed Default Project_Manager2 User
+            // Seed Default Project_Manager User
             defaultUser = new AppUser
             {
-                UserName = "ProjectManager2@bugtracker.com",
-                Email = "ProjectManager2@bugtracker.com",
-                FirstName = "Jane",
-                LastName = "Appuser",
+                UserName = "natalie.carter@democorp.com",
+                Email = "natalie.carter@democorp.com",
+                FirstName = "Natalie",
+                LastName = "Carter",
                 EmailConfirmed = true,
                 CompanyId = company1Id
             };
@@ -356,13 +452,13 @@ namespace BugscapeMVC.Data
             }
 
 
-            //Seed Default Developer1 User
+            // Seed Default Developer User
             defaultUser = new AppUser
             {
-                UserName = "Developer1@bugtracker.com",
-                Email = "Developer1@bugtracker.com",
-                FirstName = "Elon",
-                LastName = "Appuser",
+                UserName = "lucas.jackson@democorp.com",
+                Email = "lucas.jackson@democorp.com",
+                FirstName = "Lucas",
+                LastName = "Jackson",
                 EmailConfirmed = true,
                 CompanyId = company1Id
             };
@@ -385,13 +481,13 @@ namespace BugscapeMVC.Data
             }
 
 
-            //Seed Default Developer2 User
+            // Seed Default Developer User
             defaultUser = new AppUser
             {
-                UserName = "Developer2@bugtracker.com",
-                Email = "Developer2@bugtracker.com",
-                FirstName = "James",
-                LastName = "Appuser",
+                UserName = "amelia.wilson@democorp.com",
+                Email = "amelia.wilson@democorp.com",
+                FirstName = "Amelia",
+                LastName = "Wilson",
                 EmailConfirmed = true,
                 CompanyId = company1Id
             };
@@ -414,13 +510,13 @@ namespace BugscapeMVC.Data
             }
 
 
-            //Seed Default Developer3 User
+            // Seed Default Developer User
             defaultUser = new AppUser
             {
-                UserName = "Developer3@bugtracker.com",
-                Email = "Developer3@bugtracker.com",
-                FirstName = "Natasha",
-                LastName = "Appuser",
+                UserName = "leo.martin@democorp.com",
+                Email = "leo.martin@democorp.com",
+                FirstName = "Leo",
+                LastName = "Martin",
                 EmailConfirmed = true,
                 CompanyId = company1Id
             };
@@ -443,13 +539,13 @@ namespace BugscapeMVC.Data
             }
 
 
-            //Seed Default Developer4 User
+            // Seed Default Developer User
             defaultUser = new AppUser
             {
-                UserName = "Developer4@bugtracker.com",
-                Email = "Developer4@bugtracker.com",
-                FirstName = "Carol",
-                LastName = "Appuser",
+                UserName = "sophie.roberts@democorp.com",
+                Email = "sophie.roberts@democorp.com",
+                FirstName = "Sophie",
+                LastName = "Roberts",
                 EmailConfirmed = true,
                 CompanyId = company1Id
             };
@@ -472,13 +568,13 @@ namespace BugscapeMVC.Data
             }
 
 
-            //Seed Default Developer5 User
+            // Seed Default Developer User
             defaultUser = new AppUser
             {
-                UserName = "Developer5@bugtracker.com",
-                Email = "Developer5@bugtracker.com",
-                FirstName = "Tony",
-                LastName = "Appuser",
+                UserName = "liam.harrison@democorp.com",
+                Email = "liam.harrison@democorp.com",
+                FirstName = "Liam",
+                LastName = "Harrison",
                 EmailConfirmed = true,
                 CompanyId = company1Id
             };
@@ -500,13 +596,13 @@ namespace BugscapeMVC.Data
                 throw;
             }
 
-            //Seed Default Developer6 User
+            // Seed Default Developer User
             defaultUser = new AppUser
             {
-                UserName = "Developer6@bugtracker.com",
-                Email = "Developer6@bugtracker.com",
-                FirstName = "Bruce",
-                LastName = "Appuser",
+                UserName = "isabella.murray@democorp.com",
+                Email = "isabella.murray@democorp.com",
+                FirstName = "Isabella",
+                LastName = "Murray",
                 EmailConfirmed = true,
                 CompanyId = company1Id
             };
@@ -528,13 +624,13 @@ namespace BugscapeMVC.Data
                 throw;
             }
 
-            //Seed Default Submitter1 User
+            // Seed Default Submitter User
             defaultUser = new AppUser
             {
-                UserName = "Submitter1@bugtracker.com",
-                Email = "Submitter1@bugtracker.com",
-                FirstName = "Scott",
-                LastName = "Appuser",
+                UserName = "liam.harrison@democorp.com",
+                Email = "liam.harrison@democorp.com",
+                FirstName = "Liam",
+                LastName = "Harrison",
                 EmailConfirmed = true,
                 CompanyId = company1Id
             };
@@ -557,13 +653,13 @@ namespace BugscapeMVC.Data
             }
 
 
-            //Seed Default Submitter2 User
+            // Seed Default Submitter User
             defaultUser = new AppUser
             {
-                UserName = "Submitter2@bugtracker.com",
-                Email = "Submitter2@bugtracker.com",
-                FirstName = "Sue",
-                LastName = "Appuser",
+                UserName = "eva.jenkins@democorp.com",
+                Email = "eva.jenkins@democorp.com",
+                FirstName = "Eva",
+                LastName = "Jenkins",
                 EmailConfirmed = true,
                 CompanyId = company1Id
             };
@@ -589,6 +685,8 @@ namespace BugscapeMVC.Data
 
         public static async Task SeedDemoUsersAsync(UserManager<AppUser> userManager)
         {
+
+
             // seed demo admin user
             var defaultUser = new AppUser
             {

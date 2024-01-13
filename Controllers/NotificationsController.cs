@@ -152,6 +152,20 @@ namespace BugscapeMVC.Controllers
                 return RedirectToAction(nameof(Inbox));
             }
 
+            int? companyId = User.Identity?.GetCompanyId();
+
+            if (companyId is null) return NotFound();
+            
+            List<AppUser> members = await _companyInfoService.GetAllMembersAsync(companyId.Value) ?? new List<AppUser>();
+            List<Ticket> tickets = (await _ticketService.GetAllTicketsByCompanyAsync(companyId.Value))
+                .OrderBy(t => t.Title)
+                .ToList()
+                ?? new List<Ticket>();
+
+            ViewBag.RecipientId = new SelectList(members, "Id", "FullName", recipientId);
+            ViewBag.TicketId = new SelectList(tickets, "Id", "Title", ticketId);
+            ViewBag.Subject = subject;
+
             return View(notification);
         }
 
