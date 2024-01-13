@@ -32,10 +32,10 @@ namespace BugscapeMVC.Controllers
             // define demo users for each role
             var demoUsers = new Dictionary<string, string>
             {
-                {"admin", "demoadmin@bugscape.com"},
-                {"project_manager", "demopm@bugscape.com"},
-                {"developer", "demodev@bugscape.com"},
-                {"submitter", "demosub@bugscape.com"}
+                {"admin", "demo.admin@democorp.com"},
+                {"project_manager", "demo.projectmanager@democorp.com"},
+                {"developer", "demo.developer@democorp.com"},
+                {"submitter", "demo.submitter@democorp.com"}
             };
 
             if (!demoUsers.TryGetValue(role, out string? value))

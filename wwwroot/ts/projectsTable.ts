@@ -29,8 +29,8 @@ class ProjectsTable {
     this.container = container ?? document.querySelector('[data-container="projects"]') as HTMLElement,
     this.page = page ?? 1,
     this.limit = limit ?? 4,
-    this.sortBy = sortBy ?? 'name',
-    this.order = order ?? 'asc'
+    this.sortBy = sortBy ?? 'startdate',
+    this.order = order ?? 'desc'
   }
 
   async init() {

@@ -30,7 +30,7 @@
             DateTime end = Model.Project!.EndDate.DateTime;
             DateTime today = DateTime.Now;
 
-            double percent = today >= end ? 100 :
+            double percent = today >= end || Model.TicketStatus?.Name == nameof(TicketStatuses.Resolved) ? 100 :
                 today < start ? 0 :
                 Math.Round((today.Subtract(start)) / (end.Subtract(start)) * 100);
         }
@@ -122,14 +122,26 @@
             <span class="uppercase px-2 py-1 @badgeClass rounded-md text-xs font-bold w-fit">@Model.TicketPriority?.Name</span>
             
             <p class="font-bold text-sm">Status:</p>
-            @if (today >= start && today < end)
-            {
-                <span class="uppercase px-2 py-1 bg-success rounded-md text-xs font-bold w-fit">ACTIVE</span>
-            }
-            else
-            {
-                <span class="uppercase px-2 py-1 bg-danger rounded-md text-xs font-bold w-fit">INACTIVE</span>
-            }
+            <div class="flex flex-wrap gap-2 items-center">
+                <span class="bg-dark text-white uppercase px-2 py-1 rounded-md text-xs font-bold">@Model.TicketStatus?.Name</span>
+
+                @if ((today >= start && today < end) && (Model.TicketStatus?.Name != nameof(TicketStatuses.Resolved)))
+                {
+                    <span class="uppercase px-2 py-1 bg-success rounded-md text-xs font-bold w-fit">ACTIVE</span>
+                }
+                else if (Model.TicketStatus?.Name == nameof(TicketStatuses.Resolved))
+                {
+                    <span class="uppercase px-2 py-1 bg-info rounded-md text-xs font-bold w-fit">CLOSED</span>
+                }
+                else if (today < start)
+                {
+                    <span class="uppercase px-2 py-1 bg-warning rounded-md text-xs font-bold w-fit">PENDING</span>
+                }
+                else if (today >= end)
+                {
+                    <span class="uppercase px-2 py-1 bg-danger rounded-md text-xs font-bold w-fit">EXPIRED</span>
+                }
+            </div>
         </div>
 
         @if(User.IsInRole(nameof(Roles.Admin)) || user?.Id == projectManager?.Id)

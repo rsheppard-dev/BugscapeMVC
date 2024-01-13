@@ -8,7 +8,6 @@ using BugscapeMVC.Models.Enums;
 using BugscapeMVC.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using BugscapeMVC.Models.ViewModels;
-using BugscapeMVC.Data;
 
 namespace BugscapeMVC.Controllers
 {
@@ -47,7 +46,7 @@ namespace BugscapeMVC.Controllers
 
         // GET: Tickets/MyTickets
         [HttpGet]
-        public async Task<IActionResult> MyTickets(int page = 1, string search = "", string order = "asc", string sortBy = "title", int limit = 10)
+        public async Task<IActionResult> MyTickets(int page = 1, string search = "", string order = "desc", string sortBy = "date", int limit = 10)
         {
             string? userId = _userManager.GetUserId(User);
             int? companyId = User.Identity?.GetCompanyId();
@@ -72,7 +71,7 @@ namespace BugscapeMVC.Controllers
 
         // GET: Tickets/AllTickets
         [HttpGet]
-        public async Task<IActionResult> Index(int page = 1, string search = "", string order = "asc", string sortBy = "title", int limit = 10)
+        public async Task<IActionResult> Index(int page = 1, string search = "", string order = "desc", string sortBy = "date", int limit = 10)
         {
             int? companyId = User.Identity?.GetCompanyId();
 
@@ -102,7 +101,7 @@ namespace BugscapeMVC.Controllers
 
         // GET: Tickets/ArchivedTickets
         [HttpGet]
-        public async Task<IActionResult> ArchivedTickets(int page = 1, string search = "", string order = "asc", string sortBy = "title", int limit = 10)
+        public async Task<IActionResult> ArchivedTickets(int page = 1, string search = "", string order = "desc", string sortBy = "date", int limit = 10)
         {
             int? companyId = User.Identity?.GetCompanyId();
 
@@ -129,7 +128,7 @@ namespace BugscapeMVC.Controllers
         [HttpGet]
         [Authorize(Roles = $"{nameof(Roles.Admin)}, {nameof(Roles.Project_Manager)}")]
 
-        public async Task<IActionResult> UnassignedTickets(int page = 1, string search = "", string order = "asc", string sortBy = "title", int limit = 10)
+        public async Task<IActionResult> UnassignedTickets(int page = 1, string search = "", string order = "desc", string sortBy = "date", int limit = 10)
         {
             int? companyId = User.Identity?.GetCompanyId();
             string? userId = _userManager.GetUserId(User);
@@ -632,7 +631,7 @@ namespace BugscapeMVC.Controllers
         }
 
         [HttpPost]
-        public IActionResult SortTickets([FromBody]List<Ticket> tickets, int? page, int? limit, string sortBy = "title", string order = "asc")
+        public IActionResult SortTickets([FromBody]List<Ticket> tickets, int? page, int? limit, string sortBy = "date", string order = "desc")
         {
             ViewData["SortBy"] = sortBy;
             ViewData["SortOrder"] = order;
@@ -642,7 +641,7 @@ namespace BugscapeMVC.Controllers
             return PartialView("_TicketsTablePartial", new PaginatedList<Ticket>(tickets, page ?? 1, limit ?? 10));
         }
 
-        private static List<Ticket> Sort(List<Ticket> tickets, string sortBy = "title", string order = "asc")
+        private static List<Ticket> Sort(List<Ticket> tickets, string sortBy = "date", string order = "desc")
         {
             tickets = sortBy.ToLower() switch
             {

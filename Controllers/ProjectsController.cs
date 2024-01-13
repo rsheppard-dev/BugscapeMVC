@@ -46,7 +46,7 @@ namespace BugscapeMVC.Controllers
 
         // GET: Projects/MyProjects
         [HttpGet]
-        public async Task<IActionResult> MyProjects(int page = 1, string search = "", string order = "asc", string sortBy = "name", int limit = 10)
+        public async Task<IActionResult> MyProjects(int page = 1, string search = "", string order = "desc", string sortBy = "startdate", int limit = 10)
         {
             string? userId = _userManager.GetUserId(User);
 
@@ -71,7 +71,7 @@ namespace BugscapeMVC.Controllers
 
         // GET: Projects
         [HttpGet]
-        public async Task<IActionResult> Index(int page = 1, string search = "", string order = "asc", string sortBy = "name", int limit = 10)
+        public async Task<IActionResult> Index(int page = 1, string search = "", string order = "desc", string sortBy = "startdate", int limit = 10)
         {
             int? companyId = User.Identity?.GetCompanyId();
 
@@ -105,7 +105,7 @@ namespace BugscapeMVC.Controllers
 
         // GET: Projects/ArchivedProjects
         [HttpGet]
-        public async Task<IActionResult> ArchivedProjects(int page = 1, string search = "", string order = "asc", string sortBy = "name", int limit = 10)
+        public async Task<IActionResult> ArchivedProjects(int page = 1, string search = "", string order = "desc", string sortBy = "startdate", int limit = 10)
         {
             int? companyId = User.Identity?.GetCompanyId();
 
@@ -131,7 +131,7 @@ namespace BugscapeMVC.Controllers
         // GET: Projects/UnassignedProjects
         [HttpGet]
         [Authorize(Roles = nameof(Roles.Admin))]
-        public async Task<IActionResult> UnassignedProjects(int page = 1, string search = "", string order = "asc", string sortBy = "name", int limit = 10)
+        public async Task<IActionResult> UnassignedProjects(int page = 1, string search = "", string order = "desc", string sortBy = "startdate", int limit = 10)
         {
             int? companyId = User.Identity?.GetCompanyId();
 
@@ -613,7 +613,7 @@ namespace BugscapeMVC.Controllers
             return PartialView("_ProjectsTablePartial", new PaginatedList<Project>(projects, page ?? 1, limit ?? 4));
         }
 
-        private static List<Project> Sort(List<Project> projects, string sortBy, string order = "asc")
+        private static List<Project> Sort(List<Project> projects, string sortBy, string order = "desc")
         {
             if (projects is null)
             {

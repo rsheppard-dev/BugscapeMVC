@@ -1,21 +1,23 @@
 ﻿@page
 @model LogoutModel
 @{
-    ViewData["Title"] = "Log out";
+    ViewData["Title"] = "See You Soon!";
 }
 
-<header>
-    <h1>@ViewData["Title"]</h1>
+<header class="container">
+    <h1 class="font-rockwell text-dark text-xl font-bold mb-4">@ViewData["Title"]</h1>
+
+    <hr class="mb-4" />
     @{
         if (User.Identity?.IsAuthenticated ?? false)
         {
-            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
-                <button type="submit" class="nav-link btn btn-link text-dark">Click here to Logout</button>
+            <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/", new { area = "" })" method="post">
+                <button id="login-submit" type="submit" class="px-4 py-2 text-sm rounded-md cursor-pointer bg-danger text-white font-lato hover:bg-opacity-80 transition-opacity">Signout</button>
             </form>
         }
         else
         {
-            <p>You have successfully logged out of the application.</p>
+            <p class="font-lato text-zinc-700">You have successfully logged out of the application.</p>
         }
     }
 </header>
