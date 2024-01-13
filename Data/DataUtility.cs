@@ -10,7 +10,6 @@ namespace BugscapeMVC.Data
     {
         //Company Ids
         private static int company1Id;
-        private static int company2Id;
 
         public static string? GetConnectionString(IConfiguration configuration)
         {
@@ -88,52 +87,31 @@ namespace BugscapeMVC.Data
                     { 
                         Name = "Democorp",
                         Description=@"
-                        <section>
-                            <h2>Overview:</h2>
-                            <p>Democorp Project Management Solutions is a forward-thinking and client-centric project management company committed to delivering tailored solutions that meet the unique needs of our clients. With a focus on innovation, efficiency, and client satisfaction, we bring a wealth of expertise to every project we undertake.</p>
-                        </section>
+                        <h2>Your Software and Web Development Partner</h2>
 
-                        <section>
-                            <h2>Mission Statement:</h2>
-                            <p>""At Democorp, our mission is to empower businesses by providing top-notch project management services that drive success. We strive to build lasting relationships with our clients through transparent communication, meticulous planning, and the relentless pursuit of excellence in project execution.""</p>
-                        </section>
+                        <p>Welcome to Democorp, where innovation meets technology excellence. As a leading software and web development company, we specialize in crafting digital solutions that empower businesses and elevate online experiences. Our commitment to quality, creativity, and client satisfaction sets us apart in the competitive landscape of technology.</p>
 
-                        <section>
-                            <h2>Key Services:</h2>
-                            <ol>
-                                <li><strong>Customized Project Planning:</strong> Democorp understands that every project is unique. Our team collaborates closely with clients to create customized project plans that align with specific goals, ensuring a clear roadmap to success.</li>
-                                <li><strong>Strategic Execution:</strong> We pride ourselves on turning strategies into tangible results. Democorp's project management experts excel in coordinating tasks, managing resources, and executing plans with precision to achieve project objectives.</li>
-                                <li><strong>Proactive Risk Management:</strong> Anticipating and addressing risks is at the core of our approach. Democorp employs proactive risk management strategies to identify and mitigate potential challenges, ensuring a smooth project flow.</li>
-                                <li><strong>Transparent Communication:</strong> Open communication is the cornerstone of our client relationships. Democorp keeps clients informed at every stage, providing regular updates on project progress, challenges, and achievements to foster trust and collaboration.</li>
-                                <li><strong>Technology Integration for Efficiency:</strong> Democorp harnesses the power of cutting-edge project management tools to enhance efficiency and collaboration. Our tech-driven approach ensures real-time insights, streamlined processes, and optimal project performance.</li>
-                            </ol>
-                        </section>
-                            <section>
-                                <h2>Industries Served:</h2>
-                                <ul>
-                                    <li>Technology and IT</li>
-                                    <li>Construction and Infrastructure</li>
-                                    <li>Healthcare and Life Sciences</li>
-                                    <li>Financial Services</li>
-                                    <li>Manufacturing and Logistics</li>
-                                    <li>Energy and Sustainability</li>
-                                </ul>
-                            </section>
+                        <h2>Our Expertise:</h2>
+                        <p>At Democorp, we excel in:</p>
+                        <ul>
+                            <li><strong>Custom Software Development:</strong> Tailored software solutions designed to meet your unique business needs.</li>
+                            <li><strong>Web Development:</strong> Engaging and responsive websites that captivate audiences and drive user interaction.</li>
+                            <li><strong>Mobile App Development:</strong> Innovative mobile applications that bring your ideas to life on iOS and Android platforms.</li>
+                            <li><strong>E-commerce Solutions:</strong> Robust and scalable e-commerce platforms for seamless online transactions.</li>
+                            <li><strong>UI/UX Design:</strong> Intuitive and visually appealing user interfaces that enhance user experiences.</li>
+                        </ul>
 
-                            <section>
-                                <h2>Why Choose Democorp:</h2>
-                                <ul>
-                                    <li><strong>Client-Centric Focus:</strong> Democorp prioritizes client satisfaction, tailoring solutions to meet unique project requirements.</li>
-                                    <li><strong>Experienced Team:</strong> Our team consists of seasoned project management professionals with a proven track record in delivering successful outcomes.</li>
-                                    <li><strong>Innovation and Agility:</strong> We stay ahead of industry trends, integrating innovative solutions and adapting to changes swiftly to keep projects on course.</li>
-                                    <li><strong>Quality Assurance:</strong> Democorp is dedicated to delivering high-quality results, with rigorous quality assurance measures integrated into our project management methodology.</li>
-                                    <li><strong>Cost-Effective Solutions:</strong> We optimize resource allocation to ensure cost-effectiveness without compromising on the quality of deliverables.</li>
-                                </ul>
-                            </section>
+                        <h2>Industries We Serve:</h2>
+                        <ul>
+                            <li>Technology and IT</li>
+                            <li>Healthcare and Life Sciences</li>
+                            <li>Finance and Banking</li>
+                            <li>Manufacturing and Logistics</li>
+                            <li>E-commerce</li>
+                            <li>Entertainment and Media</li>
+                        </ul>
 
-                            <footer>
-                                <p>Choose Democorp Project Management Solutions for a collaborative, results-driven approach to project success. Partner with us to turn your visions into reality.</p>
-                            </footer>"
+                        <p>Partner with Democorp for forward-thinking solutions that drive your business growth. Let's innovate together!</p>"
                     },
                 };
 
@@ -142,7 +120,7 @@ namespace BugscapeMVC.Data
                 await context.SaveChangesAsync();
 
                 //Get company Ids
-                company1Id = context.Companies.FirstOrDefault(p => p.Name == "Democorp")?.Id ?? throw new Exception("Failed to get companyId");
+                company1Id = context.Companies.FirstOrDefault(p => p.Name == "Democorp")?.Id ?? throw new Exception("Failed to get company1Id");
             }
             catch (Exception ex)
             {
@@ -159,10 +137,10 @@ namespace BugscapeMVC.Data
             try
             {
                 IList<Models.ProjectPriority> projectPriorities = new List<ProjectPriority>() {
-                    new ProjectPriority() { Name = Priorities.Low.ToString() },
-                    new ProjectPriority() { Name = Priorities.Medium.ToString() },
-                    new ProjectPriority() { Name = Priorities.High.ToString() },
-                    new ProjectPriority() { Name = Priorities.Urgent.ToString() },
+                    new() { Name = Priorities.Low.ToString() },
+                    new() { Name = Priorities.Medium.ToString() },
+                    new() { Name = Priorities.High.ToString() },
+                    new() { Name = Priorities.Urgent.ToString() },
                 };
 
                 var dbProjectPriorities = context.ProjectPriorities.Select(c => c.Name).ToList();
@@ -184,48 +162,66 @@ namespace BugscapeMVC.Data
         {
             try
             {
-                //Get project priority Ids
-                int priorityLow = context.ProjectPriorities.FirstOrDefault(p => p.Name == Priorities.Low.ToString())?.Id ?? throw new Exception("Failed to get projectPriortyId");
-                int priorityMedium = context.ProjectPriorities.FirstOrDefault(p => p.Name == Priorities.Medium.ToString())?.Id ?? throw new Exception("Failed to get projectPriortyId");;
-                int priorityHigh = context.ProjectPriorities.FirstOrDefault(p => p.Name == Priorities.High.ToString())?.Id ?? throw new Exception("Failed to get projectPriortyId");;
-                int priorityUrgent = context.ProjectPriorities.FirstOrDefault(p => p.Name == Priorities.Urgent.ToString())?.Id ?? throw new Exception("Failed to get projectPriortyId");;
+                // get project images
+                byte[] blogImage = await File.ReadAllBytesAsync("wwwroot/images/demo/projects/blog.png");
+                byte[] onlineLearningImage = await File.ReadAllBytesAsync("wwwroot/images/demo/projects/onlineLearning.png");
+                byte[] ecommerceImage = await File.ReadAllBytesAsync("wwwroot/images/demo/projects/ecommerce.png");
+                byte[] crmImage = await File.ReadAllBytesAsync("wwwroot/images/demo/projects/crm.png");
+
+                // get project priority Ids
+                int priorityLow = context.ProjectPriorities.FirstOrDefault(p => p.Name == Priorities.Low.ToString())?.Id ?? throw new Exception("Failed to get projectPriorityId");
+                int priorityMedium = context.ProjectPriorities.FirstOrDefault(p => p.Name == Priorities.Medium.ToString())?.Id ?? throw new Exception("Failed to get projectPriorityId");;
+                int priorityHigh = context.ProjectPriorities.FirstOrDefault(p => p.Name == Priorities.High.ToString())?.Id ?? throw new Exception("Failed to get projectPriorityId");;
+                int priorityUrgent = context.ProjectPriorities.FirstOrDefault(p => p.Name == Priorities.Urgent.ToString())?.Id ?? throw new Exception("Failed to get projectPriorityId");;
            
                 IList<Project> projects = new List<Project>() {
-                     new Project()
+                    new()
+                    {
+                        CompanyId = company1Id,
+                        Name = "Online Learning Platform",
+                        Description = @"Develop an <b>online learning platform</b> that allows users to access courses, participate in quizzes, and track their progress.",
+                        StartDate = DateTime.Now.AddMonths(-1),
+                        EndDate = DateTime.Now.AddMonths(5),
+                        ProjectPriorityId = priorityLow,
+                        ImageFileData = onlineLearningImage,
+                        ImageFileName = "onlineLearning.png",
+                        ImageContentType = "image/png"
+                    },
+                     new()
                      {
-                         CompanyId = company1Id,
-                         Name = "Build a Personal Porfolio",
-                         Description="Single page html, css & javascript page.  Serves as a landing page for candidates and contains a bio and links to all applications and challenges." ,
-                         StartDate = new DateTime(2021,8,20),
-                         EndDate = new DateTime(2021,8,20).AddMonths(1),
-                         ProjectPriorityId = priorityLow
+                        CompanyId = company1Id,
+                        Name = "Build a Blog Web Application",
+                        Description="Candidate's custom built web application using .Net Core with MVC, a postgres database and hosted in a heroku container.  The app is designed for the candidate to create, update and maintain a live blog site.",
+                        StartDate = DateTime.Now.AddDays(-7),
+                        EndDate = DateTime.Now.AddDays(-7).AddMonths(3),
+                        ProjectPriorityId = priorityMedium,
+                        ImageFileData = blogImage,
+                        ImageFileName = "blog.png",
+                        ImageContentType = "image/png"
                      },
-                     new Project()
+                     new()
                      {
-                         CompanyId = company2Id,
-                         Name = "Build a supplemental Blog Web Application",
-                         Description="Candidate's custom built web application using .Net Core with MVC, a postgres database and hosted in a heroku container.  The app is designed for the candidate to create, update and maintain a live blog site.",
-                         StartDate = new DateTime(2021,8,20),
-                         EndDate = new DateTime(2021,8,20).AddMonths(4),
-                         ProjectPriorityId = priorityMedium
+                        CompanyId = company1Id,
+                        Name = "E-commerce Website",
+                        Description = @"Build a feature-rich <i>e-commerce website</i> with secure payment processing, product catalog, and user account management.",
+                        StartDate = DateTime.Now.AddMonths(-2).AddDays(-5),
+                        EndDate = DateTime.Now.AddDays(-5).AddMonths(1),
+                        ProjectPriorityId = priorityHigh,
+                        ImageFileData = ecommerceImage,
+                        ImageFileName = "ecommerce.png",
+                        ImageContentType = "image/png"
                      },
-                     new Project()
+                     new()
                      {
-                         CompanyId = company1Id,
-                         Name = "Build an Issue Tracking Web Application",
-                         Description="A custom designed .Net Core application with postgres database.  The application is a multi tennent application designed to track issue tickets' progress.  Implemented with identity and user roles, Tickets are maintained in projects which are maintained by users in the role of Project_Manager.  Each project has a team and team members.",
-                         StartDate = new DateTime(2021,8,20),
-                         EndDate = new DateTime(2021,8,20).AddMonths(6),
-                         ProjectPriorityId = priorityHigh
-                     },
-                     new Project()
-                     {
-                         CompanyId = company1Id,
-                         Name = "Build a Movie Information Web Application",
-                         Description="An internet movie database using web api.",
-                         StartDate = new DateTime(2021,8,20),
-                         EndDate = new DateTime(2021,8,20).AddMonths(6),
-                         ProjectPriorityId = priorityHigh
+                        CompanyId = company1Id,
+                        Name = "Customer Relationship Management (CRM) System",
+                        Description = @"Create a comprehensive <u>CRM system</u> to manage customer interactions, leads, and communication effectively.",
+                        StartDate = DateTime.Now.AddMonths(-2).AddDays(-3),
+                        EndDate = DateTime.Now.AddDays(-3).AddMonths(6),
+                        ProjectPriorityId = priorityUrgent,
+                        ImageFileData = crmImage,
+                        ImageFileName = "crm.png",
+                        ImageContentType = "image/png"
                      },
                 };
 
@@ -281,7 +277,7 @@ namespace BugscapeMVC.Data
                 FirstName = "Steve",
                 LastName = "Appuser",
                 EmailConfirmed = true,
-                CompanyId = company2Id
+                CompanyId = company1Id
             };
             try
             {
@@ -339,7 +335,7 @@ namespace BugscapeMVC.Data
                 FirstName = "Jane",
                 LastName = "Appuser",
                 EmailConfirmed = true,
-                CompanyId = company2Id
+                CompanyId = company1Id
             };
             try
             {
@@ -397,7 +393,7 @@ namespace BugscapeMVC.Data
                 FirstName = "James",
                 LastName = "Appuser",
                 EmailConfirmed = true,
-                CompanyId = company2Id
+                CompanyId = company1Id
             };
             try
             {
@@ -455,7 +451,7 @@ namespace BugscapeMVC.Data
                 FirstName = "Carol",
                 LastName = "Appuser",
                 EmailConfirmed = true,
-                CompanyId = company2Id
+                CompanyId = company1Id
             };
             try
             {
@@ -512,7 +508,7 @@ namespace BugscapeMVC.Data
                 FirstName = "Bruce",
                 LastName = "Appuser",
                 EmailConfirmed = true,
-                CompanyId = company2Id
+                CompanyId = company1Id
             };
             try
             {
@@ -569,7 +565,7 @@ namespace BugscapeMVC.Data
                 FirstName = "Sue",
                 LastName = "Appuser",
                 EmailConfirmed = true,
-                CompanyId = company2Id
+                CompanyId = company1Id
             };
             try
             {
@@ -756,7 +752,7 @@ namespace BugscapeMVC.Data
                      new TicketType() { Name = TicketTypes.Defect.ToString()},               // Ticket involves unexpected development/maintenance on a previously designed feature/functionality
                      new TicketType() { Name = TicketTypes.Change_Request.ToString() },       // Ticket involves modification development of a previously designed feature/functionality
                      new TicketType() { Name = TicketTypes.Enhancement.ToString() },         // Ticket involves additional development on a previously designed feature or new functionality
-                     new TicketType() { Name = TicketTypes.General_Task.ToString() }          // Ticket involves no software development but may involve tasks such as configuations, or hardware setup
+                     new TicketType() { Name = TicketTypes.General_Task.ToString() }          // Ticket involves no software development but may involve tasks such as configurations, or hardware setup
                 };
 
                 var dbTicketTypes = context.TicketTypes.Select(c => c.Name).ToList();
@@ -829,10 +825,10 @@ namespace BugscapeMVC.Data
         public static async Task SeedDefaultTicketsAsync(ApplicationDbContext context)
         {
             //Get project Ids
-            int portfolioId = (context.Projects.FirstOrDefault(p => p.Name == "Build a Personal Porfolio")?.Id) ?? throw new Exception("Failed to get projectId.");
-            int blogId = context.Projects.FirstOrDefault(p => p.Name == "Build a supplemental Blog Web Application")?.Id ?? throw new Exception("Failed to get projectId.");
-            int bugtrackerId = context.Projects.FirstOrDefault(p => p.Name == "Build an Issue Tracking Web Application")?.Id ?? throw new Exception("Failed to get projectId.");
-            int movieId = context.Projects.FirstOrDefault(p => p.Name == "Build a Movie Information Web Application")?.Id ?? throw new Exception("Failed to get projectId.");
+            int onlineLearningId = (context.Projects.FirstOrDefault(p => p.Name == "Online Learning Platform")?.Id) ?? throw new Exception("Failed to get projectId.");
+            int blogId = context.Projects.FirstOrDefault(p => p.Name == "Build a Blog Web Application")?.Id ?? throw new Exception("Failed to get projectId.");
+            int ecommerceId = context.Projects.FirstOrDefault(p => p.Name == "E-commerce Website")?.Id ?? throw new Exception("Failed to get projectId.");
+            int crmId = context.Projects.FirstOrDefault(p => p.Name == "Customer Relationship Management (CRM) System")?.Id ?? throw new Exception("Failed to get projectId.");
 
             //Get ticket type Ids
             int typeNewDev = context.TicketTypes.FirstOrDefault(p => p.Name == TicketTypes.New_Development.ToString())?.Id ?? throw new Exception("Failed to get ticketTypeId.");
@@ -859,13 +855,13 @@ namespace BugscapeMVC.Data
                 int? priorityLow1 = priorityLow;
                 IList<Ticket> tickets = new List<Ticket>() {
                                 //PORTFOLIO
-                                new Ticket() { Title = "Portfolio Ticket 1", Description = "Ticket details for portfolio ticket 1", Created = DateTimeOffset.Now, ProjectId = portfolioId, TicketPriorityId = priorityLow, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
-                                new Ticket() { Title = "Portfolio Ticket 2", Description = "Ticket details for portfolio ticket 2", Created = DateTimeOffset.Now, ProjectId = portfolioId, TicketPriorityId = priorityHigh, TicketStatusId = statusDev, TicketTypeId = typeEnhancement},
-                                new Ticket() { Title = "Portfolio Ticket 4", Description = "Ticket details for portfolio ticket 4", Created = DateTimeOffset.Now, ProjectId = portfolioId, TicketPriorityId = priorityUrgent, TicketStatusId = statusTest, TicketTypeId = typeDefect},
-                                new Ticket() { Title = "Portfolio Ticket 5", Description = "Ticket details for portfolio ticket 5", Created = DateTimeOffset.Now, ProjectId = portfolioId, TicketPriorityId = priorityLow, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
-                                new Ticket() { Title = "Portfolio Ticket 6", Description = "Ticket details for portfolio ticket 6", Created = DateTimeOffset.Now, ProjectId = portfolioId, TicketPriorityId = priorityMedium, TicketStatusId = statusNew, TicketTypeId = typeChangeRequest},
-                                new Ticket() { Title = "Portfolio Ticket 7", Description = "Ticket details for portfolio ticket 7", Created = DateTimeOffset.Now, ProjectId = portfolioId, TicketPriorityId = priorityHigh, TicketStatusId = statusDev, TicketTypeId = typeEnhancement},
-                                new Ticket() { Title = "Portfolio Ticket 8", Description = "Ticket details for portfolio ticket 8", Created = DateTimeOffset.Now, ProjectId = portfolioId, TicketPriorityId = priorityUrgent, TicketStatusId = statusTest, TicketTypeId = typeDefect},
+                                new Ticket() { Title = "Portfolio Ticket 1", Description = "Ticket details for portfolio ticket 1", Created = DateTimeOffset.Now, ProjectId = onlineLearningId, TicketPriorityId = priorityLow, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
+                                new Ticket() { Title = "Portfolio Ticket 2", Description = "Ticket details for portfolio ticket 2", Created = DateTimeOffset.Now, ProjectId = onlineLearningId, TicketPriorityId = priorityHigh, TicketStatusId = statusDev, TicketTypeId = typeEnhancement},
+                                new Ticket() { Title = "Portfolio Ticket 4", Description = "Ticket details for portfolio ticket 4", Created = DateTimeOffset.Now, ProjectId = onlineLearningId, TicketPriorityId = priorityUrgent, TicketStatusId = statusTest, TicketTypeId = typeDefect},
+                                new Ticket() { Title = "Portfolio Ticket 5", Description = "Ticket details for portfolio ticket 5", Created = DateTimeOffset.Now, ProjectId = onlineLearningId, TicketPriorityId = priorityLow, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
+                                new Ticket() { Title = "Portfolio Ticket 6", Description = "Ticket details for portfolio ticket 6", Created = DateTimeOffset.Now, ProjectId = onlineLearningId, TicketPriorityId = priorityMedium, TicketStatusId = statusNew, TicketTypeId = typeChangeRequest},
+                                new Ticket() { Title = "Portfolio Ticket 7", Description = "Ticket details for portfolio ticket 7", Created = DateTimeOffset.Now, ProjectId = onlineLearningId, TicketPriorityId = priorityHigh, TicketStatusId = statusDev, TicketTypeId = typeEnhancement},
+                                new Ticket() { Title = "Portfolio Ticket 8", Description = "Ticket details for portfolio ticket 8", Created = DateTimeOffset.Now, ProjectId = onlineLearningId, TicketPriorityId = priorityUrgent, TicketStatusId = statusTest, TicketTypeId = typeDefect},
                                 //BLOG
                                 new Ticket() { Title = "Blog Ticket 1", Description = "Ticket details for blog ticket 1", Created = DateTimeOffset.Now, ProjectId = blogId, TicketPriorityId = priorityLow, TicketStatusId = statusNew, TicketTypeId = typeDefect},
                                 new Ticket() { Title = "Blog Ticket 2", Description = "Ticket details for blog ticket 2", Created = DateTimeOffset.Now, ProjectId = blogId, TicketPriorityId = priorityMedium, TicketStatusId = statusDev, TicketTypeId = typeEnhancement},
@@ -885,57 +881,57 @@ namespace BugscapeMVC.Data
                                 new Ticket() { Title = "Blog Ticket 16", Description = "Ticket details for blog ticket 16", Created = DateTimeOffset.Now, ProjectId = blogId, TicketPriorityId = priorityUrgent, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
                                 new Ticket() { Title = "Blog Ticket 17", Description = "Ticket details for blog ticket 17", Created = DateTimeOffset.Now, ProjectId = blogId, TicketPriorityId = priorityHigh, TicketStatusId = statusDev,  TicketTypeId = typeNewDev},
                                 //BUGTRACKER                                                                                                                         
-                                new Ticket() { Title = "Bug Tracker Ticket 1", Description = "Ticket details for bug tracker ticket 1", Created = DateTimeOffset.Now, ProjectId = bugtrackerId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
-                                new Ticket() { Title = "Bug Tracker Ticket 2", Description = "Ticket details for bug tracker ticket 2", Created = DateTimeOffset.Now, ProjectId = bugtrackerId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
-                                new Ticket() { Title = "Bug Tracker Ticket 3", Description = "Ticket details for bug tracker ticket 3", Created = DateTimeOffset.Now, ProjectId = bugtrackerId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
-                                new Ticket() { Title = "Bug Tracker Ticket 4", Description = "Ticket details for bug tracker ticket 4", Created = DateTimeOffset.Now, ProjectId = bugtrackerId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
-                                new Ticket() { Title = "Bug Tracker Ticket 5", Description = "Ticket details for bug tracker ticket 5", Created = DateTimeOffset.Now, ProjectId = bugtrackerId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
-                                new Ticket() { Title = "Bug Tracker Ticket 6", Description = "Ticket details for bug tracker ticket 6", Created = DateTimeOffset.Now, ProjectId = bugtrackerId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
-                                new Ticket() { Title = "Bug Tracker Ticket 7", Description = "Ticket details for bug tracker ticket 7", Created = DateTimeOffset.Now, ProjectId = bugtrackerId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
-                                new Ticket() { Title = "Bug Tracker Ticket 8", Description = "Ticket details for bug tracker ticket 8", Created = DateTimeOffset.Now, ProjectId = bugtrackerId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
-                                new Ticket() { Title = "Bug Tracker Ticket 9", Description = "Ticket details for bug tracker ticket 9", Created = DateTimeOffset.Now, ProjectId = bugtrackerId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
-                                new Ticket() { Title = "Bug Tracker Ticket 10", Description = "Ticket details for bug tracker 10", Created = DateTimeOffset.Now, ProjectId = bugtrackerId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
-                                new Ticket() { Title = "Bug Tracker Ticket 11", Description = "Ticket details for bug tracker 11", Created = DateTimeOffset.Now, ProjectId = bugtrackerId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
-                                new Ticket() { Title = "Bug Tracker Ticket 12", Description = "Ticket details for bug tracker 12", Created = DateTimeOffset.Now, ProjectId = bugtrackerId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
-                                new Ticket() { Title = "Bug Tracker Ticket 13", Description = "Ticket details for bug tracker 13", Created = DateTimeOffset.Now, ProjectId = bugtrackerId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
-                                new Ticket() { Title = "Bug Tracker Ticket 14", Description = "Ticket details for bug tracker 14", Created = DateTimeOffset.Now, ProjectId = bugtrackerId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
-                                new Ticket() { Title = "Bug Tracker Ticket 15", Description = "Ticket details for bug tracker 15", Created = DateTimeOffset.Now, ProjectId = bugtrackerId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
-                                new Ticket() { Title = "Bug Tracker Ticket 16", Description = "Ticket details for bug tracker 16", Created = DateTimeOffset.Now, ProjectId = bugtrackerId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
-                                new Ticket() { Title = "Bug Tracker Ticket 17", Description = "Ticket details for bug tracker 17", Created = DateTimeOffset.Now, ProjectId = bugtrackerId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
-                                new Ticket() { Title = "Bug Tracker Ticket 18", Description = "Ticket details for bug tracker 18", Created = DateTimeOffset.Now, ProjectId = bugtrackerId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
-                                new Ticket() { Title = "Bug Tracker Ticket 19", Description = "Ticket details for bug tracker 19", Created = DateTimeOffset.Now, ProjectId = bugtrackerId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
-                                new Ticket() { Title = "Bug Tracker Ticket 20", Description = "Ticket details for bug tracker 20", Created = DateTimeOffset.Now, ProjectId = bugtrackerId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
-                                new Ticket() { Title = "Bug Tracker Ticket 21", Description = "Ticket details for bug tracker 21", Created = DateTimeOffset.Now, ProjectId = bugtrackerId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
-                                new Ticket() { Title = "Bug Tracker Ticket 22", Description = "Ticket details for bug tracker 22", Created = DateTimeOffset.Now, ProjectId = bugtrackerId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
-                                new Ticket() { Title = "Bug Tracker Ticket 23", Description = "Ticket details for bug tracker 23", Created = DateTimeOffset.Now, ProjectId = bugtrackerId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
-                                new Ticket() { Title = "Bug Tracker Ticket 24", Description = "Ticket details for bug tracker 24", Created = DateTimeOffset.Now, ProjectId = bugtrackerId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
-                                new Ticket() { Title = "Bug Tracker Ticket 25", Description = "Ticket details for bug tracker 25", Created = DateTimeOffset.Now, ProjectId = bugtrackerId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
-                                new Ticket() { Title = "Bug Tracker Ticket 26", Description = "Ticket details for bug tracker 26", Created = DateTimeOffset.Now, ProjectId = bugtrackerId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
-                                new Ticket() { Title = "Bug Tracker Ticket 27", Description = "Ticket details for bug tracker 27", Created = DateTimeOffset.Now, ProjectId = bugtrackerId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
-                                new Ticket() { Title = "Bug Tracker Ticket 28", Description = "Ticket details for bug tracker 28", Created = DateTimeOffset.Now, ProjectId = bugtrackerId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
-                                new Ticket() { Title = "Bug Tracker Ticket 29", Description = "Ticket details for bug tracker 29", Created = DateTimeOffset.Now, ProjectId = bugtrackerId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
-                                new Ticket() { Title = "Bug Tracker Ticket 30", Description = "Ticket details for bug tracker 30", Created = DateTimeOffset.Now, ProjectId = bugtrackerId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
+                                new Ticket() { Title = "Bug Tracker Ticket 1", Description = "Ticket details for bug tracker ticket 1", Created = DateTimeOffset.Now, ProjectId = ecommerceId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
+                                new Ticket() { Title = "Bug Tracker Ticket 2", Description = "Ticket details for bug tracker ticket 2", Created = DateTimeOffset.Now, ProjectId = ecommerceId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
+                                new Ticket() { Title = "Bug Tracker Ticket 3", Description = "Ticket details for bug tracker ticket 3", Created = DateTimeOffset.Now, ProjectId = ecommerceId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
+                                new Ticket() { Title = "Bug Tracker Ticket 4", Description = "Ticket details for bug tracker ticket 4", Created = DateTimeOffset.Now, ProjectId = ecommerceId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
+                                new Ticket() { Title = "Bug Tracker Ticket 5", Description = "Ticket details for bug tracker ticket 5", Created = DateTimeOffset.Now, ProjectId = ecommerceId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
+                                new Ticket() { Title = "Bug Tracker Ticket 6", Description = "Ticket details for bug tracker ticket 6", Created = DateTimeOffset.Now, ProjectId = ecommerceId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
+                                new Ticket() { Title = "Bug Tracker Ticket 7", Description = "Ticket details for bug tracker ticket 7", Created = DateTimeOffset.Now, ProjectId = ecommerceId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
+                                new Ticket() { Title = "Bug Tracker Ticket 8", Description = "Ticket details for bug tracker ticket 8", Created = DateTimeOffset.Now, ProjectId = ecommerceId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
+                                new Ticket() { Title = "Bug Tracker Ticket 9", Description = "Ticket details for bug tracker ticket 9", Created = DateTimeOffset.Now, ProjectId = ecommerceId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
+                                new Ticket() { Title = "Bug Tracker Ticket 10", Description = "Ticket details for bug tracker 10", Created = DateTimeOffset.Now, ProjectId = ecommerceId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
+                                new Ticket() { Title = "Bug Tracker Ticket 11", Description = "Ticket details for bug tracker 11", Created = DateTimeOffset.Now, ProjectId = ecommerceId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
+                                new Ticket() { Title = "Bug Tracker Ticket 12", Description = "Ticket details for bug tracker 12", Created = DateTimeOffset.Now, ProjectId = ecommerceId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
+                                new Ticket() { Title = "Bug Tracker Ticket 13", Description = "Ticket details for bug tracker 13", Created = DateTimeOffset.Now, ProjectId = ecommerceId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
+                                new Ticket() { Title = "Bug Tracker Ticket 14", Description = "Ticket details for bug tracker 14", Created = DateTimeOffset.Now, ProjectId = ecommerceId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
+                                new Ticket() { Title = "Bug Tracker Ticket 15", Description = "Ticket details for bug tracker 15", Created = DateTimeOffset.Now, ProjectId = ecommerceId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
+                                new Ticket() { Title = "Bug Tracker Ticket 16", Description = "Ticket details for bug tracker 16", Created = DateTimeOffset.Now, ProjectId = ecommerceId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
+                                new Ticket() { Title = "Bug Tracker Ticket 17", Description = "Ticket details for bug tracker 17", Created = DateTimeOffset.Now, ProjectId = ecommerceId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
+                                new Ticket() { Title = "Bug Tracker Ticket 18", Description = "Ticket details for bug tracker 18", Created = DateTimeOffset.Now, ProjectId = ecommerceId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
+                                new Ticket() { Title = "Bug Tracker Ticket 19", Description = "Ticket details for bug tracker 19", Created = DateTimeOffset.Now, ProjectId = ecommerceId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
+                                new Ticket() { Title = "Bug Tracker Ticket 20", Description = "Ticket details for bug tracker 20", Created = DateTimeOffset.Now, ProjectId = ecommerceId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
+                                new Ticket() { Title = "Bug Tracker Ticket 21", Description = "Ticket details for bug tracker 21", Created = DateTimeOffset.Now, ProjectId = ecommerceId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
+                                new Ticket() { Title = "Bug Tracker Ticket 22", Description = "Ticket details for bug tracker 22", Created = DateTimeOffset.Now, ProjectId = ecommerceId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
+                                new Ticket() { Title = "Bug Tracker Ticket 23", Description = "Ticket details for bug tracker 23", Created = DateTimeOffset.Now, ProjectId = ecommerceId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
+                                new Ticket() { Title = "Bug Tracker Ticket 24", Description = "Ticket details for bug tracker 24", Created = DateTimeOffset.Now, ProjectId = ecommerceId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
+                                new Ticket() { Title = "Bug Tracker Ticket 25", Description = "Ticket details for bug tracker 25", Created = DateTimeOffset.Now, ProjectId = ecommerceId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
+                                new Ticket() { Title = "Bug Tracker Ticket 26", Description = "Ticket details for bug tracker 26", Created = DateTimeOffset.Now, ProjectId = ecommerceId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
+                                new Ticket() { Title = "Bug Tracker Ticket 27", Description = "Ticket details for bug tracker 27", Created = DateTimeOffset.Now, ProjectId = ecommerceId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
+                                new Ticket() { Title = "Bug Tracker Ticket 28", Description = "Ticket details for bug tracker 28", Created = DateTimeOffset.Now, ProjectId = ecommerceId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
+                                new Ticket() { Title = "Bug Tracker Ticket 29", Description = "Ticket details for bug tracker 29", Created = DateTimeOffset.Now, ProjectId = ecommerceId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
+                                new Ticket() { Title = "Bug Tracker Ticket 30", Description = "Ticket details for bug tracker 30", Created = DateTimeOffset.Now, ProjectId = ecommerceId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
                                 //MOVIE
-                                new Ticket() { Title = "Movie Ticket 1", Description = "Ticket details for movie ticket 1", Created = DateTimeOffset.Now, ProjectId = movieId, TicketPriorityId = priorityLow, TicketStatusId = statusNew, TicketTypeId = typeDefect},
-                                new Ticket() { Title = "Movie Ticket 2", Description = "Ticket details for movie ticket 2", Created = DateTimeOffset.Now, ProjectId = movieId, TicketPriorityId = priorityMedium, TicketStatusId = statusDev, TicketTypeId = typeEnhancement},
-                                new Ticket() { Title = "Movie Ticket 3", Description = "Ticket details for movie ticket 3", Created = DateTimeOffset.Now, ProjectId = movieId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeChangeRequest},
-                                new Ticket() { Title = "Movie Ticket 4", Description = "Ticket details for movie ticket 4", Created = DateTimeOffset.Now, ProjectId = movieId, TicketPriorityId = priorityUrgent, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
-                                new Ticket() { Title = "Movie Ticket 5", Description = "Ticket details for movie ticket 5", Created = DateTimeOffset.Now, ProjectId = movieId, TicketPriorityId = priorityLow, TicketStatusId = statusDev,  TicketTypeId = typeDefect},
-                                new Ticket() { Title = "Movie Ticket 6", Description = "Ticket details for movie ticket 6", Created = DateTimeOffset.Now, ProjectId = movieId, TicketPriorityId = priorityMedium, TicketStatusId = statusNew,  TicketTypeId = typeEnhancement},
-                                new Ticket() { Title = "Movie Ticket 7", Description = "Ticket details for movie ticket 7", Created = DateTimeOffset.Now, ProjectId = movieId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeChangeRequest},
-                                new Ticket() { Title = "Movie Ticket 8", Description = "Ticket details for movie ticket 8", Created = DateTimeOffset.Now, ProjectId = movieId, TicketPriorityId = priorityUrgent, TicketStatusId = statusDev,  TicketTypeId = typeNewDev},
-                                new Ticket() { Title = "Movie Ticket 9", Description = "Ticket details for movie ticket 9", Created = DateTimeOffset.Now, ProjectId = movieId, TicketPriorityId = priorityLow, TicketStatusId = statusNew,  TicketTypeId = typeDefect},
-                                new Ticket() { Title = "Movie Ticket 10", Description = "Ticket details for movie ticket 10", Created = DateTimeOffset.Now, ProjectId = movieId, TicketPriorityId = priorityMedium, TicketStatusId = statusNew, TicketTypeId = typeEnhancement},
-                                new Ticket() { Title = "Movie Ticket 11", Description = "Ticket details for movie ticket 11", Created = DateTimeOffset.Now, ProjectId = movieId, TicketPriorityId = priorityHigh, TicketStatusId = statusDev,  TicketTypeId = typeChangeRequest},
-                                new Ticket() { Title = "Movie Ticket 12", Description = "Ticket details for movie ticket 12", Created = DateTimeOffset.Now, ProjectId = movieId, TicketPriorityId = priorityUrgent, TicketStatusId = statusNew,  TicketTypeId = typeNewDev},
-                                new Ticket() { Title = "Movie Ticket 13", Description = "Ticket details for movie ticket 13", Created = DateTimeOffset.Now, ProjectId = movieId, TicketPriorityId = priorityLow, TicketStatusId = statusNew, TicketTypeId = typeDefect},
-                                new Ticket() { Title = "Movie Ticket 14", Description = "Ticket details for movie ticket 14", Created = DateTimeOffset.Now, ProjectId = movieId, TicketPriorityId = priorityMedium, TicketStatusId = statusDev,  TicketTypeId = typeEnhancement},
-                                new Ticket() { Title = "Movie Ticket 15", Description = "Ticket details for movie ticket 15", Created = DateTimeOffset.Now, ProjectId = movieId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew,  TicketTypeId = typeChangeRequest},
-                                new Ticket() { Title = "Movie Ticket 16", Description = "Ticket details for movie ticket 16", Created = DateTimeOffset.Now, ProjectId = movieId, TicketPriorityId = priorityUrgent, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
-                                new Ticket() { Title = "Movie Ticket 17", Description = "Ticket details for movie ticket 17", Created = DateTimeOffset.Now, ProjectId = movieId, TicketPriorityId = priorityHigh, TicketStatusId = statusDev,  TicketTypeId = typeNewDev},
-                                new Ticket() { Title = "Movie Ticket 18", Description = "Ticket details for movie ticket 18", Created = DateTimeOffset.Now, ProjectId = movieId, TicketPriorityId = priorityMedium, TicketStatusId = statusDev,  TicketTypeId = typeEnhancement},
-                                new Ticket() { Title = "Movie Ticket 19", Description = "Ticket details for movie ticket 19", Created = DateTimeOffset.Now, ProjectId = movieId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew,  TicketTypeId = typeChangeRequest},
-                                new Ticket() { Title = "Movie Ticket 20", Description = "Ticket details for movie ticket 20", Created = DateTimeOffset.Now, ProjectId = movieId, TicketPriorityId = priorityUrgent, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
+                                new Ticket() { Title = "Movie Ticket 1", Description = "Ticket details for movie ticket 1", Created = DateTimeOffset.Now, ProjectId = crmId, TicketPriorityId = priorityLow, TicketStatusId = statusNew, TicketTypeId = typeDefect},
+                                new Ticket() { Title = "Movie Ticket 2", Description = "Ticket details for movie ticket 2", Created = DateTimeOffset.Now, ProjectId = crmId, TicketPriorityId = priorityMedium, TicketStatusId = statusDev, TicketTypeId = typeEnhancement},
+                                new Ticket() { Title = "Movie Ticket 3", Description = "Ticket details for movie ticket 3", Created = DateTimeOffset.Now, ProjectId = crmId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeChangeRequest},
+                                new Ticket() { Title = "Movie Ticket 4", Description = "Ticket details for movie ticket 4", Created = DateTimeOffset.Now, ProjectId = crmId, TicketPriorityId = priorityUrgent, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
+                                new Ticket() { Title = "Movie Ticket 5", Description = "Ticket details for movie ticket 5", Created = DateTimeOffset.Now, ProjectId = crmId, TicketPriorityId = priorityLow, TicketStatusId = statusDev,  TicketTypeId = typeDefect},
+                                new Ticket() { Title = "Movie Ticket 6", Description = "Ticket details for movie ticket 6", Created = DateTimeOffset.Now, ProjectId = crmId, TicketPriorityId = priorityMedium, TicketStatusId = statusNew,  TicketTypeId = typeEnhancement},
+                                new Ticket() { Title = "Movie Ticket 7", Description = "Ticket details for movie ticket 7", Created = DateTimeOffset.Now, ProjectId = crmId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew, TicketTypeId = typeChangeRequest},
+                                new Ticket() { Title = "Movie Ticket 8", Description = "Ticket details for movie ticket 8", Created = DateTimeOffset.Now, ProjectId = crmId, TicketPriorityId = priorityUrgent, TicketStatusId = statusDev,  TicketTypeId = typeNewDev},
+                                new Ticket() { Title = "Movie Ticket 9", Description = "Ticket details for movie ticket 9", Created = DateTimeOffset.Now, ProjectId = crmId, TicketPriorityId = priorityLow, TicketStatusId = statusNew,  TicketTypeId = typeDefect},
+                                new Ticket() { Title = "Movie Ticket 10", Description = "Ticket details for movie ticket 10", Created = DateTimeOffset.Now, ProjectId = crmId, TicketPriorityId = priorityMedium, TicketStatusId = statusNew, TicketTypeId = typeEnhancement},
+                                new Ticket() { Title = "Movie Ticket 11", Description = "Ticket details for movie ticket 11", Created = DateTimeOffset.Now, ProjectId = crmId, TicketPriorityId = priorityHigh, TicketStatusId = statusDev,  TicketTypeId = typeChangeRequest},
+                                new Ticket() { Title = "Movie Ticket 12", Description = "Ticket details for movie ticket 12", Created = DateTimeOffset.Now, ProjectId = crmId, TicketPriorityId = priorityUrgent, TicketStatusId = statusNew,  TicketTypeId = typeNewDev},
+                                new Ticket() { Title = "Movie Ticket 13", Description = "Ticket details for movie ticket 13", Created = DateTimeOffset.Now, ProjectId = crmId, TicketPriorityId = priorityLow, TicketStatusId = statusNew, TicketTypeId = typeDefect},
+                                new Ticket() { Title = "Movie Ticket 14", Description = "Ticket details for movie ticket 14", Created = DateTimeOffset.Now, ProjectId = crmId, TicketPriorityId = priorityMedium, TicketStatusId = statusDev,  TicketTypeId = typeEnhancement},
+                                new Ticket() { Title = "Movie Ticket 15", Description = "Ticket details for movie ticket 15", Created = DateTimeOffset.Now, ProjectId = crmId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew,  TicketTypeId = typeChangeRequest},
+                                new Ticket() { Title = "Movie Ticket 16", Description = "Ticket details for movie ticket 16", Created = DateTimeOffset.Now, ProjectId = crmId, TicketPriorityId = priorityUrgent, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
+                                new Ticket() { Title = "Movie Ticket 17", Description = "Ticket details for movie ticket 17", Created = DateTimeOffset.Now, ProjectId = crmId, TicketPriorityId = priorityHigh, TicketStatusId = statusDev,  TicketTypeId = typeNewDev},
+                                new Ticket() { Title = "Movie Ticket 18", Description = "Ticket details for movie ticket 18", Created = DateTimeOffset.Now, ProjectId = crmId, TicketPriorityId = priorityMedium, TicketStatusId = statusDev,  TicketTypeId = typeEnhancement},
+                                new Ticket() { Title = "Movie Ticket 19", Description = "Ticket details for movie ticket 19", Created = DateTimeOffset.Now, ProjectId = crmId, TicketPriorityId = priorityHigh, TicketStatusId = statusNew,  TicketTypeId = typeChangeRequest},
+                                new Ticket() { Title = "Movie Ticket 20", Description = "Ticket details for movie ticket 20", Created = DateTimeOffset.Now, ProjectId = crmId, TicketPriorityId = priorityUrgent, TicketStatusId = statusNew, TicketTypeId = typeNewDev},
 
                 };
 

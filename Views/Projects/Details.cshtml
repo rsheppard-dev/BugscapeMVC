@@ -27,7 +27,7 @@
 
         @if(Model.ImageFileData is not null && Model.ImageContentType is not null)
         {
-            <img src="@FileService.ConvertByteArrayToFile(Model.ImageFileData, Model.ImageContentType)" alt="@Model.Name" class="mx-auto xl:float-right max-h-60 rounded-lg shadow-md xl:ml-4 mb-4">
+            <img src="@FileService.ConvertByteArrayToFile(Model.ImageFileData, Model.ImageContentType)" alt="@Model.Name" class="mx-auto xl:float-right max-h-60 xl:ml-4 mb-4">
         }
 
         <div class="prose max-w-none font-lato">@Html.Raw(Model.Description)</div>
@@ -180,7 +180,7 @@
 
         @if (ticketHistories.Count == 0)
         {
-            <p class="font-lato px-6">There is no activity to show.</p>
+            <p class="font-lato text-zinc-700 px-6">There is no activity to show.</p>
         }
         else
         {
@@ -250,7 +250,7 @@
 
         @if (Model.Tickets is null || Model.Tickets.Count == 0)
         {
-            <p class="font-lato flex flex-col gap-4 grow">There are currently no tickets to show.</p>
+            <p class="font-lato text-zinc-700 flex flex-col gap-4 grow">There are currently no tickets to show.</p>
         }
         else
         {

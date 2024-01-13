@@ -10,6 +10,7 @@
     "enddate",
     "Hsts",
     "Npgsql",
-    "startdate"
+    "startdate",
+    "wwwroot"
   ]
 }
