@@ -182,8 +182,8 @@
     <script src="~/js/ticketsTable.js"></script>
 
     <script>
-        const ticketsTable = new TicketsTable(@Html.Raw(Json.Serialize(Model.Tickets)));
-        const projectsTable = new ProjectsTable(@Html.Raw(Json.Serialize(Model.Projects)));
+        const ticketsTable = new TicketsTable('getAllTickets');
+        const projectsTable = new ProjectsTable('getAllProjects');
 
         ticketsTable.init();
         projectsTable.init();
@@ -308,8 +308,7 @@
                     x: {
                         display: true,
                         title: {
-                            display: true,
-                            text: 'Date'
+                            display: false,
                         },
                         ticks: {
                             autoSkip: true, // Automatically skip labels to avoid clutter

@@ -95,8 +95,8 @@
         <table id="projectTable" class="w-full text-sm text-left text-dark font-lato">
             <thead class="text-xs bg-light uppercase">
                 <tr>
-                    <th scope="col" aria-label="Viewed" class="px-6 py-3 whitespace-nowrap w-fit"></th>
-                    <th scope="col" class="px-6 py-3 whitespace-nowrap">
+                    <th scope="col" aria-label="Viewed" class="px-6 py-3 w-fit"></th>
+                    <th scope="col" class="px-6 py-3 hidden sm:table-cell">
                         <a asp-action="Inbox" asp-controller="Notifications" asp-all-route-data="@routeValues" asp-route-sortBy="sender" asp-route-order="@GetNewOrder("sender")" class="flex items-center gap-2">
                             <span>Sender</span>
                             @if (ViewBag.SortBy == "sender")
@@ -107,7 +107,7 @@
                             }
                         </a>
                     </th>
-                    <th scope="col" class="px-6 py-3 whitespace-nowrap hidden sm:table-cell">
+                    <th scope="col" class="px-6 py-3">
                         <a asp-action="Inbox" asp-controller="Notifications" asp-all-route-data="@routeValues" asp-route-sortBy="subject"  asp-route-order="@GetNewOrder("subject")" class="flex items-center gap-2">
                         <span>Subject</span>
                             @if (ViewBag.SortBy == "subject")
@@ -118,7 +118,7 @@
                             }
                         </a>
                     </th>
-                    <th scope="col" class="px-6 py-3 whitespace-nowrap hidden lg:table-cell">
+                    <th scope="col" class="px-6 py-3 hidden lg:table-cell">
                         <a asp-action="Inbox" asp-controller="Notifications" asp-all-route-data="@routeValues" asp-route-sortBy="date" asp-route-order="@GetNewOrder("date")" class="flex items-center gap-2">
                         <span>Received</span>
                             @if (ViewBag.SortBy == "date")
@@ -129,7 +129,7 @@
                             }
                         </a>
                     </th>
-                    <th scope="col" class="px-6 py-3 whitespace-nowrap" aria-label="Actions">
+                    <th scope="col" class="px-6 py-3 hidden md:table-cell" aria-label="Actions">
                     </th>
                 </tr>
             </thead>
@@ -159,7 +159,7 @@
                             }
                         </td>
 
-                        <th scope="row" class="px-6 py-4">
+                        <th scope="row" class="px-6 py-4 hidden sm:table-cell">
                             @if (notification.Sender is not null)
                             {
                                 <a asp-action="Details" asp-route-id="@notification.Sender?.Id" class="group whitespace-nowrap flex gap-2 items-center w-fit">
@@ -183,18 +183,34 @@
                             }
                         </th>
 
-                        <td class="px-6 py-4 hidden sm:table-cell">
-                            <a asp-action="Details" asp-route-id="@notification?.Id" class="@(notification!.Viewed ? "font-normal" : "font-bold") font-lato text-zinc-700 hover:underline underline-offset-2">
-                                @notification?.Title
-                            </a>
+                        <td class="px-6 py-4 w-full sm:w-auto">
+                            <div class="flex flex-col gap-1">
+                                <dl class="sm:hidden">
+                                    <dt class="sr-only">Received</dt>
+                                    <dd class="font-lato font-normal text-xs text-zinc-500 border p-1 w-fit border-zinc-300 rounded-md">
+                                        @FormatDate(notification!.Created.DateTime)
+                                    </dd>
+                                </dl>
+
+                                <a asp-action="Details" asp-route-id="@notification?.Id" class="@(notification!.Viewed ? "font-normal" : "font-bold") font-lato text-zinc-700 hover:underline underline-offset-2">
+                                    @notification?.Title
+                                </a>
+
+                                <dl class="sm:hidden">
+                                    <dt class="sr-only">Sender</dt>
+                                    <dd class="font-lato font-normal text-xs text-zinc-500">
+                                        @(notification.Sender is not null ? notification.Sender?.FullName : "Bug Bot")
+                                    </dd>
+                                </dl>
+                            </div>
                         </td>
                         <td class="px-6 py-4 hidden lg:table-cell">
-                            <span class="font-lato text-zinc-700 whitespace-nowrap">
+                            <span class="font-lato text-zinc-700">
                                 @FormatDate(notification!.Created.DateTime)
                             </span>
                         </td>
                         
-                        <td class="px-6 py-4 table-cell">
+                        <td class="px-6 py-4 hidden md:table-cell">
                             <div class="flex items-center gap-2">
                                 <a asp-action="Details" asp-controller="Notifications" title="Sender Profile" asp-route-id="@notification?.Id" class="hover:scale-110 transition-transform">
                                     <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">

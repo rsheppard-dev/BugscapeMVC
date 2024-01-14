@@ -630,15 +630,29 @@ namespace BugscapeMVC.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        [HttpPost]
-        public IActionResult SortTickets([FromBody]List<Ticket> tickets, int? page, int? limit, string sortBy = "date", string order = "desc")
+        [HttpGet]
+        public async Task<IActionResult> GetTicketsByQuery(string query = "getAllTickets", int page = 1, int limit = 10, string sortBy = "date", string order = "desc", string? memberId = null, int? projectId = null)
         {
             ViewData["SortBy"] = sortBy;
             ViewData["SortOrder"] = order;
 
+            int? companyId = User.Identity?.GetCompanyId() ?? throw new Exception("CompanyId cannot be null.");
+            string? userId = _userManager.GetUserId(User) ?? throw new Exception("UserId cannot be null.");
+
+            List<Ticket> tickets = query switch
+            {
+                "getAllTickets" => await _ticketService.GetAllTicketsByCompanyAsync(companyId.Value),
+                "getMyTickets" => await _ticketService.GetTicketsByUserIdAsync(userId, companyId.Value),
+                "getUnassignedTickets" => await _ticketService.GetUnassignedTicketsAsync(companyId.Value),
+                "getArchivedTickets" => await _ticketService.GetArchivedTicketsAsync(companyId.Value),
+                "getTicketsByMember" => memberId is not null ? await _ticketService.GetTicketsByUserIdAsync(memberId, companyId.Value) : new List<Ticket>(),
+                "getTicketsByProject" => projectId is not null ? (await _projectService.GetProjectByIdAsync(projectId.Value, companyId.Value))?.Tickets?.ToList() ?? new List<Ticket>() : new List<Ticket>(),
+                _ => await _ticketService.GetAllTicketsByCompanyAsync(companyId.Value)
+            };
+
             tickets = Sort(tickets, sortBy, order);
 
-            return PartialView("_TicketsTablePartial", new PaginatedList<Ticket>(tickets, page ?? 1, limit ?? 10));
+            return PartialView("_TicketsTablePartial", new PaginatedList<Ticket>(tickets, page, limit));
         }
 
         private static List<Ticket> Sort(List<Ticket> tickets, string sortBy = "date", string order = "desc")
@@ -646,21 +660,21 @@ namespace BugscapeMVC.Controllers
             tickets = sortBy.ToLower() switch
             {
                 "title" => order == "asc" ?
-                                        tickets.OrderBy(t => t.Title).ToList() :
-                                        tickets.OrderByDescending(t => t.Title).ToList(),
+                                    tickets.OrderBy(t => t.Title).ToList() :
+                                    tickets.OrderByDescending(t => t.Title).ToList(),
                 "developer" => order == "asc" ?
-                                        tickets.OrderBy(t => t.DeveloperUser?.FullName).ToList() :
-                                        tickets.OrderByDescending(t => t.DeveloperUser?.FullName).ToList(),
-                                       
+                                    tickets.OrderBy(t => t.DeveloperUser?.FullName).ToList() :
+                                    tickets.OrderByDescending(t => t.DeveloperUser?.FullName).ToList(),
+                                   
                 "status" => order == "asc" ?
-                                        tickets.OrderBy(t => t.TicketStatus?.Name).ToList() :
-                                        tickets.OrderByDescending(t => t.TicketStatus?.Name).ToList(),
+                                    tickets.OrderBy(t => t.TicketStatus?.Name).ToList() :
+                                    tickets.OrderByDescending(t => t.TicketStatus?.Name).ToList(),
                 "priority" => order == "asc" ?
-                                        tickets.OrderBy(t => t.TicketPriority?.Name).ToList() :
-                                        tickets.OrderByDescending(t => t.TicketPriority?.Name).ToList(),
+                                    tickets.OrderBy(t => t.TicketPriority?.Name).ToList() :
+                                    tickets.OrderByDescending(t => t.TicketPriority?.Name).ToList(),
                 _ => order == "asc" ?
-                                        tickets.OrderBy(t => t.Created).ToList() :
-                                        tickets.OrderByDescending(t => t.Created).ToList()
+                                    tickets.OrderBy(t => t.Created).ToList() :
+                                    tickets.OrderByDescending(t => t.Created).ToList()
             };
 
             return tickets;

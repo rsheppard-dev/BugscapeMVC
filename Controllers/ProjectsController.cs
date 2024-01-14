@@ -602,15 +602,28 @@ namespace BugscapeMVC.Controllers
             }
         }
 
-        [HttpPost]
-        public IActionResult SortProjects([FromBody]List<Project> projects, int? page, int? limit, string sortBy = "title", string order = "asc")
+        [HttpGet]
+        public async Task<IActionResult> GetProjectsByQuery(string query, int page = 1, int limit = 4, string sortBy = "title", string order = "asc", string? memberId = null)
         {
             ViewData["SortBy"] = sortBy;
             ViewData["SortOrder"] = order;
 
+            int? companyId = User.Identity?.GetCompanyId() ?? throw new Exception("Company ID not valid.");
+            string? userId = _userManager.GetUserId(User) ?? throw new Exception("User ID not valid.");
+
+            List<Project> projects = query switch
+            {
+                "getAllProjects" => await _projectService.GetAllProjectsByCompanyAsync(companyId.Value),
+                "getMyProjects" => await _projectService.GetUserProjectsAsync(userId),
+                "getUnassignedProjects" => await _projectService.GetUnassignedProjectsAsync(companyId.Value),
+                "getArchivedProjects" => await _projectService.GetArchivedProjectsByCompanyAsync(companyId.Value),
+                "getProjectsByMember" => memberId is not null ? await _projectService.GetUserProjectsAsync(memberId) : new List<Project>(),
+                _ => await _projectService.GetAllProjectsByCompanyAsync(companyId.Value)
+            };
+
             projects = Sort(projects, sortBy, order);
 
-            return PartialView("_ProjectsTablePartial", new PaginatedList<Project>(projects, page ?? 1, limit ?? 4));
+            return PartialView("_ProjectsTablePartial", new PaginatedList<Project>(projects, page, limit));
         }
 
         private List<Project> Sort(List<Project> projects, string sortBy, string order = "desc")

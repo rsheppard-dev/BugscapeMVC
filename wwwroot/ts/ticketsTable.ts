@@ -1,36 +1,39 @@
-type TicketSort = 'title' | 'developer' | 'status' | 'priority' | 'date'
-type TicketOrder = 'asc' | 'desc'
-type Ticket = {
-  id: number
-  title: string
-  developer: string
-  status: string
-  priority: string
-  date: string
-}
+type TicketQuery = 'getAllTickets' | 'getMyTickets' | 'getTicketsByProject' | 'getUnassignedTickets' | 'getArchivedTickets' | 'getTicketsByMember';
+type TicketSort = 'title' | 'developer' | 'status' | 'priority' | 'date';
+type TicketOrder = 'asc' | 'desc';
+type TicketOptions = {
+  container?: HTMLElement,
+  page?: number,
+  limit?: number,
+  sortBy?: TicketSort,
+  order?: TicketOrder
+  memberId?: string,
+  projectId?: number
+};
 
 class TicketsTable {
-  tickets: Ticket[]
+  options?: TicketOptions
+  query: TicketQuery
   container: HTMLElement
   page: number
   limit: number
   sortBy: TicketSort
   order: TicketOrder
+  memberId?: string
+  projectId?: number
 
   constructor(
-    tickets: Ticket[],
-    container?: HTMLElement,
-    page?: number,
-    limit?: number,
-    sortBy?: TicketSort,
-    order?: TicketOrder
+    query?: TicketQuery,
+    options?: TicketOptions
   ) {
-    this.tickets = tickets ?? [],
-    this.container = container ?? document.querySelector('[data-container="tickets"]') as HTMLElement,
-    this.page = page ?? 1,
-    this.limit = limit ?? 10,
-    this.sortBy = sortBy ?? 'date',
-    this.order = order ?? 'desc'
+    this.query = query ?? 'getAllTickets',
+    this.container = options?.container ?? document.querySelector('[data-container="tickets"]') as HTMLElement,
+    this.page = options?.page ?? 1,
+    this.limit = options?.limit ?? 10,
+    this.sortBy = options?.sortBy ?? 'date',
+    this.order = options?.order ?? 'desc'
+    this.memberId = options?.memberId ?? undefined
+    this.projectId = options?.projectId ?? undefined
   }
 
   async init() {
@@ -56,15 +59,9 @@ class TicketsTable {
 
   async getTickets() {
     try {
-      const url = `/Tickets/SortTickets?page=${this.page}&sortBy=${this.sortBy}&order=${this.order}&limit=${this.limit}`
+      const url = `/Tickets/GetTicketsByQuery?query=${this.query}&page=${this.page}&sortBy=${this.sortBy}&order=${this.order}&limit=${this.limit}&memberId=${this.memberId}&projectId=${this.projectId}`
 
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(this.tickets),
-      })
+      const response = await fetch(url);
 
       if (!response.ok) {
         throw new Error(`Error loading tickets table: ${response.statusText}`)

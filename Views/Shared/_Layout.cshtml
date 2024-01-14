@@ -82,10 +82,8 @@
 
                         <a class="hidden md:block" title="Signout"
                             href="javascript:document.getElementById('logoutForm').submit();">
-                            <svg xmlns="http://www.w3.org/2000/svg" aria-hidden fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                stroke="currentColor" class="w-6 h-6 stroke-dark">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
+                            <svg xmlns="http://www.w3.org/2000/svg" aria-hidden class="h-6 w-6 stroke-zinc-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                             </svg>
                         </a>
                     }
@@ -267,6 +265,8 @@
                             </div>
                         }
 
+                        <hr class="bg-lightest" />
+
                         <a asp-area="Identity" asp-page="/Account/Manage/Index" class="flex gap-4 items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" aria-hidden width="24" viewBox="0 0 30 30.842" class="fill-light">
                                 <path id="Icon_material-settings" data-name="Icon material-settings"
@@ -274,6 +274,13 @@
                                     transform="translate(-3.406 -3)" />
                             </svg>
                             <span>Settings</span>
+                        </a>
+
+                        <a title="Signout" href="javascript:document.getElementById('logoutForm').submit();" class="flex gap-4 items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" aria-hidden width="24" class="stroke-light" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                            </svg>
+                            <span>Logout</span>
                         </a>
 
                     </div>

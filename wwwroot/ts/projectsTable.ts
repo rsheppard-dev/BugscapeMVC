@@ -1,36 +1,35 @@
+type ProjectQuery = 'getAllProjects' | 'getMyProjects' | 'getUnassignedProjects' | 'getArchivedProjects' | 'getProjectsByMember'
 type ProjectSort = 'name' | 'startdate' | 'enddate' | 'pm' | 'priority'
 type ProjectOrder = 'asc' | 'desc'
-type Project = {
-  id: number
-  title: string
-  developer: string
-  status: string
-  priority: string
-  date: string
-}
+type ProjectOptions = {
+  container?: HTMLElement,
+  page?: number,
+  limit?: number,
+  sortBy?: ProjectSort,
+  order?: ProjectOrder
+  memberId?: string,
+};
 
 class ProjectsTable {
-  projects: Project[]
+  options?: ProjectOptions
+  query: ProjectQuery
   container: HTMLElement
   page: number
   limit: number
   sortBy: ProjectSort
-  order: ProjectOrder
+  order?: ProjectOrder
+  memberId?: string
 
   constructor(
-    projects: Project[],
-    container?: HTMLElement,
-    page?: number,
-    limit?: number,
-    sortBy?: ProjectSort,
-    order?: ProjectOrder
+    query?: ProjectQuery,
+    options?: ProjectOptions
   ) {
-    this.projects = projects ?? [],
-    this.container = container ?? document.querySelector('[data-container="projects"]') as HTMLElement,
-    this.page = page ?? 1,
-    this.limit = limit ?? 4,
-    this.sortBy = sortBy ?? 'startdate',
-    this.order = order ?? 'desc'
+    this.query = query ?? 'getAllProjects',
+    this.container = options?.container ?? document.querySelector('[data-container="projects"]') as HTMLElement,
+    this.page = options?.page ?? 1,
+    this.limit = options?.limit ?? 4,
+    this.sortBy = options?.sortBy ?? 'startdate',
+    this.order = options?.order ?? 'desc'
   }
 
   async init() {
@@ -56,15 +55,9 @@ class ProjectsTable {
 
   async getProjects() {
     try {
-      const url = `/Projects/SortProjects?page=${this.page}&sortBy=${this.sortBy}&order=${this.order}&limit=${this.limit}`
+      const url = `/Projects/GetProjectsByQuery?query=${this.query}&page=${this.page}&sortBy=${this.sortBy}&order=${this.order}&limit=${this.limit}&memberId=${this.memberId}`
 
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(this.projects),
-      })
+      const response = await fetch(url);
 
       if (!response.ok) {
         throw new Error(`Error loading projects table: ${response.statusText}`)

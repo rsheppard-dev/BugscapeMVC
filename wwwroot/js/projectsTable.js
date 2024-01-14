@@ -36,13 +36,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 var ProjectsTable = /** @class */ (function () {
-    function ProjectsTable(projects, container, page, limit, sortBy, order) {
-        this.projects = projects !== null && projects !== void 0 ? projects : [],
-            this.container = container !== null && container !== void 0 ? container : document.querySelector('[data-container="projects"]'),
-            this.page = page !== null && page !== void 0 ? page : 1,
-            this.limit = limit !== null && limit !== void 0 ? limit : 4,
-            this.sortBy = sortBy !== null && sortBy !== void 0 ? sortBy : 'startdate',
-            this.order = order !== null && order !== void 0 ? order : 'desc';
+    function ProjectsTable(query, options) {
+        var _a, _b, _c, _d, _e;
+        this.query = query !== null && query !== void 0 ? query : 'getAllProjects',
+            this.container = (_a = options === null || options === void 0 ? void 0 : options.container) !== null && _a !== void 0 ? _a : document.querySelector('[data-container="projects"]'),
+            this.page = (_b = options === null || options === void 0 ? void 0 : options.page) !== null && _b !== void 0 ? _b : 1,
+            this.limit = (_c = options === null || options === void 0 ? void 0 : options.limit) !== null && _c !== void 0 ? _c : 4,
+            this.sortBy = (_d = options === null || options === void 0 ? void 0 : options.sortBy) !== null && _d !== void 0 ? _d : 'startdate',
+            this.order = (_e = options === null || options === void 0 ? void 0 : options.order) !== null && _e !== void 0 ? _e : 'desc';
     }
     ProjectsTable.prototype.init = function () {
         return __awaiter(this, void 0, void 0, function () {
@@ -79,14 +80,8 @@ var ProjectsTable = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 3, , 4]);
-                        url = "/Projects/SortProjects?page=".concat(this.page, "&sortBy=").concat(this.sortBy, "&order=").concat(this.order, "&limit=").concat(this.limit);
-                        return [4 /*yield*/, fetch(url, {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify(this.projects),
-                            })];
+                        url = "/Projects/GetProjectsByQuery?query=".concat(this.query, "&page=").concat(this.page, "&sortBy=").concat(this.sortBy, "&order=").concat(this.order, "&limit=").concat(this.limit, "&memberId=").concat(this.memberId);
+                        return [4 /*yield*/, fetch(url)];
                     case 1:
                         response = _a.sent();
                         if (!response.ok) {

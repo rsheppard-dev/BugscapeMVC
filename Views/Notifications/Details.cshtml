@@ -13,10 +13,50 @@
 }
 
 <section class="rounded-md bg-white px-6 py-3">
-    <div class="flex items-center justify-between mb-4">
-        <div class="flex flex-wrap items-center gap-2">
-            <h1 class="font-rockwell text-dark text-xl font-bold">@ViewData["Title"]</h1>
-            <span class="font-lato text-xs text-zinc-500 border border-gray-300 rounded p-1">@Model?.Created.ToString("MM/dd/yyyy HH:mm")</span>
+    <div class="flex flex-wrap items-center gap-2 mb-4">
+        <h1 class="font-rockwell text-dark text-xl font-bold">@ViewData["Title"]</h1>
+        <span class="font-lato text-xs text-zinc-500 border border-gray-300 rounded p-1">@Model?.Created.ToString("MM/dd/yyyy HH:mm")</span>
+    </div>
+
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+        <div class="grid grid-cols-12 gap-2">
+            <div class="font-lato font-semibold text-zinc-700 text-sm col-span-2 md:col-span-1">From:</div>
+
+            @if (Model?.Sender is not null)
+            {
+                <a asp-action="Details" asp-controller="Members" asp-route-id="@Model?.SenderId" class="col-span-10 md:col-span-11 group h-8 w-8 flex gap-2" aria-label="Sender&apos;s Profile">
+                    @if (Model?.Sender?.AvatarFileData is null || Model?.Sender?.AvatarContentType is null)
+                    {
+                        <img class="h-5 w-5 object-cover rounded-full group-hover:scale-110 transition-transform" src="~/images/default-avatar.png" alt="@Model?.Sender?.FullName">
+                    }
+                    else
+                    {
+                        <img class="h-5 w-5 object-cover rounded-full group-hover:scale-110 transition-transform" src="@FileService.ConvertByteArrayToFile(Model.Sender.AvatarFileData, Model.Sender.AvatarContentType)" alt="@Model.Sender?.FullName">
+                    }
+                    <span class="whitespace-nowrap group-hover:underline underline-offset-2 text-sm font-lato text-zinc-700">@Model?.Sender?.FullName</span>
+                </a>
+            }
+            else
+            {
+                <div class="flex gap-2 items-center col-span-10 md:col-span-11">
+                    <img src="~/images/bugbot.png" alt="Bug Bot" class="h-5 w-5">
+                    <span class="font-lato text-sm whitespace-nowrap text-zinc-700 font-normal">Bug Bot</span>
+                </div>
+            }
+
+            <div class="font-lato font-semibold text-zinc-700 text-sm col-span-2 md:col-span-1">To:</div>
+
+            <a asp-action="Details" asp-controller="Members" asp-route-id="@Model?.Recipient?.Id" class="col-span-10 md:col-span-11 group h-8 w-8 flex gap-2" aria-label="Recipient&apos;s Profile">
+                @if (Model?.Recipient?.AvatarFileData is null || Model?.Recipient?.AvatarContentType is null)
+                {
+                    <img class="h-5 w-5 object-cover rounded-full group-hover:scale-110 transition-transform" src="~/images/default-avatar.png" alt="@Model?.Recipient?.FullName">
+                }
+                else
+                {
+                    <img class="h-5 w-5 object-cover rounded-full group-hover:scale-110 transition-transform" src="@FileService.ConvertByteArrayToFile(Model.Recipient.AvatarFileData, Model.Recipient.AvatarContentType)" alt="@Model.Recipient?.FullName">
+                }
+                <span class="whitespace-nowrap group-hover:underline underline-offset-2 text-sm font-lato text-zinc-700">@Model?.Recipient?.FullName</span>
+            </a>
         </div>
 
         @if (userId == Model?.RecipientId)
@@ -41,47 +81,7 @@
                 </form>
             </div>
         }
-    </div>
-
-    <div class="mb-4 grid grid-cols-12 gap-2">
-        <div class="font-lato font-semibold text-zinc-700 text-sm col-span-2 md:col-span-1">From:</div>
-
-        @if (Model?.Sender is not null)
-        {
-            <a asp-action="Details" asp-controller="Members" asp-route-id="@Model?.SenderId" class="col-span-10 md:col-span-11 group h-8 w-8 flex gap-2" aria-label="Sender&apos;s Profile">
-                @if (Model?.Sender?.AvatarFileData is null || Model?.Sender?.AvatarContentType is null)
-                {
-                    <img class="h-5 w-5 object-cover rounded-full group-hover:scale-110 transition-transform" src="~/images/default-avatar.png" alt="@Model?.Sender?.FullName">
-                }
-                else
-                {
-                    <img class="h-5 w-5 object-cover rounded-full group-hover:scale-110 transition-transform" src="@FileService.ConvertByteArrayToFile(Model.Sender.AvatarFileData, Model.Sender.AvatarContentType)" alt="@Model.Sender?.FullName">
-                }
-                <span class="whitespace-nowrap group-hover:underline underline-offset-2 text-sm font-lato text-zinc-700">@Model?.Sender?.FullName</span>
-            </a>
-        }
-        else
-        {
-            <div class="flex gap-2 items-center col-span-10 md:col-span-11">
-                <img src="~/images/bugbot.png" alt="Bug Bot" class="h-5 w-5">
-                <span class="font-lato text-sm whitespace-nowrap text-zinc-700 font-normal">Bug Bot</span>
-            </div>
-        }
-
-        <div class="font-lato font-semibold text-zinc-700 text-sm col-span-2 md:col-span-1">To:</div>
-
-        <a asp-action="Details" asp-controller="Members" asp-route-id="@Model?.Recipient?.Id" class="col-span-10 md:col-span-11 group h-8 w-8 flex gap-2" aria-label="Recipient&apos;s Profile">
-            @if (Model?.Recipient?.AvatarFileData is null || Model?.Recipient?.AvatarContentType is null)
-            {
-                <img class="h-5 w-5 object-cover rounded-full group-hover:scale-110 transition-transform" src="~/images/default-avatar.png" alt="@Model?.Recipient?.FullName">
-            }
-            else
-            {
-                <img class="h-5 w-5 object-cover rounded-full group-hover:scale-110 transition-transform" src="@FileService.ConvertByteArrayToFile(Model.Recipient.AvatarFileData, Model.Recipient.AvatarContentType)" alt="@Model.Recipient?.FullName">
-            }
-            <span class="whitespace-nowrap group-hover:underline underline-offset-2 text-sm font-lato text-zinc-700">@Model?.Recipient?.FullName</span>
-        </a>
-    </div>
+    </div>    
 
     <hr class="mb-4" />
 

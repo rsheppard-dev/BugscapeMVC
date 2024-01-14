@@ -47,7 +47,7 @@ namespace BugscapeMVC.Controllers
                 members = Search(members, search);
             }
 
-            members = await Sort(_userManager, members, sortBy, order);
+            members = await Sort(members, sortBy, order);
 
             return View(new PaginatedList<AppUser>(members, page, limit));
         }
@@ -109,13 +109,13 @@ namespace BugscapeMVC.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private static async Task<List<AppUser>> Sort(UserManager<AppUser> userManager, List<AppUser> members, string sortBy = "name", string order = "asc")
+        private async Task<List<AppUser>> Sort(List<AppUser> members, string sortBy = "name", string order = "asc")
         {
             // Load the members and their roles into memory
             var memberRoles = new List<(AppUser Member, IList<string> Roles)>();
             foreach (var member in members)
             {
-                var roles = await userManager.GetRolesAsync(member);
+                var roles = await _userManager.GetRolesAsync(member);
                 memberRoles.Add((member, roles));
             }
 

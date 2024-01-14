@@ -254,8 +254,7 @@
         }
         else
         {
-            <div data-container="tickets"
-                class="relative overflow-x-auto rounded-t-lg scrollbar-thin scrollbar-thumb-light scrollbar-track-white">
+            <div data-container="tickets" class="relative overflow-x-auto rounded-t-lg scrollbar-thin scrollbar-thumb-light scrollbar-track-white">
             </div>
         }
 
@@ -281,8 +280,9 @@
     <script src="~/js/ticketsTable.js"></script>
 
     <script>
-        const container = document.querySelector('[data-container="tickets"]');
-        const ticketsTable = new TicketsTable(@Html.Raw(Json.Serialize(Model.Tickets)), container, 1, 10, 'title', 'asc');
+        const ticketsTable = new TicketsTable('getTicketsByProject', {
+            projectId: @Model.Id,
+        });
 
         ticketsTable.init();
     </script>
