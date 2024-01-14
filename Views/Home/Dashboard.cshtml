@@ -105,10 +105,6 @@
         else
         {
             <div data-container="projects" class="grow relative overflow-x-auto rounded-t-lg scrollbar-thin scrollbar-thumb-light scrollbar-track-white">
-                @if (Model.Projects != null)
-                {
-                    <partial name="~/Views/Projects/_ProjectsTablePartial.cshtml" model="@(new PaginatedList<Project>(Model.Projects, 1, 4))" />
-                }
             </div>
         }
 
@@ -153,10 +149,6 @@
         else
         {
             <div data-container="tickets" class="grow rounded-t-lg overflow-x-auto scrollbar-thin scrollbar-thumb-light scrollbar-track-white">
-                @if (Model.Tickets != null)
-                {
-                    <partial name="~/Views/Tickets/_TicketsTablePartial.cshtml" model="@(new PaginatedList<Ticket>(Model.Tickets))" />
-                }
             </div>
         }
 
