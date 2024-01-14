@@ -12,7 +12,8 @@ RUN apt-get update && \
     wget https://nodejs.org/dist/v14.18.1/node-v14.18.1-linux-x64.tar.xz && \
     cd / && \
     tar -xf /src/node-v14.18.1-linux-x64.tar.xz && \
-    ln -s /node-v14.18.1-linux-x64/bin/node /usr/local/bin/
+    ln -s /node-v14.18.1-linux-x64/bin/node /usr/local/bin/ && \
+    ln -s /node-v14.18.1-linux-x64/bin/npm /usr/local/bin/
 
 COPY ["BugscapeMVC.csproj", "./"]
 RUN dotnet restore "BugscapeMVC.csproj"
