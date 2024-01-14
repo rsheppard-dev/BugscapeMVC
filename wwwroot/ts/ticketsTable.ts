@@ -28,7 +28,7 @@ class TicketsTable {
     this.tickets = tickets ?? [],
     this.container = container ?? document.querySelector('[data-container="tickets"]') as HTMLElement,
     this.page = page ?? 1,
-    this.limit = limit ?? 10,
+    this.limit = limit ?? 5,
     this.sortBy = sortBy ?? 'date',
     this.order = order ?? 'desc'
   }

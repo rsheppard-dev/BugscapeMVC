@@ -613,7 +613,7 @@ namespace BugscapeMVC.Controllers
             return PartialView("_ProjectsTablePartial", new PaginatedList<Project>(projects, page ?? 1, limit ?? 4));
         }
 
-        private static List<Project> Sort(List<Project> projects, string sortBy, string order = "desc")
+        private List<Project> Sort(List<Project> projects, string sortBy, string order = "desc")
         {
             if (projects is null)
             {
@@ -632,8 +632,8 @@ namespace BugscapeMVC.Controllers
                                         projects.OrderBy(p => p.ProjectPriority?.Name).ToList() :
                                         projects.OrderByDescending(p => p.ProjectPriority?.Name).ToList(),
                 "pm" => order == "asc" ?
-                                        projects.OrderBy(p => p.Members.Select(m => m.FullName).FirstOrDefault()).ToList() :
-                                        projects.OrderByDescending(p => p.Members.Select(m => m.FullName).FirstOrDefault()).ToList(),
+                                        projects.OrderBy(p => _projectService.GetProjectManagerAsync(p.Id).Result?.FullName).ToList() :
+                                        projects.OrderByDescending(p => _projectService.GetProjectManagerAsync(p.Id).Result?.FullName).ToList(),
                 _ => order == "asc" ?
                                         projects.OrderBy(p => p.Name).ToList() :
                                         projects.OrderByDescending(p => p.Name).ToList(),

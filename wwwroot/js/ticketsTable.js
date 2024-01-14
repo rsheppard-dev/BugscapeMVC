@@ -40,7 +40,7 @@ var TicketsTable = /** @class */ (function () {
         this.tickets = tickets !== null && tickets !== void 0 ? tickets : [],
             this.container = container !== null && container !== void 0 ? container : document.querySelector('[data-container="tickets"]'),
             this.page = page !== null && page !== void 0 ? page : 1,
-            this.limit = limit !== null && limit !== void 0 ? limit : 10,
+            this.limit = limit !== null && limit !== void 0 ? limit : 5,
             this.sortBy = sortBy !== null && sortBy !== void 0 ? sortBy : 'date',
             this.order = order !== null && order !== void 0 ? order : 'desc';
     }

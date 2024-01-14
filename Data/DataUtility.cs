@@ -790,10 +790,24 @@ namespace BugscapeMVC.Data
                 byte[] ecommerceImage = await File.ReadAllBytesAsync("wwwroot/images/demo/projects/ecommerce.png");
                 byte[] crmImage = await File.ReadAllBytesAsync("wwwroot/images/demo/projects/crm.png");
 
-                // get project manager Ids
-                string oliviaJones1Id = context.Users.FirstOrDefault(p => p.FirstName == "Olivia" && p.LastName == "Jones")?.Id ?? throw new Exception("Failed to get oliviaJones1Id");
-                string natalieCarter1Id = context.Users.FirstOrDefault(p => p.FirstName == "Natalie" && p.LastName == "Carter")?.Id ?? throw new Exception("Failed to get natalieCarter1Id");
-                string demoPmId = context.Users.FirstOrDefault(p => p.FirstName == "Demo" && p.LastName == "Project-Manager")?.Id ?? throw new Exception("Failed to get demoPmId");
+                // get project managers
+                AppUser oliviaJones = context.Users.FirstOrDefault(p => p.FirstName == "Olivia" && p.LastName == "Jones") ?? throw new Exception("Failed to get oliviaJones");
+                AppUser natalieCarter = context.Users.FirstOrDefault(p => p.FirstName == "Natalie" && p.LastName == "Carter") ?? throw new Exception("Failed to get natalieCarter");
+                AppUser demoPm = context.Users.FirstOrDefault(p => p.FirstName == "Demo" && p.LastName == "Project-Manager") ?? throw new Exception("Failed to get demoPm");
+
+                // get developers
+                AppUser lucasJackson = context.Users.FirstOrDefault(p => p.FirstName == "Lucas" && p.LastName == "Jackson") ?? throw new Exception("Failed to get lucasJackson");
+                AppUser ameliaWilson = context.Users.FirstOrDefault(p => p.FirstName == "Amelia" && p.LastName == "Wilson") ?? throw new Exception("Failed to get ameliaWilson");
+                AppUser leoMartin = context.Users.FirstOrDefault(p => p.FirstName == "Leo" && p.LastName == "Martin") ?? throw new Exception("Failed to get leoMartin");
+                AppUser sophieRoberts = context.Users.FirstOrDefault(p => p.FirstName == "Sophie" && p.LastName == "Roberts") ?? throw new Exception("Failed to get sophieRoberts");
+                AppUser liamHarrison = context.Users.FirstOrDefault(p => p.FirstName == "Liam" && p.LastName == "Harrison") ?? throw new Exception("Failed to get liamHarrison");
+                AppUser isabellaMurray = context.Users.FirstOrDefault(p => p.FirstName == "Isabella" && p.LastName == "Murray") ?? throw new Exception("Failed to get isabellaMurray");
+                AppUser demoDev = context.Users.FirstOrDefault(p => p.FirstName == "Demo" && p.LastName == "Developer") ?? throw new Exception("Failed to get demoDev");
+
+                // get submitters
+                AppUser ethanMarshallId = context.Users.FirstOrDefault(p => p.FirstName == "Ethan" && p.LastName == "Marshall") ?? throw new Exception("Failed to get ethanMarshallId");
+                AppUser marcusDonovanId = context.Users.FirstOrDefault(p => p.FirstName == "Marcus" && p.LastName == "Donovan") ?? throw new Exception("Failed to get marcusDonovanId");
+                AppUser demoSubmitterId = context.Users.FirstOrDefault(p => p.FirstName == "Demo" && p.LastName == "Submitter") ?? throw new Exception("Failed to get demoSubmitterId");
 
                 // get project priority Ids
                 int priorityLow = context.ProjectPriorities.FirstOrDefault(p => p.Name == Priorities.Low.ToString())?.Id ?? throw new Exception("Failed to get projectPriorityId");
@@ -801,155 +815,216 @@ namespace BugscapeMVC.Data
                 int priorityHigh = context.ProjectPriorities.FirstOrDefault(p => p.Name == Priorities.High.ToString())?.Id ?? throw new Exception("Failed to get projectPriorityId");;
                 int priorityUrgent = context.ProjectPriorities.FirstOrDefault(p => p.Name == Priorities.Urgent.ToString())?.Id ?? throw new Exception("Failed to get projectPriorityId");;
            
-                IList<Project> projects = new List<Project>() {
-                    new()
-                    {
-                        CompanyId = company1Id,
-                        Name = "Online Learning Platform",
-                        Description = @"
-                        <p>Embark on the creation of a dynamic Online Learning Platform designed to revolutionise education delivery and provide a seamless learning experience. This project focuses on building an engaging platform that empowers educators, facilitates student learning, and fosters collaboration in the digital education landscape.</p>
+                Project onlineLearningPortal = new()
+                {
+                    CompanyId = company1Id,
+                    Name = "Online Learning Platform",
+                    Description = @"
+                    <p>Embark on the creation of a dynamic Online Learning Platform designed to revolutionise education delivery and provide a seamless learning experience. This project focuses on building an engaging platform that empowers educators, facilitates student learning, and fosters collaboration in the digital education landscape.</p>
 
-                        <h2>Key Features:</h2>
-                        <ul>
-                            <li><strong>Course Management:</strong> Easily create, manage, and organise courses with diverse content types.</li>
-                            <li><strong>User Authentication:</strong> Secure user authentication and access control for educators and students.</li>
-                            <li><strong>Interactive Content:</strong> Engage learners with multimedia content, quizzes, and interactive assessments.</li>
-                            <li><strong>Discussion Forums:</strong> Foster a sense of community with discussion forums for students and educators to interact.</li>
-                            <li><strong>Progress Tracking:</strong> Monitor student progress, track completion, and provide performance analytics.</li>
-                            <li><strong>Mobile Accessibility:</strong> Ensure a responsive design for seamless access on various devices.</li>
-                        </ul>
+                    <h2>Key Features:</h2>
+                    <ul>
+                        <li><strong>Course Management:</strong> Easily create, manage, and organise courses with diverse content types.</li>
+                        <li><strong>User Authentication:</strong> Secure user authentication and access control for educators and students.</li>
+                        <li><strong>Interactive Content:</strong> Engage learners with multimedia content, quizzes, and interactive assessments.</li>
+                        <li><strong>Discussion Forums:</strong> Foster a sense of community with discussion forums for students and educators to interact.</li>
+                        <li><strong>Progress Tracking:</strong> Monitor student progress, track completion, and provide performance analytics.</li>
+                        <li><strong>Mobile Accessibility:</strong> Ensure a responsive design for seamless access on various devices.</li>
+                    </ul>
 
-                        <h2>Technologies Used:</h2>
-                        <ul>
-                            <li>HTML5</li>
-                            <li>CSS3</li>
-                            <li>JavaScript</li>
-                            <li>React.js (or Angular/Vue.js)</li>
-                            <li>Node.js (or Django/Flask for Python)</li>
-                            <li>MongoDB (or MySQL/PostgreSQL)</li>
-                        </ul>
+                    <h2>Technologies Used:</h2>
+                    <ul>
+                        <li>HTML5</li>
+                        <li>CSS3</li>
+                        <li>JavaScript</li>
+                        <li>React.js (or Angular/Vue.js)</li>
+                        <li>Node.js (or Django/Flask for Python)</li>
+                        <li>MongoDB (or MySQL/PostgreSQL)</li>
+                    </ul>
 
-                        <p>Join us in creating an Online Learning Platform that transforms education into an interactive and accessible experience. Let's build a platform that empowers educators, inspires learners, and shapes the future of digital education!</p>
-                        ",
-                        StartDate = DateTime.Now.AddMonths(-1),
-                        EndDate = DateTime.Now.AddMonths(5),
-                        ProjectPriorityId = priorityLow,
-                        ImageFileData = onlineLearningImage,
-                        ImageFileName = "onlineLearning.png",
-                        ImageContentType = "image/png"
-                    },
-                     new()
-                     {
-                        CompanyId = company1Id,
-                        Name = "Build a Blog Web Application",
-                        Description=@"
-                        <p>Embark on a journey to create a dynamic and feature-rich blog web application that not only captures attention but also provides a seamless user experience. This project focuses on developing a platform where content creators can share their thoughts, stories, and expertise with a global audience. The goal is to build a robust and engaging blogging solution that stands out in the digital landscape.</p>
+                    <p>Join us in creating an Online Learning Platform that transforms education into an interactive and accessible experience. Let's build a platform that empowers educators, inspires learners, and shapes the future of digital education!</p>
+                    ",
+                    StartDate = DateTime.Now.AddMonths(-1),
+                    EndDate = DateTime.Now.AddMonths(5),
+                    ProjectPriorityId = priorityLow,
+                    ImageFileData = onlineLearningImage,
+                    ImageFileName = "onlineLearning.png",
+                    ImageContentType = "image/png",
+                };
+                
+                Project blog = new()
+                {
+                    CompanyId = company1Id,
+                    Name = "Build a Blog Web Application",
+                    Description=@"
+                    <p>Embark on a journey to create a dynamic and feature-rich blog web application that not only captures attention but also provides a seamless user experience. This project focuses on developing a platform where content creators can share their thoughts, stories, and expertise with a global audience. The goal is to build a robust and engaging blogging solution that stands out in the digital landscape.</p>
 
-                        <h2>Key Features:</h2>
-                        <ul>
-                            <li><strong>User-Friendly Interface:</strong> Intuitive design for easy navigation and content consumption.</li>
-                            <li><strong>Content Management System (CMS):</strong> Empower authors with a user-friendly CMS to create, edit, and manage blog posts effortlessly.</li>
-                            <li><strong>Responsive Design:</strong> Ensure a seamless experience across various devices with a fully responsive web application.</li>
-                            <li><strong>Commenting System:</strong> Foster community engagement with a robust commenting system for reader interaction.</li>
-                            <li><strong>Search Functionality:</strong> Implement a powerful search feature for users to find relevant content quickly.</li>
-                            <li><strong>Social Media Integration:</strong> Enhance content sharing and user reach by integrating social media sharing capabilities.</li>
-                        </ul>
+                    <h2>Key Features:</h2>
+                    <ul>
+                        <li><strong>User-Friendly Interface:</strong> Intuitive design for easy navigation and content consumption.</li>
+                        <li><strong>Content Management System (CMS):</strong> Empower authors with a user-friendly CMS to create, edit, and manage blog posts effortlessly.</li>
+                        <li><strong>Responsive Design:</strong> Ensure a seamless experience across various devices with a fully responsive web application.</li>
+                        <li><strong>Commenting System:</strong> Foster community engagement with a robust commenting system for reader interaction.</li>
+                        <li><strong>Search Functionality:</strong> Implement a powerful search feature for users to find relevant content quickly.</li>
+                        <li><strong>Social Media Integration:</strong> Enhance content sharing and user reach by integrating social media sharing capabilities.</li>
+                    </ul>
 
-                        <h2>Technologies Used:</h2>
-                        <ul>
-                            <li>HTML5</li>
-                            <li>CSS3</li>
-                            <li>JavaScript</li>
-                            <li>Node.js</li>
-                            <li>Express.js</li>
-                            <li>MongoDB</li>
-                        </ul>
+                    <h2>Technologies Used:</h2>
+                    <ul>
+                        <li>HTML5</li>
+                        <li>CSS3</li>
+                        <li>JavaScript</li>
+                        <li>Node.js</li>
+                        <li>Express.js</li>
+                        <li>MongoDB</li>
+                    </ul>
 
-                        <p>Join us on this exciting venture to revolutionise the blogging experience. Let's create a platform that not only reflects your brand but also empowers content creators in the digital age!</p>
-                        ",
-                        StartDate = DateTime.Now.AddDays(-7),
-                        EndDate = DateTime.Now.AddDays(-7).AddMonths(3),
-                        ProjectPriorityId = priorityMedium,
-                        ImageFileData = blogImage,
-                        ImageFileName = "blog.png",
-                        ImageContentType = "image/png"
-                     },
-                     new()
-                     {
-                        CompanyId = company1Id,
-                        Name = "E-commerce Website",
-                        Description = @"
-                        <p>Embark on the journey of creating a powerful and user-friendly e-commerce website that not only showcases your products but also provides a seamless shopping experience for your customers. This project is focused on building a robust online store that reflects your brand identity, attracts customers, and drives sales in the competitive digital marketplace.</p>
+                    <p>Join us on this exciting venture to revolutionise the blogging experience. Let's create a platform that not only reflects your brand but also empowers content creators in the digital age!</p>
+                    ",
+                    StartDate = DateTime.Now.AddDays(-7),
+                    EndDate = DateTime.Now.AddDays(-7).AddMonths(3),
+                    ProjectPriorityId = priorityMedium,
+                    ImageFileData = blogImage,
+                    ImageFileName = "blog.png",
+                    ImageContentType = "image/png"
+                    };
 
-                        <h2>Key Features:</h2>
-                        <ul>
-                            <li><strong>Product Catalogue:</strong> Showcase your products with high-quality images, detailed descriptions, and categorisation for easy navigation.</li>
-                            <li><strong>Shopping Cart and Checkout:</strong> Implement a secure and user-friendly shopping cart system with a seamless checkout process.</li>
-                            <li><strong>Payment Gateway Integration:</strong> Integrate popular payment gateways to offer a variety of secure payment options for customers.</li>
-                            <li><strong>Responsive Design:</strong> Ensure a consistent and engaging shopping experience across devices with a responsive design.</li>
-                            <li><strong>Customer Accounts:</strong> Allow customers to create accounts, track orders, and manage their preferences for personalised shopping.</li>
-                            <li><strong>Search Functionality:</strong> Implement a robust search feature for customers to easily find products based on keywords or categories.</li>
-                        </ul>
+                Project ecommerce = new()
+                {
+                    CompanyId = company1Id,
+                    Name = "E-commerce Website",
+                    Description = @"
+                    <p>Embark on the journey of creating a powerful and user-friendly e-commerce website that not only showcases your products but also provides a seamless shopping experience for your customers. This project is focused on building a robust online store that reflects your brand identity, attracts customers, and drives sales in the competitive digital marketplace.</p>
 
-                        <h2>Technologies Used:</h2>
-                        <ul>
-                            <li>HTML5</li>
-                            <li>CSS3</li>
-                            <li>JavaScript</li>
-                            <li>React.js (or Angular/Vue.js)</li>
-                            <li>Node.js (or Django/Flask for Python)</li>
-                            <li>MongoDB (or MySQL/PostgreSQL)</li>
-                        </ul>
+                    <h2>Key Features:</h2>
+                    <ul>
+                        <li><strong>Product Catalogue:</strong> Showcase your products with high-quality images, detailed descriptions, and categorisation for easy navigation.</li>
+                        <li><strong>Shopping Cart and Checkout:</strong> Implement a secure and user-friendly shopping cart system with a seamless checkout process.</li>
+                        <li><strong>Payment Gateway Integration:</strong> Integrate popular payment gateways to offer a variety of secure payment options for customers.</li>
+                        <li><strong>Responsive Design:</strong> Ensure a consistent and engaging shopping experience across devices with a responsive design.</li>
+                        <li><strong>Customer Accounts:</strong> Allow customers to create accounts, track orders, and manage their preferences for personalised shopping.</li>
+                        <li><strong>Search Functionality:</strong> Implement a robust search feature for customers to easily find products based on keywords or categories.</li>
+                    </ul>
 
-                        <p>Join us in creating an e-commerce website that not only meets but exceeds the expectations of your customers. Let's build an online shopping destination that showcases your products and elevates your brand presence!</p>
-                        ",
-                        StartDate = DateTime.Now.AddMonths(-2).AddDays(-5),
-                        EndDate = DateTime.Now.AddDays(-5).AddMonths(1),
-                        ProjectPriorityId = priorityHigh,
-                        ImageFileData = ecommerceImage,
-                        ImageFileName = "ecommerce.png",
-                        ImageContentType = "image/png"
-                     },
-                     new()
-                     {
-                        CompanyId = company1Id,
-                        Name = "Customer Relationship Management (CRM) System",
-                        Description = @"
-                        <p>Embark on the creation of a comprehensive Customer Relationship Management (CRM) System designed to empower your business in managing customer interactions, leads, and communication effectively. This project focuses on building a centralised platform that enhances customer relationships, streamlines communication, and provides valuable insights to drive business growth.</p>
+                    <h2>Technologies Used:</h2>
+                    <ul>
+                        <li>HTML5</li>
+                        <li>CSS3</li>
+                        <li>JavaScript</li>
+                        <li>React.js (or Angular/Vue.js)</li>
+                        <li>Node.js (or Django/Flask for Python)</li>
+                        <li>MongoDB (or MySQL/PostgreSQL)</li>
+                    </ul>
 
-                        <h2>Key Features:</h2>
-                        <ul>
-                            <li><strong>Customer Database:</strong> Centralised storage for customer information, interactions, and preferences.</li>
-                            <li><strong>Lead Management:</strong> Efficiently track and manage leads from acquisition to conversion.</li>
-                            <li><strong>Communication Tools:</strong> Integrated tools for seamless communication with customers via email, phone, and other channels.</li>
-                            <li><strong>Task and Appointment Management:</strong> Schedule tasks, appointments, and follow-ups to ensure timely and organised interactions.</li>
-                            <li><strong>Analytics and Reporting:</strong> Generate insightful reports and analytics to understand customer behaviour and make informed business decisions.</li>
-                            <li><strong>Integration Capabilities:</strong> Integrate with other business systems and tools for a unified workflow.</li>
-                        </ul>
+                    <p>Join us in creating an e-commerce website that not only meets but exceeds the expectations of your customers. Let's build an online shopping destination that showcases your products and elevates your brand presence!</p>
+                    ",
+                    StartDate = DateTime.Now.AddMonths(-2).AddDays(-5),
+                    EndDate = DateTime.Now.AddDays(-5).AddMonths(1),
+                    ProjectPriorityId = priorityHigh,
+                    ImageFileData = ecommerceImage,
+                    ImageFileName = "ecommerce.png",
+                    ImageContentType = "image/png"
+                };
+                
+                Project crm = new()
+                {
+                    CompanyId = company1Id,
+                    Name = "Customer Relationship Management (CRM) System",
+                    Description = @"
+                    <p>Embark on the creation of a comprehensive Customer Relationship Management (CRM) System designed to empower your business in managing customer interactions, leads, and communication effectively. This project focuses on building a centralised platform that enhances customer relationships, streamlines communication, and provides valuable insights to drive business growth.</p>
 
-                        <h2>Technologies Used:</h2>
-                        <ul>
-                            <li>HTML5</li>
-                            <li>CSS3</li>
-                            <li>JavaScript</li>
-                            <li>React.js (or Angular/Vue.js)</li>
-                            <li>Node.js (or Django/Flask for Python)</li>
-                            <li>MongoDB (or MySQL/PostgreSQL)</li>
-                        </ul>
+                    <h2>Key Features:</h2>
+                    <ul>
+                        <li><strong>Customer Database:</strong> Centralised storage for customer information, interactions, and preferences.</li>
+                        <li><strong>Lead Management:</strong> Efficiently track and manage leads from acquisition to conversion.</li>
+                        <li><strong>Communication Tools:</strong> Integrated tools for seamless communication with customers via email, phone, and other channels.</li>
+                        <li><strong>Task and Appointment Management:</strong> Schedule tasks, appointments, and follow-ups to ensure timely and organised interactions.</li>
+                        <li><strong>Analytics and Reporting:</strong> Generate insightful reports and analytics to understand customer behaviour and make informed business decisions.</li>
+                        <li><strong>Integration Capabilities:</strong> Integrate with other business systems and tools for a unified workflow.</li>
+                    </ul>
 
-                        <p>Join us in creating a CRM System that goes beyond managing data; it's a strategic tool to enhance customer relationships and drive business success. Let's build a system that grows with your business!</p>
-                        ",
-                        StartDate = DateTime.Now.AddMonths(-2).AddDays(-3),
-                        EndDate = DateTime.Now.AddDays(-3).AddMonths(6),
-                        ProjectPriorityId = priorityUrgent,
-                        ImageFileData = crmImage,
-                        ImageFileName = "crm.png",
-                        ImageContentType = "image/png"
-                     },
+                    <h2>Technologies Used:</h2>
+                    <ul>
+                        <li>HTML5</li>
+                        <li>CSS3</li>
+                        <li>JavaScript</li>
+                        <li>React.js (or Angular/Vue.js)</li>
+                        <li>Node.js (or Django/Flask for Python)</li>
+                        <li>MongoDB (or MySQL/PostgreSQL)</li>
+                    </ul>
+
+                    <p>Join us in creating a CRM System that goes beyond managing data; it's a strategic tool to enhance customer relationships and drive business success. Let's build a system that grows with your business!</p>
+                    ",
+                    StartDate = DateTime.Now.AddMonths(-2).AddDays(-3),
+                    EndDate = DateTime.Now.AddDays(-3).AddMonths(6),
+                    ProjectPriorityId = priorityUrgent,
+                    ImageFileData = crmImage,
+                    ImageFileName = "crm.png",
+                    ImageContentType = "image/png"
                 };
 
-                List<string?> dbProjects = context.Projects.Select(c => c.Name).ToList();
-                await context.Projects.AddRangeAsync(projects.Where(c => !dbProjects.Contains(c.Name)));
+                // online learning portal members
+                // project manager
+                onlineLearningPortal.Members.Add(demoPm);
+                // developers
+                onlineLearningPortal.Members.Add(lucasJackson);
+                onlineLearningPortal.Members.Add(ameliaWilson);
+                onlineLearningPortal.Members.Add(demoDev);
+                // submitters
+                onlineLearningPortal.Members.Add(ethanMarshallId);
+                onlineLearningPortal.Members.Add(marcusDonovanId);
+                onlineLearningPortal.Members.Add(demoSubmitterId);
+
+                // blog members
+                // project manager
+                blog.Members.Add(oliviaJones);
+                // developers
+                blog.Members.Add(leoMartin);
+                blog.Members.Add(demoDev);
+                blog.Members.Add(sophieRoberts);
+                // submitters
+                blog.Members.Add(ethanMarshallId);
+                blog.Members.Add(marcusDonovanId);
+                blog.Members.Add(demoSubmitterId);
+
+                // ecommerce members
+                // project manager
+                ecommerce.Members.Add(natalieCarter);
+                // developers
+                ecommerce.Members.Add(liamHarrison);
+                ecommerce.Members.Add(isabellaMurray);
+                ecommerce.Members.Add(leoMartin);
+                // submitters
+                ecommerce.Members.Add(ethanMarshallId);
+                ecommerce.Members.Add(marcusDonovanId);
+
+                // crm members
+                // project manager
+                crm.Members.Add(demoPm);
+                // developers
+                crm.Members.Add(lucasJackson);
+                crm.Members.Add(demoDev);
+                crm.Members.Add(ameliaWilson);
+                crm.Members.Add(liamHarrison);
+                // submitters
+                crm.Members.Add(ethanMarshallId);
+                crm.Members.Add(marcusDonovanId);
+                crm.Members.Add(demoSubmitterId);
+
+                // list of projects
+                var projects = new List<Project> { onlineLearningPortal, blog, ecommerce, crm };
+
+                foreach (Project project in projects)
+                {
+                    // check if the project already exists in the database
+                    Project? existingProject = await context.Projects
+                        .FirstOrDefaultAsync(p => p.Name == project.Name);
+
+                    // if the project doesn't exist, add it
+                    if (existingProject == null) context.Projects.Add(project);
+                }
+
+                // save changes
                 await context.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -979,6 +1054,11 @@ namespace BugscapeMVC.Data
             string isabellaMurrayId = context.Users.FirstOrDefault(p => p.FirstName == "Isabella" && p.LastName == "Murray")?.Id ?? throw new Exception("Failed to get isabellaMurrayId");
             string demoDevId = context.Users.FirstOrDefault(p => p.FirstName == "Demo" && p.LastName == "Developer")?.Id ?? throw new Exception("Failed to get demoDevId");
             
+            // get submitter Ids
+            string ethanMarshallId = context.Users.FirstOrDefault(p => p.FirstName == "Ethan" && p.LastName == "Marshall")?.Id ?? throw new Exception("Failed to get ethanMarshallId");
+            string marcusDonovanId = context.Users.FirstOrDefault(p => p.FirstName == "Marcus" && p.LastName == "Donovan")?.Id ?? throw new Exception("Failed to get marcusDonovanId");
+            string demoSubmitterId = context.Users.FirstOrDefault(p => p.FirstName == "Demo" && p.LastName == "Submitter")?.Id ?? throw new Exception("Failed to get demoSubmitterId");
+
             //Get ticket type Ids
             int typeNewDev = context.TicketTypes.FirstOrDefault(p => p.Name == TicketTypes.New_Development.ToString())?.Id ?? throw new Exception("Failed to get ticketTypeId.");
             int typeWorkTask = context.TicketTypes.FirstOrDefault(p => p.Name == TicketTypes.Work_Task.ToString())?.Id ?? throw new Exception("Failed to get ticketTypeId.");
@@ -1014,15 +1094,18 @@ namespace BugscapeMVC.Data
                                     TicketPriorityId = priorityLow,
                                     TicketStatusId = statusNew,
                                     TicketTypeId = typeNewDev,
+                                    OwnerUserId = demoSubmitterId,
+                                    DeveloperUserId = ameliaWilsonId
                                 },
                                 new() { 
                                     Title = "Implement Video Lecture Feature",
                                     Description = "<p>Develop the functionality to support video lectures. Ensure compatibility with various video formats and provide a user-friendly interface for students and instructors.</p>",
-                                    Created = DateTimeOffset.Now.AddDays(-random.Next(1, 30)),
+                                    Created = DateTimeOffset.Now,
                                     ProjectId = onlineLearningId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusDev,
-                                    TicketTypeId = typeEnhancement
+                                    TicketTypeId = typeEnhancement,
+                                    OwnerUserId = ethanMarshallId
                                 },
                                 new() {
                                     Title = "Fix Quiz Grading Bug",
@@ -1031,7 +1114,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = onlineLearningId,
                                     TicketPriorityId = priorityUrgent,
                                     TicketStatusId = statusTest,
-                                    TicketTypeId = typeDefect
+                                    TicketTypeId = typeDefect,
+                                    OwnerUserId = marcusDonovanId,
+                                    DeveloperUserId = lucasJacksonId
                                 },
                                 new() {
                                     Title = "Add Discussion Forum",
@@ -1040,7 +1125,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = onlineLearningId,
                                     TicketPriorityId = priorityLow,
                                     TicketStatusId = statusNew,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = demoSubmitterId,
+                                    DeveloperUserId = ameliaWilsonId
                                 },
                                 new() {
                                     Title = "Enhance User Profile Page",
@@ -1049,7 +1136,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = onlineLearningId,
                                     TicketPriorityId = priorityMedium,
                                     TicketStatusId = statusNew,
-                                    TicketTypeId = typeChangeRequest
+                                    TicketTypeId = typeChangeRequest,
+                                    OwnerUserId = ethanMarshallId,
+                                    DeveloperUserId = demoDevId
                                 },
                                 new() {
                                     Title = "Optimise Video Streaming Performance",
@@ -1058,7 +1147,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = onlineLearningId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusDev,
-                                    TicketTypeId = typeEnhancement
+                                    TicketTypeId = typeEnhancement,
+                                    OwnerUserId = marcusDonovanId,
+                                    DeveloperUserId = lucasJacksonId
                                 },
                                 new() {
                                     Title = "Fix Accessibility Issues in Course Content",
@@ -1067,7 +1158,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = onlineLearningId,
                                     TicketPriorityId = priorityUrgent,
                                     TicketStatusId = statusTest,
-                                    TicketTypeId = typeDefect
+                                    TicketTypeId = typeDefect,
+                                    OwnerUserId = demoSubmitterId,
+                                    DeveloperUserId = ameliaWilsonId
                                 },
 
                                 // resolved tickets
@@ -1080,7 +1173,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = onlineLearningId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusResolved,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = demoSubmitterId,
+                                    DeveloperUserId = ameliaWilsonId
                                 },
 
                                 new()
@@ -1092,7 +1187,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = onlineLearningId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusResolved,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = ethanMarshallId,
+                                    DeveloperUserId = demoDevId
                                 },
 
                                 new()
@@ -1104,7 +1201,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = onlineLearningId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusResolved,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = marcusDonovanId,
+                                    DeveloperUserId = lucasJacksonId
                                 },
 
                                 new()
@@ -1116,7 +1215,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = onlineLearningId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusResolved,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = demoSubmitterId,
+                                    DeveloperUserId = ameliaWilsonId
                                 },
 
                                 new()
@@ -1128,7 +1229,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = onlineLearningId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusResolved,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = ethanMarshallId,
+                                    DeveloperUserId = demoDevId
                                 },
 
                                 new()
@@ -1140,7 +1243,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = onlineLearningId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusResolved,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = marcusDonovanId,
+                                    DeveloperUserId = lucasJacksonId
                                 },
 
                                 new()
@@ -1152,7 +1257,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = onlineLearningId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusResolved,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = demoSubmitterId,
+                                    DeveloperUserId = ameliaWilsonId
                                 },
 
                                 // blog
@@ -1167,6 +1274,8 @@ namespace BugscapeMVC.Data
                                     TicketPriorityId = priorityLow,
                                     TicketStatusId = statusResolved,
                                     TicketTypeId = typeDefect,
+                                    DeveloperUserId = leoMartinId,
+                                    OwnerUserId = demoSubmitterId
                                 },
                                 new()
                                 {
@@ -1176,17 +1285,20 @@ namespace BugscapeMVC.Data
                                     ProjectId = blogId,
                                     TicketPriorityId = priorityMedium,
                                     TicketStatusId = statusDev,
-                                    TicketTypeId = typeEnhancement
+                                    TicketTypeId = typeEnhancement,
+                                    DeveloperUserId = sophieRobertsId,
+                                    OwnerUserId = ethanMarshallId
                                 },
                                 new()
                                 {
                                     Title = "Fix Blog Post Formatting Issue",
                                     Description = "<p>Investigate and fix a formatting issue affecting the appearance of blog posts. Ensure consistent and visually appealing formatting across all posts.</p>",
-                                    Created = DateTimeOffset.Now.AddDays(-random.Next(1, 30)),
+                                    Created = DateTimeOffset.Now,
                                     ProjectId = blogId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusNew,
-                                    TicketTypeId = typeChangeRequest
+                                    TicketTypeId = typeChangeRequest,
+                                    OwnerUserId = marcusDonovanId
                                 },
                                 new()
                                 {
@@ -1196,7 +1308,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = blogId,
                                     TicketPriorityId = priorityUrgent,
                                     TicketStatusId = statusNew,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    DeveloperUserId = demoDevId,
+                                    OwnerUserId = demoSubmitterId
                                 },
                                 new()
                                 {
@@ -1206,7 +1320,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = blogId,
                                     TicketPriorityId = priorityLow,
                                     TicketStatusId = statusDev,
-                                    TicketTypeId = typeDefect
+                                    TicketTypeId = typeDefect,
+                                    DeveloperUserId = sophieRobertsId,
+                                    OwnerUserId = ethanMarshallId
                                 },
                                 new()
                                 {
@@ -1216,7 +1332,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = blogId,
                                     TicketPriorityId = priorityMedium,
                                     TicketStatusId = statusNew,
-                                    TicketTypeId = typeEnhancement
+                                    TicketTypeId = typeEnhancement,
+                                    DeveloperUserId = leoMartinId,
+                                    OwnerUserId = marcusDonovanId
                                 },
                                 new()
                                 {
@@ -1226,7 +1344,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = blogId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusDev,
-                                    TicketTypeId = typeChangeRequest
+                                    TicketTypeId = typeChangeRequest,
+                                    DeveloperUserId = demoDevId,
+                                    OwnerUserId = demoSubmitterId
                                 },
                                 new()
                                 {
@@ -1236,7 +1356,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = blogId,
                                     TicketPriorityId = priorityUrgent,
                                     TicketStatusId = statusNew,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    DeveloperUserId = sophieRobertsId,
+                                    OwnerUserId = ethanMarshallId
                                 },
                                 new()
                                 {
@@ -1246,7 +1368,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = blogId,
                                     TicketPriorityId = priorityLow,
                                     TicketStatusId = statusDev,
-                                    TicketTypeId = typeDefect
+                                    TicketTypeId = typeDefect,
+                                    DeveloperUserId = leoMartinId,
+                                    OwnerUserId = marcusDonovanId
                                 },
                                 new()
                                 {
@@ -1256,7 +1380,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = blogId,
                                     TicketPriorityId = priorityMedium,
                                     TicketStatusId = statusNew,
-                                    TicketTypeId = typeEnhancement
+                                    TicketTypeId = typeEnhancement,
+                                    DeveloperUserId = demoDevId,
+                                    OwnerUserId = demoSubmitterId
                                 },
                                 new()
                                 {
@@ -1266,7 +1392,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = blogId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusDev,
-                                    TicketTypeId = typeChangeRequest
+                                    TicketTypeId = typeChangeRequest,
+                                    DeveloperUserId = sophieRobertsId,
+                                    OwnerUserId = ethanMarshallId
                                 },
                                 new()
                                 {
@@ -1276,7 +1404,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = blogId,
                                     TicketPriorityId = priorityUrgent,
                                     TicketStatusId = statusNew,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    DeveloperUserId = leoMartinId,
+                                    OwnerUserId = marcusDonovanId
                                 },
                                 new()
                                 {
@@ -1286,7 +1416,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = blogId,
                                     TicketPriorityId = priorityLow,
                                     TicketStatusId = statusDev,
-                                    TicketTypeId = typeDefect
+                                    TicketTypeId = typeDefect,
+                                    DeveloperUserId = demoDevId,
+                                    OwnerUserId = demoSubmitterId
                                 },
                                 new()
                                 {
@@ -1296,7 +1428,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = blogId,
                                     TicketPriorityId = priorityMedium,
                                     TicketStatusId = statusNew,
-                                    TicketTypeId = typeEnhancement
+                                    TicketTypeId = typeEnhancement,
+                                    DeveloperUserId = sophieRobertsId,
+                                    OwnerUserId = ethanMarshallId
                                 },
                                 new()
                                 {
@@ -1306,7 +1440,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = blogId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusDev,
-                                    TicketTypeId = typeChangeRequest
+                                    TicketTypeId = typeChangeRequest,
+                                    DeveloperUserId = leoMartinId,
+                                    OwnerUserId = marcusDonovanId
                                 },
                                 new()
                                 {
@@ -1316,7 +1452,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = blogId,
                                     TicketPriorityId = priorityUrgent,
                                     TicketStatusId = statusNew,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    DeveloperUserId = demoDevId,
+                                    OwnerUserId = demoSubmitterId
                                 },
 
                                 // resolved tickets
@@ -1329,7 +1467,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = blogId,
                                     TicketPriorityId = priorityMedium,
                                     TicketStatusId = statusResolved,
-                                    TicketTypeId = typeDefect
+                                    TicketTypeId = typeDefect,
+                                    DeveloperUserId = leoMartinId,
+                                    OwnerUserId = demoSubmitterId
                                 },
 
                                 new()
@@ -1341,7 +1481,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = blogId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusResolved,
-                                    TicketTypeId = typeChangeRequest
+                                    TicketTypeId = typeChangeRequest,
+                                    DeveloperUserId = sophieRobertsId,
+                                    OwnerUserId = ethanMarshallId
                                 },
 
                                 new()
@@ -1353,7 +1495,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = blogId,
                                     TicketPriorityId = priorityUrgent,
                                     TicketStatusId = statusResolved,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    DeveloperUserId = leoMartinId,
+                                    OwnerUserId = marcusDonovanId
                                 },
                                 
                                 // ecommerce website
@@ -1366,7 +1510,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = ecommerceId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusNew,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = demoSubmitterId,
+                                    DeveloperUserId = liamHarrisonId
                                 },
                                 new()
                                 {
@@ -1376,7 +1522,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = ecommerceId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusNew,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = ethanMarshallId,
+                                    DeveloperUserId = isabellaMurrayId
                                 },
                                 new()
                                 {
@@ -1386,17 +1534,20 @@ namespace BugscapeMVC.Data
                                     ProjectId = ecommerceId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusNew,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = marcusDonovanId,
+                                    DeveloperUserId = leoMartinId
                                 },
                                 new()
                                 {
                                     Title = "Optimise Product Search Functionality",
                                     Description = "<p>Optimise the product search functionality on the website. Implement advanced search features and filters to help users find specific products more efficiently.</p>",
-                                    Created = DateTimeOffset.Now.AddDays(-random.Next(1, 30)),
+                                    Created = DateTimeOffset.Now,
                                     ProjectId = ecommerceId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusNew,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = demoSubmitterId,
                                 },
                                 new()
                                 {
@@ -1406,7 +1557,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = ecommerceId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusNew,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = ethanMarshallId,
+                                    DeveloperUserId = isabellaMurrayId
                                 },
                                 new()
                                 {
@@ -1416,7 +1569,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = ecommerceId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusNew,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = marcusDonovanId,
+                                    DeveloperUserId = leoMartinId
                                 },
                                 new()
                                 {
@@ -1426,7 +1581,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = ecommerceId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusNew,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = demoSubmitterId,
+                                    DeveloperUserId = liamHarrisonId
                                 },
                                 new()
                                 {
@@ -1436,7 +1593,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = ecommerceId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusNew,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = ethanMarshallId,
+                                    DeveloperUserId = isabellaMurrayId
                                 },
                                 new()
                                 {
@@ -1446,7 +1605,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = ecommerceId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusNew,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = marcusDonovanId,
+                                    DeveloperUserId = leoMartinId
                                 },
                                 new()
                                 {
@@ -1456,7 +1617,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = ecommerceId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusNew,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = demoSubmitterId,
+                                    DeveloperUserId = liamHarrisonId
                                 },
                                 new()
                                 {
@@ -1466,7 +1629,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = ecommerceId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusNew,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = ethanMarshallId,
+                                    DeveloperUserId = isabellaMurrayId
                                 },
                                 new()
                                 {
@@ -1476,7 +1641,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = ecommerceId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusNew,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = marcusDonovanId,
+                                    DeveloperUserId = leoMartinId
                                 },
                                 new()
                                 {
@@ -1486,7 +1653,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = ecommerceId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusNew,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = demoSubmitterId,
+                                    DeveloperUserId = liamHarrisonId
                                 },
                                 new()
                                 {
@@ -1496,7 +1665,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = ecommerceId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusNew,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = ethanMarshallId,
+                                    DeveloperUserId = isabellaMurrayId
                                 },
                                 new()
                                 {
@@ -1506,7 +1677,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = ecommerceId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusNew,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = marcusDonovanId,
+                                    DeveloperUserId = leoMartinId
                                 },
                                 new()
                                 {
@@ -1516,7 +1689,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = ecommerceId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusNew,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = demoSubmitterId,
+                                    DeveloperUserId = liamHarrisonId
                                 },
 
                                 // resolved tickets
@@ -1529,7 +1704,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = ecommerceId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusResolved,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = demoSubmitterId,
+                                    DeveloperUserId = liamHarrisonId
                                 },
 
                                 new()
@@ -1541,7 +1718,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = ecommerceId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusResolved,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = ethanMarshallId,
+                                    DeveloperUserId = isabellaMurrayId
                                 },
 
                                 new()
@@ -1553,7 +1732,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = ecommerceId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusResolved,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = marcusDonovanId,
+                                    DeveloperUserId = leoMartinId
                                 },
 
                                 new()
@@ -1565,7 +1746,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = ecommerceId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusResolved,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = demoSubmitterId,
+                                    DeveloperUserId = liamHarrisonId
                                 },
 
                                 new()
@@ -1577,7 +1760,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = ecommerceId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusResolved,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = ethanMarshallId,
+                                    DeveloperUserId = isabellaMurrayId
                                 },
 
                                 new()
@@ -1589,7 +1774,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = ecommerceId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusResolved,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = marcusDonovanId,
+                                    DeveloperUserId = leoMartinId
                                 },
 
                                 new()
@@ -1601,7 +1788,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = ecommerceId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusResolved,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = demoSubmitterId,
+                                    DeveloperUserId = liamHarrisonId
                                 },
 
                                 new()
@@ -1613,7 +1802,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = ecommerceId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusResolved,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = ethanMarshallId,
+                                    DeveloperUserId = isabellaMurrayId
                                 },
 
                                 new()
@@ -1625,7 +1816,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = ecommerceId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusResolved,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = marcusDonovanId,
+                                    DeveloperUserId = leoMartinId
                                 },
 
                                 new()
@@ -1637,7 +1830,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = ecommerceId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusResolved,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = demoSubmitterId,
+                                    DeveloperUserId = liamHarrisonId
                                 },
 
                                 // crm
@@ -1650,7 +1845,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = crmId,
                                     TicketPriorityId = priorityLow,
                                     TicketStatusId = statusNew,
-                                    TicketTypeId = typeDefect
+                                    TicketTypeId = typeDefect,
+                                    OwnerUserId = demoSubmitterId,
+                                    DeveloperUserId = ameliaWilsonId
                                 },
                                 new()
                                 {
@@ -1660,7 +1857,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = crmId,
                                     TicketPriorityId = priorityMedium,
                                     TicketStatusId = statusDev,
-                                    TicketTypeId = typeEnhancement
+                                    TicketTypeId = typeEnhancement,
+                                    OwnerUserId = ethanMarshallId,
+                                    DeveloperUserId = demoDevId
                                 },
                                 new()
                                 {
@@ -1670,17 +1869,20 @@ namespace BugscapeMVC.Data
                                     ProjectId = crmId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusNew,
-                                    TicketTypeId = typeChangeRequest
+                                    TicketTypeId = typeChangeRequest,
+                                    OwnerUserId = marcusDonovanId,
+                                    DeveloperUserId = liamHarrisonId
                                 },
                                 new()
                                 {
                                     Title = "Fix Urgent User Permission Issue",
                                     Description = "<p>Address and fix urgent issues related to user permissions in the CRM system. Ensure that users have the appropriate access levels and permissions for their roles.</p>",
-                                    Created = DateTimeOffset.Now.AddDays(-random.Next(1, 30)),
+                                    Created = DateTimeOffset.Now,
                                     ProjectId = crmId,
                                     TicketPriorityId = priorityUrgent,
                                     TicketStatusId = statusNew,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = demoSubmitterId
                                 },
                                 new()
                                 {
@@ -1690,7 +1892,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = crmId,
                                     TicketPriorityId = priorityLow,
                                     TicketStatusId = statusDev,
-                                    TicketTypeId = typeDefect
+                                    TicketTypeId = typeDefect,
+                                    OwnerUserId = ethanMarshallId,
+                                    DeveloperUserId = ameliaWilsonId
                                 },
                                 new()
                                 {
@@ -1700,7 +1904,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = crmId,
                                     TicketPriorityId = priorityMedium,
                                     TicketStatusId = statusNew,
-                                    TicketTypeId = typeEnhancement
+                                    TicketTypeId = typeEnhancement,
+                                    OwnerUserId = marcusDonovanId,
+                                    DeveloperUserId = demoDevId
                                 },
                                 new()
                                 {
@@ -1710,7 +1916,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = crmId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusNew,
-                                    TicketTypeId = typeChangeRequest
+                                    TicketTypeId = typeChangeRequest,
+                                    OwnerUserId = demoSubmitterId,
+                                    DeveloperUserId = liamHarrisonId
                                 },
                                 new()
                                 {
@@ -1720,7 +1928,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = crmId,
                                     TicketPriorityId = priorityUrgent,
                                     TicketStatusId = statusDev,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = ethanMarshallId,
+                                    DeveloperUserId = ameliaWilsonId
                                 },
                                 new()
                                 {
@@ -1730,7 +1940,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = crmId,
                                     TicketPriorityId = priorityLow,
                                     TicketStatusId = statusNew,
-                                    TicketTypeId = typeDefect
+                                    TicketTypeId = typeDefect,
+                                    OwnerUserId = marcusDonovanId,
+                                    DeveloperUserId = demoDevId
                                 },
                                 new()
                                 {
@@ -1740,7 +1952,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = crmId,
                                     TicketPriorityId = priorityMedium,
                                     TicketStatusId = statusNew,
-                                    TicketTypeId = typeEnhancement
+                                    TicketTypeId = typeEnhancement,
+                                    OwnerUserId = demoSubmitterId,
+                                    DeveloperUserId = liamHarrisonId
                                 },
                                 new()
                                 {
@@ -1750,7 +1964,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = crmId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusDev,
-                                    TicketTypeId = typeChangeRequest
+                                    TicketTypeId = typeChangeRequest,
+                                    OwnerUserId = ethanMarshallId,
+                                    DeveloperUserId = ameliaWilsonId
                                 },
                                 new()
                                 {
@@ -1760,7 +1976,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = crmId,
                                     TicketPriorityId = priorityUrgent,
                                     TicketStatusId = statusNew,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = marcusDonovanId,
+                                    DeveloperUserId = demoDevId
                                 },
                                 new()
                                 {
@@ -1770,7 +1988,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = crmId,
                                     TicketPriorityId = priorityLow,
                                     TicketStatusId = statusNew,
-                                    TicketTypeId = typeDefect
+                                    TicketTypeId = typeDefect,
+                                    OwnerUserId = demoSubmitterId,
+                                    DeveloperUserId = liamHarrisonId
                                 },
                                 new()
                                 {
@@ -1780,7 +2000,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = crmId,
                                     TicketPriorityId = priorityMedium,
                                     TicketStatusId = statusDev,
-                                    TicketTypeId = typeEnhancement
+                                    TicketTypeId = typeEnhancement,
+                                    OwnerUserId = ethanMarshallId,
+                                    DeveloperUserId = ameliaWilsonId
                                 },
                                 new()
                                 {
@@ -1790,7 +2012,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = crmId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusNew,
-                                    TicketTypeId = typeChangeRequest
+                                    TicketTypeId = typeChangeRequest,
+                                    OwnerUserId = marcusDonovanId,
+                                    DeveloperUserId = demoDevId
                                 },
                                 new()
                                 {
@@ -1800,7 +2024,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = crmId,
                                     TicketPriorityId = priorityUrgent,
                                     TicketStatusId = statusDev,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = demoSubmitterId,
+                                    DeveloperUserId = liamHarrisonId
                                 },
 
                                 // resolved tickets
@@ -1813,7 +2039,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = crmId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusResolved,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = ethanMarshallId,
+                                    DeveloperUserId = ameliaWilsonId
                                 },
 
                                 new()
@@ -1825,7 +2053,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = crmId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusResolved,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = marcusDonovanId,
+                                    DeveloperUserId = demoDevId
                                 },
 
                                 new()
@@ -1837,7 +2067,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = crmId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusResolved,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = demoSubmitterId,
+                                    DeveloperUserId = liamHarrisonId
                                 },
 
                                 new()
@@ -1849,7 +2081,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = crmId,
                                     TicketPriorityId = priorityUrgent,
                                     TicketStatusId = statusResolved,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = ethanMarshallId,
+                                    DeveloperUserId = ameliaWilsonId
                                 },
 
                                 new()
@@ -1861,7 +2095,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = crmId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusResolved,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = marcusDonovanId,
+                                    DeveloperUserId = demoDevId
                                 },
 
                                 new()
@@ -1873,7 +2109,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = crmId,
                                     TicketPriorityId = priorityHigh,
                                     TicketStatusId = statusResolved,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = demoSubmitterId,
+                                    DeveloperUserId = liamHarrisonId
                                 },
 
                                 new()
@@ -1885,7 +2123,9 @@ namespace BugscapeMVC.Data
                                     ProjectId = crmId,
                                     TicketPriorityId = priorityUrgent,
                                     TicketStatusId = statusResolved,
-                                    TicketTypeId = typeNewDev
+                                    TicketTypeId = typeNewDev,
+                                    OwnerUserId = ethanMarshallId,
+                                    DeveloperUserId = ameliaWilsonId
                                 },
 
                 };

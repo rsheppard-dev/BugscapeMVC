@@ -44,7 +44,7 @@ namespace BugscapeMVC.Controllers
             }
 
             var username = value;
-            var password = _configuration[$"Demo:Password"];
+            var password = _configuration[$"Demo:Password"] ?? Environment.GetEnvironmentVariable("DemoPassword")!;
 
             var user = await _userManager.FindByNameAsync(username);
             
