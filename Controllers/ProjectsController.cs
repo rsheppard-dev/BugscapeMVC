@@ -192,8 +192,8 @@ namespace BugscapeMVC.Controllers
 
                 Notification notification = new()
                 {
-                    Title = "Project Manager Assigned",
-                    Message = $"You have been assigned as the Project Manager for {project?.Name}.",
+                    Title = "New Project Assignment",
+                    Message = $"You have been assigned as the Project Manager for: {project?.Name}.",
                     RecipientId = model.ProjectManagerId,
                 };
 
@@ -290,7 +290,7 @@ namespace BugscapeMVC.Controllers
                         // send notification to new members
                         Notification notification = new()
                         {
-                            Title = "Project Assignment",
+                            Title = "New Project Assignment",
                             Message = $"You have been assigned to the project: {model.Project.Name}.",
                             RecipientId = memberId,
                         };

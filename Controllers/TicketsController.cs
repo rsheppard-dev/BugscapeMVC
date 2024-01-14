@@ -208,7 +208,7 @@ namespace BugscapeMVC.Controllers
                     Notification notification = new()
                     {
                         TicketId = model.Ticket.Id,
-                        Title = "Developer Assignment",
+                        Title = "New Ticket Assignment",
                         Message = $"You have been assigned as the developer on ticket: {newTicket.Title}.",
                         RecipientId = model.DeveloperId,
                     };

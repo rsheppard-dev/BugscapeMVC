@@ -43,7 +43,7 @@ namespace BugscapeMVC.Data
         {
             using var svcScope = host.Services.CreateScope();
             var svcProvider = svcScope.ServiceProvider;
-            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+            
             //Service: An instance of RoleManager
             var dbContextSvc = svcProvider.GetRequiredService<ApplicationDbContext>();
             //Service: An instance of RoleManager
@@ -65,6 +65,7 @@ namespace BugscapeMVC.Data
             await SeedDefaultProjectPriorityAsync(dbContextSvc);
             await SeedDefaultProjectsAsync(dbContextSvc);
             await SeedDefaultTicketsAsync(dbContextSvc);
+            await SeedDefaultNotificationsAsync(dbContextSvc);
         }
 
 
@@ -637,8 +638,8 @@ namespace BugscapeMVC.Data
             // seed demo developer user
             defaultUser = new AppUser
             {
-                UserName = "demo-developer@democorp.com",
-                Email = "demo-developer@democorp.com",
+                UserName = "demo.developer@democorp.com",
+                Email = "demo.developer@democorp.com",
                 FirstName = "Demo",
                 LastName = "Developer",
                 EmailConfirmed = true,
@@ -669,8 +670,8 @@ namespace BugscapeMVC.Data
             // seed demo submitter user
             defaultUser = new AppUser
             {
-                UserName = "demo-submitter@democorp.com",
-                Email = "demo-submitter@democorp.com",
+                UserName = "demo.submitter@democorp.com",
+                Email = "demo.submitter@democorp.com",
                 FirstName = "Demo",
                 LastName = "Submitter",
                 EmailConfirmed = true,
@@ -2139,6 +2140,97 @@ namespace BugscapeMVC.Data
             {
                 Console.WriteLine("*************  ERROR  *************");
                 Console.WriteLine("Error Seeding Tickets.");
+                Console.WriteLine(ex.Message);
+                Console.WriteLine("***********************************");
+                throw;
+            }
+        }
+
+        public static async Task SeedDefaultNotificationsAsync(ApplicationDbContext context)
+        {
+            var random = new Random();
+
+            // get member ids
+            string demoAdminId = context.Users.FirstOrDefault(p => p.FirstName == "Demo" && p.LastName == "Admin")?.Id ?? throw new Exception("Failed to get demoAdminId");
+            string demoPmId = context.Users.FirstOrDefault(p => p.FirstName == "Demo" && p.LastName == "Project-Manager")?.Id ?? throw new Exception("Failed to get demoPmId");
+            string demoDevId = context.Users.FirstOrDefault(p => p.FirstName == "Demo" && p.LastName == "Developer")?.Id ?? throw new Exception("Failed to get demoDevId");
+            string demoSubmitterId = context.Users.FirstOrDefault(p => p.FirstName == "Demo" && p.LastName == "Submitter")?.Id ?? throw new Exception("Failed to get demoSubmitterId");
+            string ethanMarshallId = context.Users.FirstOrDefault(p => p.FirstName == "Ethan" && p.LastName == "Marshall")?.Id ?? throw new Exception("Failed to get ethanMarshallId");
+
+            // get ticket ids
+            int ticketId1 = context.Tickets.Where(t => t.Title == "Add Comment Section to Blog Posts").FirstOrDefault()?.Id ?? throw new Exception("Failed to get ticketId1");
+            int ticketId2 = context.Tickets.Where(t => t.Title == "Enhance Course Enrollment Process").FirstOrDefault()?.Id ?? throw new Exception("Failed to get ticketId2");
+
+            try
+            {
+                var notifications = new List<Notification>
+                {
+                    new()
+                    {
+                        Title = "Ethan Marshall joined the team",
+                        Message = "<p>Ethan Marshall accepted your invite and joined the team as a submitter.</p>",
+                        Created = DateTimeOffset.Now.AddMonths(-1),
+                        RecipientId = demoAdminId,
+                    },
+
+                    new()
+                    {
+                        Title = "Thanks for the invite",
+                        Message = "<p>Thank you for the opportunity. I'll get to work right away. 🤓</p>",
+                        Created = DateTimeOffset.Now.AddMonths(-1).AddDays(1),
+                        RecipientId = demoAdminId,
+                        SenderId = ethanMarshallId,
+                    },
+
+                    new()
+                    {
+                        Title = "New Project Assignment",
+                        Message = "<p>You have been assigned as the Project Manager for: Online Learning Platform.</p>",
+                        Created = DateTimeOffset.Now.AddMonths(-1).AddDays(2),
+                        RecipientId = demoPmId,
+                    },
+
+                    new()
+                    {
+                        Title = "New Ticked Assignment",
+                        Message = "<p>You have been assigned as the developer on ticket: Enhance Course Enrollment Process.</p>",
+                        TicketId = ticketId2,
+                        Created = DateTimeOffset.Now.AddDays(-6),
+                        RecipientId = demoDevId,
+                    },
+
+                    new()
+                    {
+                        Title = "Completed Ticket 🚀",
+                        Message = "<p>Hi. Managed to get this one wrapped up quicker than expected 😎. Do you need me for the meeting this afternoon?</p>",
+                        TicketId = ticketId2,
+                        Created = DateTimeOffset.Now.AddDays(-2),
+                        RecipientId = demoPmId,
+                        SenderId = demoDevId,
+                    },
+
+                    new()
+                    {
+                        Title = "New Project Assignment",
+                        Message = "<p>You have been assigned to the project: Customer Relationship Management (CRM) System.</p>",
+                        Created = DateTimeOffset.Now.AddMonths(-1).AddDays(7),
+                        RecipientId = demoSubmitterId,
+                    },
+                };
+
+                var dbNotifications = context.Notifications
+                    .Select(n => new { n.Title, n.Message, n.RecipientId })
+                    .ToList();
+
+                await context.Notifications.AddRangeAsync(notifications.Where(n => !dbNotifications.Any(dbn => dbn.Title == n.Title && dbn.Message == n.Message && dbn.RecipientId == n.RecipientId)));
+
+                await context.SaveChangesAsync();
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("*************  ERROR  *************");
+                Console.WriteLine("Error Seeding Notifications.");
                 Console.WriteLine(ex.Message);
                 Console.WriteLine("***********************************");
                 throw;

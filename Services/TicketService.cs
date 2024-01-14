@@ -523,33 +523,36 @@ namespace BugscapeMVC.Services
 
             if (user is null) return tickets;
 
+            var role = (await _roleService.GetUserRolesAsync(user))
+                .Where(r => r != nameof(Roles.Demo_User))
+                .FirstOrDefault();
+
             try
             {
-                if (await _roleService.HasRoleAsync(user, Roles.Admin.ToString()))
+                switch (role)
                 {
-                    tickets = (await _projectService.GetAllProjectsByCompanyAsync(companyId))
-                        .SelectMany(project => project.Tickets)
-                        .ToList();
-                }
-                else if (await _roleService.HasRoleAsync(user, Roles.Developer.ToString()))
-                {
-                    tickets = (await _projectService.GetAllProjectsByCompanyAsync(companyId))
-                        .SelectMany(project => project.Tickets)
-                        .Where(ticket => ticket.DeveloperUserId == userId || ticket.OwnerUserId == userId)
-                        .ToList();
-                }
-                else if (await _roleService.HasRoleAsync(user, Roles.Submitter.ToString()))
-                {
-                    tickets = (await _projectService.GetAllProjectsByCompanyAsync(companyId))
-                        .SelectMany(project => project.Tickets)
-                        .Where(ticket => ticket.OwnerUserId == userId)
-                        .ToList();
-                }
-                else if (await _roleService.HasRoleAsync(user, Roles.Project_Manager.ToString()))
-                {
-                    tickets = (await _projectService.GetUserProjectsAsync(userId))
-                        .SelectMany(project => project.Tickets)
-                        .ToList();
+                    case nameof(Roles.Admin):
+                        tickets = (await _projectService.GetAllProjectsByCompanyAsync(companyId))
+                            .SelectMany(project => project.Tickets)
+                            .ToList();
+                        break;
+                    case nameof(Roles.Developer):
+                        tickets = (await _projectService.GetAllProjectsByCompanyAsync(companyId))
+                            .SelectMany(project => project.Tickets)
+                            .Where(ticket => ticket.DeveloperUserId == userId || ticket.OwnerUserId == userId)
+                            .ToList();
+                        break;
+                    case nameof(Roles.Submitter):
+                        tickets = (await _projectService.GetAllProjectsByCompanyAsync(companyId))
+                            .SelectMany(project => project.Tickets)
+                            .Where(ticket => ticket.OwnerUserId == userId)
+                            .ToList();
+                        break;
+                    case nameof(Roles.Project_Manager):
+                        tickets = (await _projectService.GetUserProjectsAsync(userId))
+                            .SelectMany(project => project.Tickets)
+                            .ToList();
+                        break;
                 }
 
                 return tickets;
