@@ -119,9 +119,8 @@
         @if (isSignedIn)
         {
             <aside data-menu
-                class="z-10 -translate-x-full md:translate-x-0 shadow-md transition-transform fixed top-24 h-[calc(100vh-theme(spacing.24))] overflow-y-auto mr-6 scrollbar-thin scrollbar-thumb-light scrollbar-track-lightest scrollbar-thumb-rounded-xl">
-                <nav
-                    class="bg-mid rounded-t-xl min-w-[theme.spacing.64] min-h-[calc(100vh-theme(spacing.24))] pt-12 pb-4 px-8 flex flex-col justify-between gap-8">
+                class="z-50 -translate-x-full md:translate-x-0 shadow-md transition-transform fixed md:top-24 min-h-screen md:h-[calc(100vh-theme(spacing.24))] overflow-y-auto mr-6 scrollbar-thin scrollbar-thumb-light scrollbar-track-lightest scrollbar-thumb-rounded-xl">
+                <nav class="bg-mid md:rounded-t-xl min-w-[theme.spacing.64] h-screen md:h-[calc(100vh-theme(spacing.24))] pt-12 pb-4 px-8 flex flex-col justify-between gap-8">
                     <div class="space-y-6 font-dark font-bold text-sm font-lato uppercase">
                         <div class="md:hidden">
                             <partial name="_SearchBar" />    

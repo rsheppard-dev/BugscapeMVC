@@ -46,7 +46,7 @@
     }
 </div>
 
-<form asp-action="Index" asp-controller="Members" method="get" class="flex flex-wrap items-center gap-2 justify-between mb-4">
+<form asp-action="Index" asp-controller="Members" method="get" class="flex flex-wrap-reverse items-center gap-2 justify-between mb-4">
     <div class="flex gap-1 items-center">
         <select name="limit" id="limit" class="font-lato text-sm" onchange="this.form.submit()">
             @foreach (var option in new int[] { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50 })
@@ -75,7 +75,7 @@
         <table id="projectTable" class="w-full text-sm text-left text-dark font-lato">
             <thead class="text-xs bg-light uppercase">
                 <tr>
-                    <th scope="col" class="px-6 py-3 whitespace-nowrap">
+                    <th scope="col" class="px-6 py-3">
                         <a asp-action="Index" asp-controller="Members" asp-all-route-data="@routeValues" asp-route-sortBy="name" asp-route-order="@GetNewOrder("name")" class="flex items-center gap-2">
                             <span>Name</span>
                             @if (ViewBag.SortBy == "name")
@@ -86,7 +86,7 @@
                             }
                         </a>
                     </th>
-                    <th scope="col" class="px-6 py-3 whitespace-nowrap hidden sm:table-cell">
+                    <th scope="col" class="px-6 py-3 whitespace-nowrap hidden lg:table-cell">
                         <a asp-action="Index" asp-controller="Members" asp-all-route-data="@routeValues" asp-route-sortBy="role"  asp-route-order="@GetNewOrder("role")" class="flex items-center gap-2">
                         <span>Role</span>
                             @if (ViewBag.SortBy == "role")
@@ -97,7 +97,7 @@
                             }
                         </a>
                     </th>
-                    <th scope="col" class="px-6 py-3 whitespace-nowrap hidden lg:table-cell">
+                    <th scope="col" class="px-6 py-3 whitespace-nowrap hidden xl:table-cell">
                         <a asp-action="Index" asp-controller="Members" asp-all-route-data="@routeValues" asp-route-sortBy="email" asp-route-order="@GetNewOrder("email")" class="flex items-center gap-2">
                         <span>Email</span>
                             @if (ViewBag.SortBy == "email")
@@ -124,7 +124,7 @@
                 
                     <tr class="@rowColor border-b">
                         <th scope="row" class="px-6 py-4">
-                            <a asp-action="Details" asp-route-id="@member?.Id" class="group whitespace-nowrap flex gap-2 items-center w-fit">
+                            <a asp-action="Details" asp-route-id="@member?.Id" class="group flex gap-2 items-center w-fit">
                                 @if (member?.AvatarFileData is null || member?.AvatarContentType is null)
                                 {
                                     <img class="h-8 w-8 object-cover rounded-full group-hover:scale-110 transition-transform" src="~/images/default-avatar.png" alt="@member?.FullName">
@@ -135,17 +135,17 @@
                                 }
                                 <div class="flex flex-col gap-1">
                                     <span class="font-lato text-zinc-700 group-hover:underline underline-offset-2">@member?.FullName</span>
-                                    <dl class="flex flex-col gap-1 sm:hidden">
+                                    <dl class="flex flex-col gap-1 lg:hidden">
                                         <dt class="sr-only">Role</dt>
-                                        <dd class="whitespace-nowrap font-lato font-normal text-xs text-zinc-700">@((RoleService.GetUserRolesAsync(member!)).Result.FirstOrDefault()?.Replace("_", " "))</dd>
+                                        <dd class="font-lato font-normal text-xs text-zinc-500">@((RoleService.GetUserRolesAsync(member!)).Result.FirstOrDefault()?.Replace("_", " "))</dd>
                                     </dl>
                                 </div>
                             </a>
                         </th>
-                    <td class="px-6 py-4 hidden sm:table-cell">
+                    <td class="px-6 py-4 hidden lg:table-cell">
                         <span class="bg-dark text-white whitespace-nowrap uppercase px-2 py-1 rounded-md text-xs font-bold">@((RoleService.GetUserRolesAsync(member!)).Result.FirstOrDefault()?.Replace("_", " "))</span>
                     </td>
-                    <td class="px-6 py-4 hidden lg:table-cell">
+                    <td class="px-6 py-4 hidden xl:table-cell">
                         <a href="mailto:@member?.Email" class="font-lato underline text-zinc-700">@member?.Email</a>
                     </td>
                     
@@ -193,7 +193,7 @@
         </table>
     </div>
 
-    <div class="flex flex-wrap items-center justify-between gap-2 col-span-12">
+    <div class="flex flex-col lg:flex-row items-center justify-between gap-4">
         @if (Model.TotalPages > 1)
         {
             <div class="flex items-center gap-2">
