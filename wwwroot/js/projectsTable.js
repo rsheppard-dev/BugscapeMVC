@@ -42,7 +42,7 @@ var ProjectsTable = /** @class */ (function () {
             this.container = (_a = options === null || options === void 0 ? void 0 : options.container) !== null && _a !== void 0 ? _a : document.querySelector('[data-container="projects"]'),
             this.page = (_b = options === null || options === void 0 ? void 0 : options.page) !== null && _b !== void 0 ? _b : 1,
             this.limit = (_c = options === null || options === void 0 ? void 0 : options.limit) !== null && _c !== void 0 ? _c : 4,
-            this.sortBy = (_d = options === null || options === void 0 ? void 0 : options.sortBy) !== null && _d !== void 0 ? _d : 'startdate',
+            this.sortBy = (_d = options === null || options === void 0 ? void 0 : options.sortBy) !== null && _d !== void 0 ? _d : 'enddate',
             this.order = (_e = options === null || options === void 0 ? void 0 : options.order) !== null && _e !== void 0 ? _e : 'desc';
     }
     ProjectsTable.prototype.init = function () {

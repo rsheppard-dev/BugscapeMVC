@@ -28,7 +28,7 @@ class ProjectsTable {
     this.container = options?.container ?? document.querySelector('[data-container="projects"]') as HTMLElement,
     this.page = options?.page ?? 1,
     this.limit = options?.limit ?? 4,
-    this.sortBy = options?.sortBy ?? 'startdate',
+    this.sortBy = options?.sortBy ?? 'enddate',
     this.order = options?.order ?? 'desc'
   }
 
@@ -69,7 +69,8 @@ class ProjectsTable {
 
       const header = this.container.querySelector(
         `[data-sort="${this.sortBy}"]`
-      )!
+      ) as HTMLElement
+
       header.setAttribute('data-order', this.order as ProjectOrder)
 
       header.classList.add('active')
