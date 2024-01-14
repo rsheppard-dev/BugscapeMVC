@@ -1,27 +1,20 @@
-# Use the .NET 7 SDK as the base image
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build-env
-
-# Set the working directory
+FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
 WORKDIR /app
+EXPOSE 80
+EXPOSE 443
 
-# Copy the .csproj and restore dependencies
-COPY *.csproj ./
-RUN dotnet restore
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+WORKDIR /src
+COPY ["BugscapeMVC.csproj", "./"]
+RUN dotnet restore "BugscapeMVC.csproj"
+COPY . .
+WORKDIR "/src/"
+RUN dotnet build "BugscapeMVC.csproj" -c Release -o /app/build
 
-# Copy the rest of the project files
-COPY . ./
+FROM build AS publish
+RUN dotnet publish "BugscapeMVC.csproj" -c Release -o /app/publish
 
-# Build the project
-RUN dotnet publish -c Release -o out
-
-# Use the .NET 7 runtime image as the base image
-FROM mcr.microsoft.com/dotnet/aspnet:7.0
-
-# Set the working directory
+FROM base AS final
 WORKDIR /app
-
-# Copy the build output from the build-env image
-COPY --from=build-env /app/out .
-
-# Specify the command to run on container startup
+COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "BugscapeMVC.dll"]
