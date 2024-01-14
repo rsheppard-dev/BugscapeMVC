@@ -14,7 +14,7 @@
     };
 }
 
-<div class="flex flex-wrap justify-between items-center mb-4">
+<div class="flex flex-wrap justify-between items-center gap-4 mb-4">
     <h1 class="font-rockwell text-xl text-dark">@ViewData["Title"]</h1>   
 
     <form asp-action="SearchResults" asp-controller="Home" method="get">
@@ -42,11 +42,12 @@
 else
 {
     <div data-tabs>
-        <nav aria-label="Search Result Categories" class="flex items-center gap-4 mb-4">
+        <nav aria-label="Search Result Categories" class="flex flex-col sm:flex-row items-center gap-4 mb-4">
             @foreach (var tab in Model.Tabs)
             {
-                <button onclick="changeTab('@tab.DataTab')" aria-label="@tab.Label, @tab.TotalItems Results" role="tab" id="@tab.Id" aria-controls="@tab.Controls" class="flex items-center gap-2 rounded-md px-4 py-2 bg-mid transition-colors @(ViewBag.ActiveTab == tab.DataTab ? "active" : "")" data-tab="@tab.DataTab">
-                    @tab.Label <span class="rounded-full bg-light text-xs flex items-center justify-center h-6 w-6 transition-colors">@tab.TotalItems</span>
+                <button onclick="changeTab('@tab.DataTab')" aria-label="@tab.Label, @tab.TotalItems Results" role="tab" id="@tab.Id" aria-controls="@tab.Controls" class="flex w-full justify-between sm:justify-start sm:w-auto items-center gap-2 rounded-md px-4 py-2 bg-mid transition-colors @(ViewBag.ActiveTab == tab.DataTab ? "active" : "")" data-tab="@tab.DataTab">
+                    @tab.Label
+                    <span class="rounded-full bg-light text-xs flex items-center justify-center h-6 w-6 transition-colors">@tab.TotalItems</span>
                 </button>
             }
         </nav>
@@ -63,7 +64,7 @@ else
 
             @if (Model.Projects.TotalPages > 1)
             {
-                <div class="flex flex-wrap items-center justify-between gap-2 col-span-12">
+                <div class="flex flex-wrap items-center justify-between gap-2">
                     <div class="flex items-center gap-2">
             
                         <a title="First Page" asp-action="SearchResults" asp-controller="Home" asp-route-tab="projects" asp-route-searchString="@ViewBag.SearchString" asp-route-limit="@Model.Limit" asp-route-projectsPage="1" class="@(Model.Projects.CurrentPage > 1 ? "hover:bg-info hover:bg-opacity-80" : "opacity-60 pointer-events-none") h-8 w-8 flex items-center justify-center text-dark rounded-md font-lato transition-colors bg-gray-200">
@@ -167,7 +168,7 @@ else
 
             @if (Model.Members.TotalPages > 1)
             {
-                <div class="flex flex-wrap items-center justify-between gap-2 col-span-12">
+                <div class="flex flex-col lg:flex-row items-center justify-between gap-4 col-span-12">
                     <div class="flex items-center gap-2">
             
                         <a title="First Page" asp-action="SearchResults" asp-controller="Home" asp-route-tab="members" asp-route-searchString="@ViewBag.SearchString" asp-route-limit="@Model.Limit" asp-route-membersPage="1" class="@(Model.Members.CurrentPage > 1 ? "hover:bg-info hover:bg-opacity-80" : "opacity-60 pointer-events-none") h-8 w-8 flex items-center justify-center text-dark rounded-md font-lato transition-colors bg-gray-200">

@@ -44,7 +44,7 @@
     }
 </div>
 
-<form asp-action="MyProjects" asp-controller="Projects" method="get" class="flex flex-wrap items-center gap-2 justify-between mb-4">
+<form asp-action="MyProjects" asp-controller="Projects" method="get" class="flex flex-wrap-reverse items-center gap-2 justify-between mb-4">
     <div class="flex gap-1 items-center">
         <select name="limit" id="limit" class="font-lato text-sm" onchange="this.form.submit()">
             @foreach (var option in new int[] { 5, 10, 15, 20, 25, 30, 35, 40, 45, 50 })
@@ -242,7 +242,7 @@
         </table>
     </div>
 
-    <div class="flex flex-wrap items-center justify-between gap-2 col-span-12">
+    <div class="flex flex-col lg:flex-row items-center justify-between gap-4 col-span-12">
         @if (Model.TotalPages > 1)
         {
             <div class="flex items-center gap-2">

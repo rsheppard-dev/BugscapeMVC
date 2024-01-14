@@ -2,16 +2,16 @@
 @{
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
 }
-<nav class="flex flex-wrap gap-4">
-    <a class="font-lato text-sm text-dark px-4 py-2 rounded-lg transition-colors @ManageNavPages.IndexNavClass(ViewContext)" id="profile" asp-page="./Index">Profile</a>
-    <a class="font-lato text-sm text-dark px-4 py-2 rounded-lg transition-colors @ManageNavPages.EmailNavClass(ViewContext)" id="email" asp-page="./Email">Email</a>
-    <a class="font-lato text-sm text-dark px-4 py-2 rounded-lg transition-colors @ManageNavPages.ChangePasswordNavClass(ViewContext)" id="change-password" asp-page="./ChangePassword">Password</a>
+<nav class="flex flex-col sm:flex-row flex-wrap gap-4">
+    <a class="whitespace-nowrap font-lato text-sm text-dark px-4 py-2 rounded-lg transition-colors @ManageNavPages.IndexNavClass(ViewContext)" id="profile" asp-page="./Index">Profile</a>
+    <a class="whitespace-nowrap font-lato text-sm text-dark px-4 py-2 rounded-lg transition-colors @ManageNavPages.EmailNavClass(ViewContext)" id="email" asp-page="./Email">Email</a>
+    <a class="whitespace-nowrap font-lato text-sm text-dark px-4 py-2 rounded-lg transition-colors @ManageNavPages.ChangePasswordNavClass(ViewContext)" id="change-password" asp-page="./ChangePassword">Password</a>
     @if (hasExternalLogins)
     {
-        <a id="external-login" class="font-lato text-sm text-dark px-4 py-2 rounded-lg transition-colors @ManageNavPages.ExternalLoginsNavClass(ViewContext)" asp-page="./ExternalLogins">External Logins</a>
+        <a id="external-login" class="whitespace-nowrap font-lato text-sm text-dark px-4 py-2 rounded-lg transition-colors @ManageNavPages.ExternalLoginsNavClass(ViewContext)" asp-page="./ExternalLogins">External Logins</a>
     }
-    <a class="font-lato text-sm text-dark px-4 py-2 rounded-lg transition-colors @ManageNavPages.TwoFactorAuthenticationNavClass(ViewContext)" id="two-factor" asp-page="./TwoFactorAuthentication">Two-Factor Authentication</a>
-    <a class="font-lato text-sm text-dark px-4 py-2 rounded-lg transition-colors @ManageNavPages.PersonalDataNavClass(ViewContext)" id="personal-data" asp-page="./PersonalData">Personal Data</a>
+    <a class="whitespace-nowrap font-lato text-sm text-dark px-4 py-2 rounded-lg transition-colors @ManageNavPages.TwoFactorAuthenticationNavClass(ViewContext)" id="two-factor" asp-page="./TwoFactorAuthentication">Two-Factor Authentication</a>
+    <a class="whitespace-nowrap font-lato text-sm text-dark px-4 py-2 rounded-lg transition-colors @ManageNavPages.PersonalDataNavClass(ViewContext)" id="personal-data" asp-page="./PersonalData">Personal Data</a>
 </nav>
 
 <hr class="my-4" />

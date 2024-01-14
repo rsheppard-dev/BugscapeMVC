@@ -37,7 +37,7 @@
             <h2 class="font-rockwell text-dark text-xl font-bold">Try Before Signing Up</h2>
             <p class="font-lato text-zinc-700 font-bold">Choose a role to demo:</p>
             <hr class="my-4 h-[2px] w-full rounded bg-mid border-0" />
-            <form asp-controller="Account" asp-action="DemoLogin" class="grid grid-cols-2 gap-4">
+            <form asp-controller="Account" asp-action="DemoLogin" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <input type="hidden" name="role" id="role" value="" />
 
                 <button onclick="document.getElementById('role').value='admin';" class="px-4 py-2 text-sm rounded-md bg-warning text-zinc-900 font-bold font-lato hover:bg-opacity-80 transition-opacity whitespace-nowrap">Demo Admin</button>

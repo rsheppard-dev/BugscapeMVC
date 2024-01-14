@@ -16,18 +16,18 @@ namespace BugscapeMVC.Models
             int totalItems = items.Count;
             int totalPages = (int)Math.Ceiling(totalItems / (double)resultsPerPage);
 
-            int startPage = currentPage - 2;
-            int endPage = currentPage + 2;
+            int startPage = currentPage - 1;
+            int endPage = currentPage + 1;
 
             if (endPage > totalPages)
             {
                 endPage = totalPages;
-                startPage = Math.Max(endPage - 4, 1);    
+                startPage = Math.Max(endPage - 2, 1);    
             }
             else if (startPage < 1)
             {
                 startPage = 1;
-                endPage = Math.Min(5, totalPages);
+                endPage = Math.Min(3, totalPages);
             }
 
             int from = (currentPage - 1) * resultsPerPage + 1;

@@ -5,7 +5,7 @@
     var nextDisabled = !Model.HasNextPage ? "disabled" : "";
 }
 
-<div class="flex flex-wrap gap-2 items-center justify-between w-full">
+<div class="flex flex-col lg:flex-row items-center justify-between gap-4">
     <div class="flex items-center gap-2 justify-center h-10">
         <button 
             @(Model.CurrentPage == 1 ? "disabled" : "")

@@ -638,7 +638,7 @@ namespace BugscapeMVC.Controllers
 
             tickets = Sort(tickets, sortBy, order);
 
-            return PartialView("_TicketsTablePartial", new PaginatedList<Ticket>(tickets, page ?? 1, limit ?? 5));
+            return PartialView("_TicketsTablePartial", new PaginatedList<Ticket>(tickets, page ?? 1, limit ?? 10));
         }
 
         private static List<Ticket> Sort(List<Ticket> tickets, string sortBy = "date", string order = "desc")
