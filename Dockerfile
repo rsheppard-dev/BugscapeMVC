@@ -22,6 +22,9 @@ COPY package*.json ./
 # Install Node.js dependencies
 RUN npm install
 
+# Install npx
+RUN npm install -g npx
+
 COPY ["BugscapeMVC.csproj", "./"]
 RUN dotnet restore "BugscapeMVC.csproj"
 COPY . .
