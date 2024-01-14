@@ -24,4 +24,4 @@ WORKDIR /app
 COPY --from=build-env /app/out .
 
 # Specify the command to run on container startup
-ENTRYPOINT ["dotnet", "Bugscape.dll"]
+ENTRYPOINT ["dotnet", "BugscapeMVC.dll"]
