@@ -4,7 +4,6 @@ EXPOSE 80
 EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
-WORKDIR /src
 
 # Install Node.js
 RUN apt-get update && \
@@ -14,6 +13,14 @@ RUN apt-get update && \
     tar -xf /src/node-v14.18.1-linux-x64.tar.xz && \
     ln -s /node-v14.18.1-linux-x64/bin/node /usr/local/bin/ && \
     ln -s /node-v14.18.1-linux-x64/bin/npm /usr/local/bin/
+
+WORKDIR /src
+
+# Copy package.json and package-lock.json (or yarn.lock)
+COPY package*.json ./
+
+# Install Node.js dependencies
+RUN npm install
 
 COPY ["BugscapeMVC.csproj", "./"]
 RUN dotnet restore "BugscapeMVC.csproj"
