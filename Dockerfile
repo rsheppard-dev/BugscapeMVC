@@ -10,7 +10,7 @@ RUN apt-get update && \
     apt-get install -y wget xz-utils && \
     wget https://nodejs.org/dist/v14.18.1/node-v14.18.1-linux-x64.tar.xz && \
     cd / && \
-    tar -xf /src/node-v14.18.1-linux-x64.tar.xz && \
+    tar -xf node-v14.18.1-linux-x64.tar.xz && \
     ln -s /node-v14.18.1-linux-x64/bin/node /usr/local/bin/ && \
     ln -s /node-v14.18.1-linux-x64/bin/npm /usr/local/bin/
 
