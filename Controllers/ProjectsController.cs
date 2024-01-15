@@ -252,6 +252,8 @@ namespace BugscapeMVC.Controllers
             AssignMembersViewModel model = new()
             {
                 Project = project,
+                AllDevelopers = new MultiSelectList(allDevelopers, "Id", "FullName"),
+                AllSubmitters = new MultiSelectList(allSubmitters, "Id", "FullName"),
                 AvailableDevelopers = new MultiSelectList(availableDevelopers, "Id", "FullName"),
                 SelectedDevelopers = new MultiSelectList(selectedDevelopers, "Id", "FullName"),
                 AvailableSubmitters = new MultiSelectList(availableSubmitters, "Id", "FullName"),
