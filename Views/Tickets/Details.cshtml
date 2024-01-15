@@ -193,7 +193,7 @@
                         <div class="relative group">
                             @if (Model.DeveloperUserId == user?.Id || Model.OwnerUserId == user?.Id || projectManager?.Id == user?.Id || User.IsInRole(nameof(Roles.Admin)))
                             {
-                                <form asp-action="DeleteFile" asp-controller="Tickets" method="post">
+                                <form asp-action="DeleteFile" asp-controller="Tickets" method="post" class="hidden sm:block">
                                     <button asp-action="DeleteFile" asp-controller="Tickets" asp-route-id="@attachment.Id" class="absolute hidden group-hover:flex items-center justify-center -top-2 right-0 bg-danger text-white rounded-full w-6 h-6 hover:scale-110 transition-transform" title="Delete Attachment">
                                         <svg xmlns="http://www.w3.org/2000/svg" aria-hidden class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
@@ -203,13 +203,16 @@
                             }
 
                             <a asp-action="ShowFile" asp-controller="Tickets" asp-route-id="@attachment.Id">
-                            <img src="@FileService.GetFileIcon(attachment.FileName!)" alt="@attachment.FileName" width="50" height="50">
+                                <img src="@FileService.GetFileIcon(attachment.FileName!)" alt="@attachment.FileName" width="50" height="50">
                             </a>
                         </div>
 
                         <div class="flex flex-col gap-2">
                             <small class="text-xs text-zinc-700 font-lato">@attachment.Description</small>
                             <small class="text-xs text-zinc-700 font-lato">Size: @FileService.FormatFileSize(attachment.FileData!.Length)</small>
+                            <form asp-action="DeleteFile" asp-controller="Tickets" method="post" class="sm:hidden">
+                                <button class="font-lato text-xs text-white bg-danger px-2 py-1 rounded-md uppercase">Delete</button>
+                            </form>
                         </div>
                     </div>
                 }

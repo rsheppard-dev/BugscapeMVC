@@ -66,6 +66,8 @@ namespace BugscapeMVC.Data
             await SeedDefaultProjectsAsync(dbContextSvc);
             await SeedDefaultTicketsAsync(dbContextSvc);
             await SeedDefaultNotificationsAsync(dbContextSvc);
+            await SeedDefaultTicketHistoriesAsync(dbContextSvc);
+            await SeedDefaultTicketCommentsAsync(dbContextSvc);
         }
 
 
@@ -2231,6 +2233,117 @@ namespace BugscapeMVC.Data
             {
                 Console.WriteLine("*************  ERROR  *************");
                 Console.WriteLine("Error Seeding Notifications.");
+                Console.WriteLine(ex.Message);
+                Console.WriteLine("***********************************");
+                throw;
+            }
+        }
+
+        public static async Task SeedDefaultTicketHistoriesAsync(ApplicationDbContext context)
+        {
+            // get member ids
+            string demoAdminId = context.Users.FirstOrDefault(p => p.FirstName == "Demo" && p.LastName == "Admin")?.Id ?? throw new Exception("Failed to get demoAdminId");
+            string demoPmId = context.Users.FirstOrDefault(p => p.FirstName == "Demo" && p.LastName == "Project-Manager")?.Id ?? throw new Exception("Failed to get demoPmId");
+            string demoDevId = context.Users.FirstOrDefault(p => p.FirstName == "Demo" && p.LastName == "Developer")?.Id ?? throw new Exception("Failed to get demoDevId");
+            string demoSubmitterId = context.Users.FirstOrDefault(p => p.FirstName == "Demo" && p.LastName == "Submitter")?.Id ?? throw new Exception("Failed to get demoSubmitterId");
+            string oliviaJonesId = context.Users.FirstOrDefault(p => p.FirstName == "Olivia" && p.LastName == "Jones")?.Id ?? throw new Exception("Failed to get oliviaJonesId");
+
+            // get ticket ids
+            int ticketId1 = context.Tickets.Where(t => t.Title == "Implement Image Gallery Feature").FirstOrDefault()?.Id ?? throw new Exception("Failed to get ticketId1");
+            int ticketId2 = context.Tickets.Where(t => t.Title == "Enhance Course Enrollment Process").FirstOrDefault()?.Id ?? throw new Exception("Failed to get ticketId2");
+
+            try
+            {
+                var histories = new List<TicketHistory>
+                {
+                    new()
+                    {
+                        TicketId = ticketId1,
+                        Property = "Developer",
+                        OldValue = "Unassigned",
+                        NewValue = "Sophie Roberts",
+                        Created = DateTimeOffset.Now.AddDays(-6),
+                        UserId = oliviaJonesId,
+                        Description = "New ticket developer: Sophie Roberts",
+                    },
+
+                    new()
+                    {
+                        TicketId = ticketId1,
+                        Property = "Status",
+                        OldValue = "New",
+                        NewValue = "Development",
+                        Created = DateTimeOffset.Now.AddDays(-6),
+                        UserId = oliviaJonesId,
+                        Description = "Ticket status changed from 'New' to 'Development'",
+                    },
+                };
+
+                var dbHistories = context.TicketHistories
+                    .Select(h => new { h.TicketId, h.Description, h.Created })
+                    .ToList();
+
+                await context.TicketHistories.AddRangeAsync(histories.Where(h => !dbHistories.Any(dbh => dbh.TicketId == h.TicketId && dbh.Description == h.Description && dbh.Created == h.Created)));
+
+                await context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("*************  ERROR  *************");
+                Console.WriteLine("Error Seeding Ticket Histories.");
+                Console.WriteLine(ex.Message);
+                Console.WriteLine("***********************************");
+                throw;
+            }
+        }
+
+        public static async Task SeedDefaultTicketCommentsAsync(ApplicationDbContext context)
+        {
+            // get member ids
+            string demoAdminId = context.Users.FirstOrDefault(p => p.FirstName == "Demo" && p.LastName == "Admin")?.Id ?? throw new Exception("Failed to get demoAdminId");
+            string demoPmId = context.Users.FirstOrDefault(p => p.FirstName == "Demo" && p.LastName == "Project-Manager")?.Id ?? throw new Exception("Failed to get demoPmId");
+            string demoDevId = context.Users.FirstOrDefault(p => p.FirstName == "Demo" && p.LastName == "Developer")?.Id ?? throw new Exception("Failed to get demoDevId");
+            string demoSubmitterId = context.Users.FirstOrDefault(p => p.FirstName == "Demo" && p.LastName == "Submitter")?.Id ?? throw new Exception("Failed to get demoSubmitterId");
+            string oliviaJonesId = context.Users.FirstOrDefault(p => p.FirstName == "Olivia" && p.LastName == "Jones")?.Id ?? throw new Exception("Failed to get oliviaJonesId");
+            string sophieRobertsId = context.Users.FirstOrDefault(p => p.FirstName == "Sophie" && p.LastName == "Roberts")?.Id ?? throw new Exception("Failed to get sophieRobertsId");
+
+            // get ticket ids
+            int ticketId1 = context.Tickets.Where(t => t.Title == "Implement Image Gallery Feature").FirstOrDefault()?.Id ?? throw new Exception("Failed to get ticketId1");
+            int ticketId2 = context.Tickets.Where(t => t.Title == "Enhance Course Enrollment Process").FirstOrDefault()?.Id ?? throw new Exception("Failed to get ticketId2");
+
+            try
+            {
+                var comments = new List<TicketComment>()
+                {
+                    new()
+                    {
+                        TicketId = ticketId1,
+                        Comment = "Hi. I've started working on this ticket. I'll keep you updated on my progress.",
+                        Created = DateTimeOffset.Now.AddDays(-6),
+                        UserId = sophieRobertsId,
+                    },
+
+                    new()
+                    {
+                        TicketId = ticketId1,
+                        Comment = "Thanks for the update. Let me know if you need any help.",
+                        Created = DateTimeOffset.Now.AddDays(-5),
+                        UserId = oliviaJonesId,
+                    }
+                };
+
+                var dbComments = context.TicketComments
+                    .Select(c => new { c.Created, c.Comment, c.TicketId })
+                    .ToList();
+
+                await context.TicketComments.AddRangeAsync(comments.Where(c => !dbComments.Any(cdb => cdb.Created == c.Created && cdb.Comment == c.Comment && cdb.TicketId == c.TicketId)));
+
+                await context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("*************  ERROR  *************");
+                Console.WriteLine("Error Seeding Ticket Comments.");
                 Console.WriteLine(ex.Message);
                 Console.WriteLine("***********************************");
                 throw;

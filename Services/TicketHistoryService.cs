@@ -145,7 +145,7 @@ namespace BugscapeMVC.Services
                     {
                         TicketId = newTicket.Id,
                         Property = "Developer",
-                        OldValue = oldTicket?.DeveloperUser?.FullName ?? "Not Assigned",
+                        OldValue = oldTicket?.DeveloperUser?.FullName ?? "Unassigned",
                         NewValue = newTicket.DeveloperUser.FullName,
                         Created = DateTimeOffset.Now,
                         UserId = userId,
