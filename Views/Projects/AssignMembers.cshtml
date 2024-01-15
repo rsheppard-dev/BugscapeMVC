@@ -12,7 +12,7 @@
 
 @Html.ValidationSummary(true, "", new { @class = "error" })
 
-<form data-form asp-action="AssignMembers" method="post">
+<form data-form asp-action="AssignMembers" method="post" class="hidden sm:block">
     <input type="hidden" asp-for="Project.Id">
     <input type="hidden" asp-for="Project.Name">
     <input type="hidden" asp-for="Project.ProjectPriorityId">

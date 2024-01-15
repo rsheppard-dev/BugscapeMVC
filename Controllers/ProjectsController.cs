@@ -224,22 +224,22 @@ namespace BugscapeMVC.Controllers
 
             if (project is null) return NotFound();
 
-            List<AppUser> availableDevelopers = await _roleService.GetUsersInRoleAsync(nameof(Roles.Developer), companyId.Value);
-            List<AppUser> availableSubmitters = await _roleService.GetUsersInRoleAsync(nameof(Roles.Submitter), companyId.Value);
+            List<AppUser> allDevelopers = await _roleService.GetUsersInRoleAsync(nameof(Roles.Developer), companyId.Value);
+            List<AppUser> allSubmitters = await _roleService.GetUsersInRoleAsync(nameof(Roles.Submitter), companyId.Value);
 
-            availableDevelopers = availableDevelopers
+            allDevelopers = allDevelopers
                 .OrderBy(member => member.LastName)
                 .ToList();
 
-            availableSubmitters = availableSubmitters
+            allSubmitters = allSubmitters
                 .OrderBy(member => member.FullName)
                 .ToList();
 
             List<AppUser> selectedDevelopers = await _projectService.GetProjectMembersByRoleAsync(project.Id, nameof(Roles.Developer));
             List<AppUser> selectedSubmitters = await _projectService.GetProjectMembersByRoleAsync(project.Id, nameof(Roles.Submitter));
 
-            availableDevelopers = availableDevelopers.Except(selectedDevelopers).ToList();
-            availableSubmitters = availableSubmitters.Except(selectedSubmitters).ToList();
+            List<AppUser> availableDevelopers = allDevelopers.Except(selectedDevelopers).ToList();
+            List<AppUser> availableSubmitters = allSubmitters.Except(selectedSubmitters).ToList();
 
             selectedDevelopers = selectedDevelopers.OrderBy(member => member.FullName).ToList();
             selectedSubmitters = selectedSubmitters.OrderBy(member => member.FullName).ToList();

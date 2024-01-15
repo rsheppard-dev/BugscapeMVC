@@ -2280,10 +2280,10 @@ namespace BugscapeMVC.Data
                 };
 
                 var dbHistories = context.TicketHistories
-                    .Select(h => new { h.TicketId, h.Description, h.Created })
+                    .Select(h => new { h.TicketId, h.Description, h.UserId })
                     .ToList();
 
-                await context.TicketHistories.AddRangeAsync(histories.Where(h => !dbHistories.Any(dbh => dbh.TicketId == h.TicketId && dbh.Description == h.Description && dbh.Created == h.Created)));
+                await context.TicketHistories.AddRangeAsync(histories.Where(h => !dbHistories.Any(dbh => dbh.TicketId == h.TicketId && dbh.Description == h.Description && dbh.UserId == h.UserId)));
 
                 await context.SaveChangesAsync();
             }
@@ -2333,10 +2333,10 @@ namespace BugscapeMVC.Data
                 };
 
                 var dbComments = context.TicketComments
-                    .Select(c => new { c.Created, c.Comment, c.TicketId })
+                    .Select(c => new { c.UserId, c.Comment, c.TicketId })
                     .ToList();
 
-                await context.TicketComments.AddRangeAsync(comments.Where(c => !dbComments.Any(cdb => cdb.Created == c.Created && cdb.Comment == c.Comment && cdb.TicketId == c.TicketId)));
+                await context.TicketComments.AddRangeAsync(comments.Where(c => !dbComments.Any(cdb => cdb.UserId == c.UserId && cdb.Comment == c.Comment && cdb.TicketId == c.TicketId)));
 
                 await context.SaveChangesAsync();
             }
