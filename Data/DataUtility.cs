@@ -65,9 +65,9 @@ namespace BugscapeMVC.Data
             await SeedDefaultProjectPriorityAsync(dbContextSvc);
             await SeedDefaultProjectsAsync(dbContextSvc);
             await SeedDefaultTicketsAsync(dbContextSvc);
-            await SeedDefaultNotificationsAsync(dbContextSvc);
             await SeedDefaultTicketHistoriesAsync(dbContextSvc);
             await SeedDefaultTicketCommentsAsync(dbContextSvc);
+            await SeedDefaultNotificationsAsync(dbContextSvc);
         }
 
 
@@ -2247,6 +2247,7 @@ namespace BugscapeMVC.Data
             string demoDevId = context.Users.FirstOrDefault(p => p.FirstName == "Demo" && p.LastName == "Developer")?.Id ?? throw new Exception("Failed to get demoDevId");
             string demoSubmitterId = context.Users.FirstOrDefault(p => p.FirstName == "Demo" && p.LastName == "Submitter")?.Id ?? throw new Exception("Failed to get demoSubmitterId");
             string oliviaJonesId = context.Users.FirstOrDefault(p => p.FirstName == "Olivia" && p.LastName == "Jones")?.Id ?? throw new Exception("Failed to get oliviaJonesId");
+            string sophieRobertsId = context.Users.FirstOrDefault(p => p.FirstName == "Sophie" && p.LastName == "Roberts")?.Id ?? throw new Exception("Failed to get sophieRobertsId");
 
             // get ticket ids
             int ticketId1 = context.Tickets.Where(t => t.Title == "Implement Image Gallery Feature").FirstOrDefault()?.Id ?? throw new Exception("Failed to get ticketId1");
@@ -2276,6 +2277,28 @@ namespace BugscapeMVC.Data
                         Created = DateTimeOffset.Now.AddDays(-6),
                         UserId = oliviaJonesId,
                         Description = "Ticket status changed from 'New' to 'Development'",
+                    },
+
+                    new()
+                    {
+                        TicketId = ticketId1,
+                        Property = "TicketComment",
+                        OldValue = "",
+                        NewValue = "",
+                        Created = DateTimeOffset.Now.AddDays(-6),
+                        UserId = sophieRobertsId,
+                        Description = "Hi. I've started working on this ticket. I'll keep you updated on my progress."
+                    },
+
+                    new()
+                    {
+                        TicketId = ticketId1,
+                        Property = "TicketComment",
+                        OldValue = "",
+                        NewValue = "",
+                        Created = DateTimeOffset.Now.AddDays(-5),
+                        UserId = oliviaJonesId,
+                        Description = "Thanks for the update. Let me know if you need any help."
                     },
                 };
 
