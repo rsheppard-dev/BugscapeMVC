@@ -272,9 +272,10 @@ namespace BugscapeMVC.Controllers
                     // add history
                     await _historyService.AddHistoryAsync(ticketComment.TicketId, nameof(TicketComment), ticketComment.UserId);
 
+                    string? projectManagerId = (await _projectService.GetProjectManagerAsync(ticket.ProjectId))?.Id;
+                    
                     // add notification
-
-                    var recipient = ticket?.OwnerUserId == ticketComment?.UserId ? ticket?.DeveloperUserId : ticket?.OwnerUserId;
+                    var recipient = ticket.DeveloperUserId ?? projectManagerId ?? ticket.OwnerUserId;
 
                     Notification notification = new()
                     {
@@ -326,8 +327,10 @@ namespace BugscapeMVC.Controllers
                     // add history
                     await _historyService.AddHistoryAsync(ticketAttachment.TicketId, nameof(TicketAttachment), ticketAttachment.UserId);
 
+                    string? projectManagerId = (await _projectService.GetProjectManagerAsync(ticket.ProjectId))?.Id;
+
                     // add notification
-                    var recipient = ticketAttachment.UserId == ticket.OwnerUserId ? ticket.DeveloperUserId : ticket.OwnerUserId;
+                    var recipient = ticket.DeveloperUserId ?? projectManagerId ?? ticket.OwnerUserId;
 
                     Notification notification = new()
                     {
