@@ -340,9 +340,25 @@
         else
         {
             <div class="space-y-4">
-                @foreach (var comment in Model.Comments.OrderByDescending(c => c.Created))
+
+                @{
+                    string? lastUserId = null;
+                }
+
+                @foreach (TicketComment comment in Model.Comments.OrderByDescending(c => c.Created))
                 {
-                    string chatBubbleColour = user?.Id == comment.UserId ? "bg-success" : "bg-info";
+                    string chatBubbleColour;
+
+                    if (lastUserId == null || lastUserId == comment.User?.Id)
+                    {
+                        chatBubbleColour = "bg-success";
+                    }
+                    else
+                    {
+                        chatBubbleColour = "bg-info";
+                    }
+
+                    lastUserId = comment.User?.Id;
                 
                     <div class="flex items-start gap-2.5">
                         <a asp-action="Details" asp-controller="Members" asp-route-id="@comment.User?.Id" class="flex items-center justify-center w-8 h-8 rounded-full ring-4 ring-mid">
