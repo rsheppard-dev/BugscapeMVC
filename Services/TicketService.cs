@@ -429,8 +429,10 @@ namespace BugscapeMVC.Services
                 return await _context.Tickets
                     .Include(ticket => ticket.Attachments)
                     .Include(ticket => ticket.Comments)
+                        .ThenInclude(comment => comment.User)
                     .Include(ticket => ticket.DeveloperUser)
                     .Include(ticket => ticket.History)
+                        .ThenInclude(history => history.User)
                     .Include(ticket => ticket.Notifications)
                     .Include(ticket => ticket.OwnerUser)
                     .Include(ticket => ticket.TicketPriority)

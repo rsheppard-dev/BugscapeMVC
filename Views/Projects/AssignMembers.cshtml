@@ -12,7 +12,7 @@
 
 @Html.ValidationSummary(true, "", new { @class = "error" })
 
-<form data-form asp-action="AssignMembers" method="post">
+<form data-form asp-action="AssignMembers" method="post" class="hidden sm:block">
     <input type="hidden" asp-for="Project.Id">
     <input type="hidden" asp-for="Project.Name">
     <input type="hidden" asp-for="Project.ProjectPriorityId">
@@ -77,6 +77,14 @@
             Update Team
         </button>
     </div>
+</form>
+
+<form asp-action="AssignMembers" method="post" class="sm:block">
+    @* create a mobile friendly version of the above form. It should add have a dropdown of both submitters and developers and a button to add. The add button will add the names to an unordered list and remove it from the dropdown. The list items will have a delete button next to them and will remove them from unordered list and add back to dropdown list.
+    On submitting form the unordered list of submitters and unordered list on developers are added to hidden inputs for asp-for="SelectedUsers" and sent to my controller *@
+
+    <p class="font-lato text-zinc-700">This does not current work on mobile devices. We are working on a fix. Please use a laptop or desktop to assign members in the meantime.</p>
+
 </form>
 
 <script src="~/js/listTransfer.js"></script>
