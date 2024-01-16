@@ -62,9 +62,9 @@ else
                 }
             </ul>
 
-            @if (Model.Projects.TotalPages > 1)
-            {
-                <div class="flex flex-wrap items-center justify-between gap-2">
+            <div class="flex flex-col lg:flex-row items-center justify-between gap-4">
+                @if (Model.Projects.TotalPages > 1)
+                {
                     <div class="flex items-center gap-2">
             
                         <a title="First Page" asp-action="SearchResults" asp-controller="Home" asp-route-tab="projects" asp-route-searchString="@ViewBag.SearchString" asp-route-limit="@Model.Limit" asp-route-projectsPage="1" class="@(Model.Projects.CurrentPage > 1 ? "hover:bg-info hover:bg-opacity-80" : "opacity-60 pointer-events-none") h-8 w-8 flex items-center justify-center text-dark rounded-md font-lato transition-colors bg-gray-200">
@@ -96,12 +96,15 @@ else
                             </svg>
                         </a>
                     </div>
-                    
-                    <span class="font-lato text-sm">
+                }
+
+                @if (Model.Projects.TotalItems > 0)
+                {
+                    <span class="font-lato text-zinc-700 text-sm">
                         Showing @Model.Projects.FirstItemOnPage to @Model.Projects.LastItemOnPage of @Model.Projects.TotalItems projects.
                     </span>
-                </div>
-            }
+                }
+            </div>
         </section>
 
          <section role="tabpanel" aria-labelledby="tickets-button" id="tickets" data-content="tickets" class="hidden @(ViewBag.ActiveTab == "tickets" ? "active" : "")">
@@ -114,9 +117,9 @@ else
                 }
             </ul>
 
-            @if (Model.Tickets.TotalPages > 1)
-            {
-                <div class="flex flex-wrap items-center justify-between gap-2 col-span-12">
+            <div class="flex flex-col lg:flex-row items-center justify-between gap-4">
+                @if (Model.Tickets.TotalPages > 1)
+                {
                     <div class="flex items-center gap-2">
             
                         <a title="First Page" asp-action="SearchResults" asp-controller="Home" asp-route-tab="tickets" asp-route-searchString="@ViewBag.SearchString" asp-route-limit="@Model.Limit" asp-route-ticketsPage="1" class="@(Model.Tickets.CurrentPage > 1 ? "hover:bg-info hover:bg-opacity-80" : "opacity-60 pointer-events-none") h-8 w-8 flex items-center justify-center text-dark rounded-md font-lato transition-colors bg-gray-200">
@@ -148,12 +151,15 @@ else
                             </svg>
                         </a>
                     </div>
+                }
 
-                    <span class="font-lato text-sm">
+                @if (Model.Tickets.TotalItems > 0)
+                {
+                    <span class="font-lato text-zinc-700 text-sm">
                         Showing @Model.Tickets.FirstItemOnPage to @Model.Tickets.LastItemOnPage of @Model.Tickets.TotalItems tickets.
                     </span>
-                </div>
-            }
+                }
+            </div>
         </section>
 
         <section role="tabpanel" aria-labelledby="members-button" id="members" data-content="members" class="hidden @(ViewBag.ActiveTab == "members" ? "active" : "")">
@@ -166,9 +172,9 @@ else
                 }
             </ul>
 
-            @if (Model.Members.TotalPages > 1)
-            {
-                <div class="flex flex-col lg:flex-row items-center justify-between gap-4 col-span-12">
+            <div class="flex flex-col lg:flex-row items-center justify-between gap-4">            
+                @if (Model.Members.TotalPages > 1)
+                {
                     <div class="flex items-center gap-2">
             
                         <a title="First Page" asp-action="SearchResults" asp-controller="Home" asp-route-tab="members" asp-route-searchString="@ViewBag.SearchString" asp-route-limit="@Model.Limit" asp-route-membersPage="1" class="@(Model.Members.CurrentPage > 1 ? "hover:bg-info hover:bg-opacity-80" : "opacity-60 pointer-events-none") h-8 w-8 flex items-center justify-center text-dark rounded-md font-lato transition-colors bg-gray-200">
@@ -200,12 +206,14 @@ else
                             </svg>
                         </a>
                     </div>
-
-                    <span class="font-lato text-sm">
+                }
+                @if (Model.Members.TotalItems > 0)
+                {
+                    <span class="font-lato text-zinc-700 text-sm">
                         Showing @Model.Members.FirstItemOnPage to @Model.Members.LastItemOnPage of @Model.Members.TotalItems members.
                     </span>
-                </div>
-            }
+                }
+            </div>
         </section>
     </div>
 }
