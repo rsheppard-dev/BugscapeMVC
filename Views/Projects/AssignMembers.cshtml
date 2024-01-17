@@ -2,6 +2,9 @@
 
 @{
     ViewData["Title"] = "Manage Team";
+
+    SelectList availableDevelopers = new SelectList(Model.AvailableDevelopers.Items, "Id", "FullName");
+    SelectList availableSubmitters = new SelectList(Model.AvailableSubmitters.Items, "Id", "FullName");
 }
 
 <h1 class="font-rockwell text-dark text-xl font-bold mb-2">@ViewData["Title"]</h1>
@@ -12,12 +15,12 @@
 
 @Html.ValidationSummary(true, "", new { @class = "error" })
 
-<form data-form asp-action="AssignMembers" method="post" class="hidden sm:block">
+<form asp-action="AssignMembers" method="post" class="hidden sm:block">
     <input type="hidden" asp-for="Project.Id">
     <input type="hidden" asp-for="Project.Name">
     <input type="hidden" asp-for="Project.ProjectPriorityId">
     <h3 class="font-rockwell font-semibold mb-4 text-lg text-dark">Assign Developers</h3>
-    <div class="flex gap-4 mb-4" data-container="developers">
+    <div class="flex gap-4 mb-4" data-list-transfer="developers">
         <div class="flex flex-col gap-2 grow">
             <label asp-for="AvailableDevelopers" class="font-lato text-sm font-semibold text-zinc-700">Available Developers</label>
             <select data-selection multiple aria-multiselectable="true" asp-for="AvailableDevelopers" asp-items="@Model.AvailableDevelopers" class="font-lato">
@@ -45,7 +48,7 @@
     </div>
 
     <h3 class="font-rockwell font-semibold mb-4 text-lg text-dark">Assign Submitters</h3>
-    <div class="flex gap-4 mb-4" data-container="submitters">
+    <div class="flex gap-4 mb-4" data-list-transfer="submitters">
         <div class="flex flex-col gap-2 grow">
             <label asp-for="AvailableSubmitters" class="font-lato text-sm font-semibold text-zinc-700">Available Submitters</label>
             <select data-selection multiple aria-multiselectable="true" asp-for="AvailableSubmitters" asp-items="@Model.AvailableSubmitters" class="font-lato">
@@ -66,7 +69,7 @@
         </div>
 
         <div class="flex flex-col gap-2 grow">
-            <label asp-for="SelectedSubmitters" class="font-lato text-sm font-semibold text-zinc-700">Assigned Submitters</label>
+            <label   class="font-lato text-sm font-semibold text-zinc-700">Assigned Submitters</label>
             <select data-selected multiple aria-multiselectable="true" asp-for="SelectedSubmitters" asp-items="@Model.SelectedSubmitters" class="font-lato">
             </select>
         </div>
@@ -79,20 +82,104 @@
     </div>
 </form>
 
-<form asp-action="AssignMembers" method="post" class="sm:hidden">
-    @* create a mobile friendly version of the above form. It should add have a dropdown of both submitters and developers and a button to add. The add button will add the names to an unordered list and remove it from the dropdown. The list items will have a delete button next to them and will remove them from unordered list and add back to dropdown list.
-    On submitting form the unordered list of submitters and unordered list on developers are added to hidden inputs for asp-for="SelectedUsers" and sent to my controller *@
+<form asp-action="AssignMembers" method="post" class="sm:hidden space-y-4">
+    <input type="hidden" asp-for="Project.Id">
+    <input type="hidden" asp-for="Project.Name">
+    <input type="hidden" asp-for="Project.ProjectPriorityId">
 
-    <p class="font-lato text-zinc-700">This does not currently work on mobile devices. We are working on a fix. Please use a laptop or desktop to assign members in the meantime.</p>
+    <div class="space-y-2" data-list="developers">
+        <h3 class="font-rockwell font-semibold text-lg text-dark">Assign Developers</h3>
+        <ul data-list-items class="space-y-2 bg-opacity-30">
+            @foreach (var developer in Model.SelectedDevelopers)
+            {
+                <li data-list-item data-value="@developer.Value" data-text="@developer.Text" class="flex items-center justify-between gap-2">
+                    <span class="font-lato text-zinc-700 w-fit">@developer.Text</span>
+                    <button data-remove-button type="button" title="Remove @developer.Value" value="@developer.Value" class="rounded-md p-2 bg-danger hover:bg-opacity-80 transition-opacity flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" aria-hidden class="h-4 w-4 stroke-red-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </li>
+            }
+        </ul>
 
+        <div class="flex justify-between items-center gap-2">
+            <select data-selection asp-items="@availableDevelopers" class="font-lato text-zinc-700 grow max-w-full overflow-auto disabled:opacity-60">
+                <option hidden selected disabled value="">Select a developer</option>
+            </select>
+
+            <button data-add-button="" type="button" title="Add Developer" class="rounded-md flex items-center justify-center p-2 h-fit bg-success enabled:hover:bg-opacity-80 disabled:opacity-60 transition-opacity">
+                <svg xmlns="http://www.w3.org/2000/svg" aria-hidden class="h-4 w-4 stroke-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                </svg>
+            </button>
+        </div>
+    </div>
+    
+    <div class="space-y-2" data-list="submitters">
+        <h3 class="font-rockwell font-semibold text-lg text-dark">Assign Submitters</h3>
+        <ul data-list-items class="space-y-2 bg-opacity-30">
+            @foreach (var submitter in Model.SelectedSubmitters)
+            {
+                <li data-list-item data-value="@submitter.Value" data-text="@submitter.Text" class="flex items-center justify-between gap-2">
+                    <span class="font-lato text-zinc-700 w-fit">@submitter.Text</span>
+                    <button data-remove-button type="button" title="Remove @submitter.Value" value="@submitter.Value" class="rounded-md p-2 bg-danger hover:bg-opacity-80 transition-opacity flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" aria-hidden class="h-4 w-4 stroke-red-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </li>
+            }
+        </ul>
+
+        <div class="flex justify-between items-center gap-2">
+            <select data-selection asp-items="@availableSubmitters" class="font-lato text-zinc-700 grow max-w-full overflow-auto disabled:opacity-60">
+                <option hidden selected disabled value="">Select a submitter</option>
+            </select>
+
+            <button data-add-button type="button" title="Add Submitter" class="rounded-md flex items-center justify-center p-2 h-fit bg-success enabled:hover:bg-opacity-80 transition-opacity disabled:opacity-60">
+                <svg xmlns="http://www.w3.org/2000/svg" aria-hidden class="h-4 w-4 stroke-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <div class="flex justify-end">
+        <button type="submit" class="px-4 py-2 text-sm rounded-md bg-success font-lato enabled:hover:bg-opacity-80 disabled:bg-opacity-30 transition-opacity">
+            Update Team
+        </button>
+    </div>
 </form>
 
+<template data-template>
+    <li data-value="" data-text="" class="flex items-center justify-between gap-2">
+        <span class="font-lato text-zinc-700 w-fit"></span>
+        <button data-remove-button type="button" title="Remove" value="" class="rounded-md p-2 bg-danger hover:bg-opacity-80 transition-opacity flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" aria-hidden class="h-4 w-4 stroke-red-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+    </li>
+</template>
+
 <script src="~/js/listTransfer.js"></script>
+<script src="~/js/list.js"></script>
 <script>
-    const developers = document.querySelector('[data-container="developers"]');
-    const submitters = document.querySelector('[data-container="submitters"]');
-    const developersList = new ListTransfer(developers, 'SelectedUsers');
-    const submittersList = new ListTransfer(submitters, 'SelectedUsers');
+    const developers = document.querySelector('[data-list-transfer="developers"]');
+    const submitters = document.querySelector('[data-list-transfer="submitters"]');
+
+    const developersMobile = document.querySelector('[data-list="developers"]');
+    const submittersMobile = document.querySelector('[data-list="submitters"]');
+
+    const developersListTransfer = new ListTransfer(developers, 'SelectedUsers');
+    const submittersListTransfer = new ListTransfer(submitters, 'SelectedUsers');
+
+    const developersList = new List(developersMobile, 'SelectedUsers');
+    const submittersList = new List(submittersMobile, 'SelectedUsers');
+
+    developersListTransfer.init();
+    submittersListTransfer.init();
 
     developersList.init();
     submittersList.init();

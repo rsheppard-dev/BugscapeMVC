@@ -259,7 +259,7 @@ namespace BugscapeMVC.Controllers
                 AvailableSubmitters = new MultiSelectList(availableSubmitters, "Id", "FullName"),
                 SelectedSubmitters = new MultiSelectList(selectedSubmitters, "Id", "FullName"),
                 SelectedUsers = projectMemberIds
-            }; 
+            };
 
             return View(model);
         }
@@ -283,6 +283,9 @@ namespace BugscapeMVC.Controllers
                 // add the selected members to the project
                 foreach (string memberId in model.SelectedUsers ?? new List<string>())
                 {
+                    // if memberId is null, skip to the next memberId
+                    if (memberId == null) continue;
+
                     // add user to project
                     await _projectService.AddUserToProjectAsync(memberId, model.Project.Id);
 
