@@ -66,7 +66,12 @@
     </div>
 </form>
 
-<section class="mb-4">
+<section class="mb-4 space-y-4">
+    @if (!String.IsNullOrEmpty(ViewBag.StatusMessage))
+    {
+        <partial name="~/Views/Shared/_StatusMessage.cshtml" model="@ViewBag.StatusMessage" />
+    }
+
 	@if (Model.Count() == 0)
     {
         <p class="font-lato text-zinc-700">There are currently no members to show.</p>

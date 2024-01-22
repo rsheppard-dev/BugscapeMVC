@@ -28,7 +28,7 @@ namespace BugscapeMVC.Controllers
             _userManager = userManager;
         }
 
-        public async Task<IActionResult> ManageUserRoles(int page = 1, string search = "", string order = "asc", string sortBy = "name", int limit = 10)
+        public async Task<IActionResult> ManageUserRoles(int page = 1, string search = "", string order = "asc", string sortBy = "name", int limit = 10, string? statusMessage = null)
         {
             List<ManageUserRolesViewModel> model = new();
 
@@ -74,6 +74,8 @@ namespace BugscapeMVC.Controllers
 
                 model.Add(viewModel);
             }
+
+            ViewBag.StatusMessage = statusMessage;
             
             return View(new PaginatedList<ManageUserRolesViewModel>(model, page, limit));
         }
@@ -83,6 +85,7 @@ namespace BugscapeMVC.Controllers
         public async Task<IActionResult> ManageUserRoles(ManageUserRolesViewModel member, int page = 1, string search = "", string order = "asc", string sortBy = "name", int limit = 10)
         {
             int companyId = User.Identity?.GetCompanyId() ?? 0;
+            string? statusMessage = null;
 
             if (companyId == 0) return View(member);
 
@@ -93,14 +96,18 @@ namespace BugscapeMVC.Controllers
 
             IEnumerable<string> roles = await _roleService.GetUserRolesAsync(user);
 
-            if (member.SelectedRole is not null)
+            if (await _roleService.HasRoleAsync(user, nameof(Roles.Demo_User)))
+            {
+                statusMessage = "Error: You are not allowed to change the role of a demo user.";
+            }
+            else if (member.SelectedRole is not null)
             {
                 await _roleService.RemoveUserFromRolesAsync(user, roles);
 
                 await _roleService.AddUserToRoleAsync(user, member.SelectedRole);
             }
 
-            return RedirectToAction(nameof(ManageUserRoles), new { page, search, order, sortBy, limit });
+            return RedirectToAction(nameof(ManageUserRoles), new { page, search, order, sortBy, limit, statusMessage });
         }
 
         private static async Task<List<AppUser>> Sort(UserManager<AppUser> userManager, List<AppUser> members, string sortBy = "name", string order = "asc")
