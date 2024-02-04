@@ -1221,8 +1221,8 @@ namespace BugscapeMVC.Data
 
                                 new()
                                 {
-                                    Title = "Enhance Course Enrollment Process",
-                                    Description = "<p>Implement improvements to the course enrollment process. Streamline the steps for users to enroll in courses and access educational content with ease.</p>",
+                                    Title = "Enhance Course Enrolment Process",
+                                    Description = "<p>Implement improvements to the course enrolment process. Streamline the steps for users to enrol in courses and access educational content with ease.</p>",
                                     Created = DateTimeOffset.Now.AddDays(-random.Next(1, 30)),
                                     ResolvedDate = DateTimeOffset.Now.AddDays(-random.Next(1, 30)),
                                     ProjectId = onlineLearningId,
@@ -2199,7 +2199,7 @@ namespace BugscapeMVC.Data
 
             // get ticket ids
             int ticketId1 = context.Tickets.Where(t => t.Title == "Add Comment Section to Blog Posts").FirstOrDefault()?.Id ?? throw new Exception("Failed to get ticketId1");
-            int ticketId2 = context.Tickets.Where(t => t.Title == "Enhance Course Enrollment Process").FirstOrDefault()?.Id ?? throw new Exception("Failed to get ticketId2");
+            int ticketId2 = context.Tickets.Where(t => t.Title == "Enhance Course Enrolment Process").FirstOrDefault()?.Id ?? throw new Exception("Failed to get ticketId2");
 
             try
             {
@@ -2233,7 +2233,7 @@ namespace BugscapeMVC.Data
                     new()
                     {
                         Title = "New Ticked Assignment",
-                        Message = "<p>You have been assigned as the developer on ticket: Enhance Course Enrollment Process.</p>",
+                        Message = "<p>You have been assigned as the developer on ticket: Enhance Course Enrolment Process.</p>",
                         TicketId = ticketId2,
                         Created = DateTimeOffset.Now.AddDays(-6),
                         RecipientId = demoDevId,
@@ -2289,7 +2289,7 @@ namespace BugscapeMVC.Data
 
             // get ticket ids
             int ticketId1 = context.Tickets.Where(t => t.Title == "Implement Image Gallery Feature").FirstOrDefault()?.Id ?? throw new Exception("Failed to get ticketId1");
-            int ticketId2 = context.Tickets.Where(t => t.Title == "Enhance Course Enrollment Process").FirstOrDefault()?.Id ?? throw new Exception("Failed to get ticketId2");
+            int ticketId2 = context.Tickets.Where(t => t.Title == "Enhance Course Enrolment Process").FirstOrDefault()?.Id ?? throw new Exception("Failed to get ticketId2");
 
             try
             {
@@ -2370,7 +2370,7 @@ namespace BugscapeMVC.Data
 
             // get ticket ids
             int ticketId1 = context.Tickets.Where(t => t.Title == "Implement Image Gallery Feature").FirstOrDefault()?.Id ?? throw new Exception("Failed to get ticketId1");
-            int ticketId2 = context.Tickets.Where(t => t.Title == "Enhance Course Enrollment Process").FirstOrDefault()?.Id ?? throw new Exception("Failed to get ticketId2");
+            int ticketId2 = context.Tickets.Where(t => t.Title == "Enhance Course Enrolment Process").FirstOrDefault()?.Id ?? throw new Exception("Failed to get ticketId2");
 
             try
             {
