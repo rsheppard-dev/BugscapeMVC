@@ -96,12 +96,12 @@ namespace BugscapeMVC.Data
             var projectIds = projects.Select(p => p.Id).ToList();
 
             // get all tickets for company projects
-            var tickets = context.Tickets
+            var tickets = await context.Tickets
                 .Include(t => t.Notifications)
                 .Include(t => t.History)
                 .Include(t => t.Comments)
                 .Include(t => t.Attachments)
-                .Where(t => projectIds.Contains(t.ProjectId)).ToList();
+                .Where(t => projectIds.Contains(t.ProjectId)).ToListAsync();
 
             var notifications = tickets.SelectMany(t => t.Notifications).ToList();
             var ticketHistories = tickets.SelectMany(t => t.History).ToList();
