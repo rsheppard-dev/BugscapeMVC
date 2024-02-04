@@ -53,7 +53,9 @@ namespace BugscapeMVC.Data
             //Migration: This is the programmatic equivalent to Update-Database
             await dbContextSvc.Database.MigrateAsync();
 
-            
+            // reset all demo data
+            await ResetDemoDataAsync(dbContextSvc);
+
             //Custom  Bug Tracker Seed Methods
             await SeedRolesAsync(roleManagerSvc);
             await SeedDefaultCompaniesAsync(dbContextSvc);
@@ -70,7 +72,6 @@ namespace BugscapeMVC.Data
             await SeedDefaultNotificationsAsync(dbContextSvc);
         }
 
-
         public static async Task SeedRolesAsync(RoleManager<IdentityRole> roleManager)
         {
             //Seed Roles
@@ -79,6 +80,43 @@ namespace BugscapeMVC.Data
             await roleManager.CreateAsync(new IdentityRole(Roles.Developer.ToString()));
             await roleManager.CreateAsync(new IdentityRole(Roles.Submitter.ToString()));
             await roleManager.CreateAsync(new IdentityRole(Roles.Demo_User.ToString()));
+        }
+
+        public static async Task ResetDemoDataAsync(ApplicationDbContext context)
+        {
+            int? companyId = context.Companies.FirstOrDefault(c => c.Name == "Democorp")?.Id;
+
+            if (!companyId.HasValue) return;
+
+            // get all users in the company
+            var users = context.Users.Where(u => u.CompanyId == companyId).ToList();
+
+            // get all projects in the company
+            var projects = context.Projects.Where(p => p.CompanyId == companyId).ToList();
+            var projectIds = projects.Select(p => p.Id).ToList();
+
+            // get all tickets for company projects
+            var tickets = context.Tickets
+                .Include(t => t.Notifications)
+                .Include(t => t.History)
+                .Include(t => t.Comments)
+                .Include(t => t.Attachments)
+                .Where(t => projectIds.Contains(t.ProjectId)).ToList();
+
+            var notifications = tickets.SelectMany(t => t.Notifications).ToList();
+            var ticketHistories = tickets.SelectMany(t => t.History).ToList();
+            var ticketComments = tickets.SelectMany(t => t.Comments).ToList();
+            var ticketAttachments = tickets.SelectMany(t => t.Attachments).ToList();
+
+            // remove all data
+            context.Notifications.RemoveRange(notifications);
+            context.TicketHistories.RemoveRange(ticketHistories);
+            context.TicketComments.RemoveRange(ticketComments);
+            context.TicketAttachments.RemoveRange(ticketAttachments);
+            context.Tickets.RemoveRange(tickets);
+            context.Projects.RemoveRange(projects);
+
+            await context.SaveChangesAsync();
         }
 
         public static async Task SeedDefaultCompaniesAsync(ApplicationDbContext context)
